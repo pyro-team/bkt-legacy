@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# PowerPoint-Datei entpacket
+cp VBAImportExport.pptm temp.zip
+unzip -d unzipped temp.zip
+
+# Custom-UI exportieren
+cp unzipped/customUI/customUI14.xml ribbonUI.xml
+
+# temporäre Dateien löschen
+rm -R unzipped
+rm temp.zip

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" >
+	<ribbon>
+		<tabs>
+			<tab idQ="TabDeveloper">
+				<group id="VBAImportExport" label="VBA Import / Export">
+					<button id="btnExport" label="Export VBA" showLabel="true" screentip="VBA Code exportieren" onAction="btnExport" size="normal" />
+					<button id="btnImport" label="Import VBA " showLabel="true" screentip="VBA Code importieren und ersetzen" onAction="btnImport" size="normal" />
+				</group>
+			</tab>
+		</tabs>
+	</ribbon>
+</customUI>

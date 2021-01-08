@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# PowerPoint-Datei entpacken
+echo "PowerPoint-Datei entpacken..."
+cp BKT-Legacy.pptm temp.zip
+unzip -q -d unzipped temp.zip
+
+# Custom-UI aus separater Datei kopieren
+echo "Custom UI kopieren..."
+cp ribbonUI.xml unzipped/customUI/customUI14.xml
+
+# Neue PowerPoint-Datei packen
+echo "PowerPoint-Datei packen..."
+cd unzipped
+zip -q -r newzipped.zip *
+cd ..
+# Alte PowerPoint-Datei ueberschreiben
+mv unzipped/newzipped.zip BKT-Legacy.pptm
+
+# temporäre Dateien löschen
+echo "Temp-Dateien entfernen..."
+rm -R unzipped
+rm temp.zip
+echo "done."
