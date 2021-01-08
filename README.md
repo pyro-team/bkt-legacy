@@ -14,7 +14,7 @@ Historically, the BKT Legacy Toolbar was developed in German and unfortunately, 
 
 ## System requirements
 
-The BKT runs under Windows from Office 2010 in all current Office versions as well as on Mac starting with Office 2016. Some functions are not available on Mac though.
+The BKT Legacy Toolbar runs under Windows from Office 2010 in all current Office versions as well as on Mac starting with Office 2016. Some functions are not available on Mac though.
 
 ## Installation
 
@@ -26,7 +26,7 @@ The PowerPoint-Addin can be downloaded as [compiled `BKT-Legacy.ppam` file](http
 
 ## Development
 
-To install the development version please refer to instructions on [00_development/DEV.md](00_development/DEV.md).
+To install the development version please refer to instructions on [20_development/DEV.md](20_development/DEV.md).
 
 ## Contributions
 
