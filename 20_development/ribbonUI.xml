@@ -111,7 +111,7 @@
 					</dialogBoxLauncher>
 				</group>
 
-				<group id="langGroup" label="Sprachen">
+				<group id="langGroup" label="Sprachen" image="GermanFlag">
 					<button id="actLangDe2" onAction="btnAction" label="Deutsch" showLabel="true" size="normal" screentip="Präsentation auf Deutsch" supertip="Gesamte Präsentation und alle Folien und Shapes auf Rechtschreibung Deutsch umstellen" image="GermanFlag" />
 					<button id="actLangEnUs2" onAction="btnAction" label="US English" showLabel="true" size="normal" screentip="Präsentation auf US English" supertip="Gesamte Präsentation und alle Folien und Shapes auf Rechtschreibung US English umstellen" image="USFlag" />
 					<button id="actLangEnUk2" onAction="btnAction" label="UK English" showLabel="true" size="normal" screentip="Präsentation auf UK English" supertip="Gesamte Präsentation und alle Folien und Shapes auf Rechtschreibung UK English umstellen" image="UKFlag" />
@@ -121,12 +121,12 @@
 					</dialogBoxLauncher>
 				</group>
 				<!-- master, hand-master, notiz-master, farbe, SW //-->
-				<group id="masterGroup" label="Master">
+				<group id="masterGroup" label="Master" imageMso="ViewSlideMasterView">
 					<toggleButton size="normal" idMso="ViewSlideMasterView" />
 					<toggleButton size="normal" idMso="ViewHandoutMasterView" />
 					<toggleButton size="normal" idMso="ViewNotesMasterView" />
 				</group>
-				<group id="colorGroup" label="Farbe" getVisible="isVisibleWin"> <!-- Win only -->
+				<group id="colorGroup" label="Farbe" getVisible="isVisibleWin" imageMso="ViewDisplayInColor"> <!-- Win only -->
 					<toggleButton size="normal" idMso="ViewDisplayInColor" />
 					<toggleButton size="normal" idMso="ViewDisplayInGrayscale" />
 					<toggleButton size="normal" idMso="ViewDisplayInPureBlackAndWhite" />
@@ -143,7 +143,7 @@
 						<control idMso="BlackAndWhiteDontShow" />
 					</menu>
 				</group>
-				<group id="rahmenGroup" label="Tabellenrahmen">
+				<group id="rahmenGroup" label="Tabellenrahmen" imageMso="BordersAll">
 					<control size="normal" showLabel="false" idMso="BorderNone" />
 					<control size="normal" showLabel="false" idMso="BordersAll" />
 					<control size="normal" showLabel="false" idMso="BorderOutside" />
