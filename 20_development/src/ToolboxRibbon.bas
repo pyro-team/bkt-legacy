@@ -1154,6 +1154,21 @@ Sub btnAction(control As IRibbonControl)
         MultiplyShapes SplitRowsCols, SplitSep
     Case "actMultiplyVertical"
         MultiplyShapes SplitRowsCols, SplitSep, True
+    
+    ' Arrange
+    Case "actArrangeTop"
+        ArrangeByLast 1
+    Case "actArrangeBottom"
+        ArrangeByLast 2
+    Case "actArrangeLeft"
+        ArrangeByLast 3
+    Case "actArrangeRight"
+        ArrangeByLast 4
+    Case "actArrangeVMiddle"
+        ArrangeByLast 5
+    Case "actArrangeMiddle"
+        ArrangeByLast 6
+    
     ' Info
     Case "lblxInfo", "lblxWebsite"
         MsgBox "More information on www.bkt-toolbox.de/legacy"

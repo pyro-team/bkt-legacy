@@ -817,3 +817,29 @@ Public Sub SplitShapes(RowsCols As Integer, Sep As Single, Optional vertical As 
         Next i
     Next
 End Sub
+
+
+Public Sub ArrangeByLast(Position As Integer)
+    Dim selectedShapes As ShapeRange
+    Dim shp As Shape, masterShp As Shape
+    
+    Set selectedShapes = ActiveWindow.selection.ShapeRange
+    Set masterShp = selectedShapes(selectedShapes.Count)
+    
+    For Each shp In ActiveWindow.selection.ShapeRange
+        Select Case Position
+            Case 1
+                shp.Top = masterShp.Top
+            Case 2
+                shp.Top = masterShp.Top + masterShp.Height - shp.Height
+            Case 3
+                shp.Left = masterShp.Left
+            Case 4
+                shp.Left = masterShp.Left + masterShp.Width - shp.Width
+            Case 5
+                shp.Top = masterShp.Top + (masterShp.Height / 2) - (shp.Height / 2)
+            Case 6
+                shp.Left = masterShp.Left + (masterShp.Width / 2) - (shp.Width / 2)
+        End Select
+    Next
+End Sub
