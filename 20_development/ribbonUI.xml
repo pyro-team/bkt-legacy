@@ -120,6 +120,38 @@
 						<button idMso="SetLanguage" />
 					</dialogBoxLauncher>
 				</group>
+
+				<group id="splitGroup" label="Teilen/Vervielfachen" image="split_horizontal">
+					<box id="splitButtons" boxStyle="horizontal">
+						<button id="actSplitVertical" onAction="btnAction" getEnabled="isEnabled" label="Vertikal teilen" showLabel="false" size="normal" screentip="Vertikal teilen" supertip="Shape vertikal in mehrere Shapes teilen, entsprechend der angegebenen Anzahl und mit angegebenem Abstand zwischen den Shapes." image="split_horizontal" />
+						<button id="actSplitHorizontal" onAction="btnAction" getEnabled="isEnabled" label="Horizontal teilen" showLabel="false" size="normal" screentip="Horizontal teilen" supertip="Shape horizontal in mehrere Shapes teilen, entsprechend der angegebenen Anzahl und mit angegebenem Abstand zwischen den Shapes." image="split_vertical" />
+						<button id="actMultiplyVertical" onAction="btnAction" getEnabled="isEnabled" label="Vertikal vervielfachen" showLabel="false" size="normal" screentip="Vertikal vervielfachen" supertip="Shape mehrfach dublizieren, entsprechend der angegebenen Anzahl. Shapes werden nebeneinander angeordnet mit dem angegebenem Abstand zwischen den Shapes." image="multiply_vertical" />
+						<button id="actMultiplyHorizontal" onAction="btnAction" getEnabled="isEnabled" label="Horizontal vervielfachen" showLabel="false" size="normal" screentip="Horizontal vervielfachen" supertip="Shape mehrfach dublizieren, entsprechend der angegebenen Anzahl. Shapes werden untereinander angeordnet mit dem angegebenem Abstand zwischen den Shapes." image="multiply_horizontal" />
+					</box>
+
+					<box id="splitRows" boxStyle="horizontal">
+						<editBox id="ebSplitRows" label="Anzahl Zeilen/Spalten" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebIntValue_onChange" imageMso="TableRowsDistribute"/>
+						<button id="decSplitRows" label="«" showLabel="true" screentip="Anzahl Zeilen/Spalten verkleinern" onAction="DecreasePixelValue" size="normal"/>
+						<button id="incSplitRows" label="»" showLabel="true" screentip="Anzahl Zeilen/Spalten vergrößern" onAction="IncreasePixelValue" size="normal"/>
+					</box>
+
+					<box id="splitSep" boxStyle="horizontal">
+						<editBox id="ebSplitSep" label="Zeilen-/Spaltenabstand" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" imageMso="RowHeight"/>
+						<button id="decSplitSep" label="«" showLabel="true" screentip="Zeilen-/Spaltenabstand verkleinern" onAction="DecreasePixelValue" size="normal"/>
+						<button id="incSplitSep" label="»" showLabel="true" screentip="Zeilen-/Spaltenabstand vergrößern" onAction="IncreasePixelValue" size="normal"/>
+					</box>
+				</group>
+
+				<group id="arrangeGroup" label="Anordnen" image="arrange_position_bottom">
+					<button id="actArrangeLeft" onAction="btnAction" getEnabled="isEnabled" label="Links ausrichten" showLabel="false" size="normal" screentip="Links ausrichten" image="arrange_position_left" />
+					<button id="actArrangeRight" onAction="btnAction" getEnabled="isEnabled" label="Rechts ausrichten" showLabel="false" size="normal" screentip="Rechts ausrichten" image="arrange_position_right" />
+					<button id="actArrangeMiddle" onAction="btnAction" getEnabled="isEnabled" label="Mittig ausrichten" showLabel="false" size="normal" screentip="Mittig ausrichten" image="arrange_position_middle" />
+
+					<button id="actArrangeTop" onAction="btnAction" getEnabled="isEnabled" label="Oben ausrichten" showLabel="false" size="normal" screentip="Oben ausrichten" image="arrange_position_top" />
+					<button id="actArrangeBottom" onAction="btnAction" getEnabled="isEnabled" label="Unten ausrichten" showLabel="false" size="normal" screentip="Unten ausrichten" image="arrange_position_bottom" />
+					<button id="actArrangeVMiddle" onAction="btnAction" getEnabled="isEnabled" label="Mittig ausrichten" showLabel="false" size="normal" screentip="Mittig ausrichten" image="arrange_position_vmiddle" />
+				</group>
+
 				<!-- master, hand-master, notiz-master, farbe, SW //-->
 				<group id="masterGroup" label="Master" imageMso="ViewSlideMasterView">
 					<toggleButton size="normal" idMso="ViewSlideMasterView" />

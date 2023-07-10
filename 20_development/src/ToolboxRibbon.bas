@@ -7,7 +7,8 @@ Private ConvertPointsToCentimeters As Boolean
 Private oTrigger As TriggerInvalidate
 
 Private AdjustmentValue As Integer
-
+Private SplitRowsCols As Integer
+Private SplitSep As Single
 
 
 'Public Sub Test()
@@ -49,6 +50,8 @@ Sub ribbonLoaded(Ribbon As IRibbonUI)
     ScaleFrom = msoScaleFromTopLeft
     
     AdjustmentValue = 1
+    SplitRowsCols = 2
+    SplitSep = CentimetersToPoints(0.2)
     
     Set oTrigger = New TriggerInvalidate
     Set oTrigger.Ribbon = myRibbon
@@ -288,11 +291,19 @@ Sub ebPixelValue_init(control As IRibbonControl, ByRef returnedVal)
     
     On Error GoTo Err_Handler
     
-    If ActiveWindow.selection.Type = ppSelectionNone Then
-        returnedVal = ""
-    Else
-        returnedVal = GetEditBoxValue(control.Id)
-    End If
+    Select Case control.Id
+        ' Split Multiply
+        Case "ebSplitRows"
+            returnedVal = SplitRowsCols
+        Case "ebSplitSep"
+            returnedVal = Round(PointsToCentimeters(SplitSep), 2)
+        Case Else
+            If ActiveWindow.selection.Type = ppSelectionNone Then
+                returnedVal = ""
+            Else
+                returnedVal = GetEditBoxValue(control.Id)
+            End If
+    End Select
 
 Exit Sub
 Err_Handler:
@@ -454,6 +465,14 @@ Sub ebIntValue_onChange(control As IRibbonControl, text As String)
     On Error GoTo Err_Handler
     
     value = CInt(text)
+    
+    ' Split Multiply
+    If control.Id = "ebSplitRows" Then
+        SplitRowsCols = Max(2, value)
+        myRibbon.Invalidate
+        Exit Sub
+    End If
+    
     If ActiveWindow.selection.Type = ppSelectionNone Then Exit Sub
     
     For Each shp In ActiveWindow.selection.ShapeRange
@@ -485,6 +504,13 @@ Sub ebPixelValue_onChange(control As IRibbonControl, text As String)
     Dim shpIdx As Integer
     
     On Error GoTo Err_Handler
+    
+    ' Split Multiply
+    If control.Id = "ebSplitSep" Then
+        SplitSep = CentimetersToPoints(Max(0, CSng(text)))
+        myRibbon.Invalidate
+        Exit Sub
+    End If
     
     If ActiveWindow.selection.Type = ppSelectionNone Then Exit Sub
     
@@ -654,9 +680,6 @@ Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
     
     On Error GoTo Err_Handler
     
-    If ActiveWindow.selection.Type = ppSelectionNone Then Exit Sub
-    
-    
     ptValue = value
     cmValue = value * 0.1
     intValue = value
@@ -666,6 +689,19 @@ Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
         intValue = 5 * intValue
     End If
     
+    ' Split Multiply
+    Select Case control.Id
+        Case "incSplitRows", "decSplitRows"
+            SplitRowsCols = Max(2, SplitRowsCols + value)
+            myRibbon.Invalidate
+            Exit Sub
+        Case "incSplitSep", "decSplitSep"
+            SplitSep = Max(0, CentimetersToPoints(Round(PointsToCentimeters(SplitSep), 1) + cmValue))
+            myRibbon.Invalidate
+            Exit Sub
+    End Select
+    
+    If ActiveWindow.selection.Type = ppSelectionNone Then Exit Sub
     
     Select Case control.Id
     Case "incHSep", "decHSep"
@@ -1109,6 +1145,15 @@ Sub btnAction(control As IRibbonControl)
     Case "textMarginZero"
         TextMarginZero
     
+    ' Multiply Split
+    Case "actSplitHorizontal"
+        SplitShapes SplitRowsCols, SplitSep
+    Case "actSplitVertical"
+        SplitShapes SplitRowsCols, SplitSep, True
+    Case "actMultiplyHorizontal"
+        MultiplyShapes SplitRowsCols, SplitSep
+    Case "actMultiplyVertical"
+        MultiplyShapes SplitRowsCols, SplitSep, True
     ' Info
     Case "lblxInfo", "lblxWebsite"
         MsgBox "More information on www.bkt-toolbox.de/legacy"

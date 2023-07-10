@@ -765,3 +765,55 @@ Private Sub setLanguageForShape(shp As Shape, langCode As Integer)
 Exit Sub
 Err_Handler:
 End Sub
+
+
+Public Sub MultiplyShapes(RowsCols As Integer, Sep As Single, Optional vertical As Boolean = False)
+    Dim i As Long
+    Dim shp As Shape, newShp As ShapeRange
+    
+    For Each shp In ActiveWindow.selection.ShapeRange
+        For i = 1 To RowsCols - 1
+            Set newShp = shp.Duplicate
+            
+            If vertical = False Then
+                newShp.Left = shp.Left + i * (shp.Width + Sep)
+                newShp.Top = shp.Top
+            Else
+                newShp.Top = shp.Top + i * (shp.Height + Sep)
+                newShp.Left = shp.Left
+            End If
+            newShp.Select False
+        Next i
+    Next
+End Sub
+
+
+Public Sub SplitShapes(RowsCols As Integer, Sep As Single, Optional vertical As Boolean = False)
+    Dim i As Long
+    Dim shp As Shape, newShp As ShapeRange
+    Dim targetSize As Single
+    
+    For Each shp In ActiveWindow.selection.ShapeRange
+        If vertical = False Then
+            targetSize = (shp.Width - (RowsCols - 1) * Sep) / RowsCols
+            shp.Width = targetSize
+        Else
+            targetSize = (shp.Height - (RowsCols - 1) * Sep) / RowsCols
+            shp.Height = targetSize
+        End If
+        For i = 1 To RowsCols - 1
+            Set newShp = shp.Duplicate
+            
+            If vertical = False Then
+                newShp.Left = shp.Left + i * (targetSize + Sep)
+                newShp.Top = shp.Top
+                newShp.Width = targetSize
+            Else
+                newShp.Top = shp.Top + i * (targetSize + Sep)
+                newShp.Left = shp.Left
+                newShp.Height = targetSize
+            End If
+            newShp.Select False
+        Next i
+    Next
+End Sub
