@@ -613,7 +613,7 @@
 						<button id="lblxAlt" label="Alt=Werte nicht angleichen (Delta pro Shape)" getVisible="isVisibleWin" />
 						<button id="lblxKeyMac" label="Ctrl/Alt nicht verfügbar auf Mac" getVisible="isVisibleMac" />
 						<menuSeparator id="info-menu-seperator-2" />
-						<button id="lblxInfo" label="BKT Legacy Toolbox v1.6.0" onAction="btnAction" />
+						<button id="lblxInfo" label="BKT Legacy Toolbox v1.6.1" onAction="btnAction" />
 						<button id="lblxWebsite" label="www.bkt-toolbox.de/legacy" onAction="btnAction" />
 					</menu>
 				</group>
