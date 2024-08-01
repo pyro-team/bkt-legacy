@@ -429,6 +429,14 @@ Public Sub ShowShapes()
     Next
 End Sub
 
+'Issue with Mac: Paste as picture pastes PDF/Vector, that is not properly shown on Windows
+'BUT: PasteSpecial not available on Mac, so no solution at the moment
+'Public Sub PasteAsPicturePng()
+'    Dim sld As Slide
+'
+'    Set sld = ActiveWindow.View.Slide
+'    sld.shapes.PasteSpecial ppPastePNG
+'End Sub
 
 Public Sub PasteOnSlides()
     Dim sld As Slide

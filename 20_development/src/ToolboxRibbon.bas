@@ -1078,6 +1078,8 @@ Sub btnAction(control As IRibbonControl)
         RemoveAllText
     
     ' Einfügen
+'    Case "actPasteAsPicturePng"
+'        PasteAsPicturePng
     Case "actPasteToSlides"
         PasteOnSlides
     Case "actPasteAndReplace"
