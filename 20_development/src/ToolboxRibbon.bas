@@ -93,7 +93,7 @@ Sub GetLabelValue(control As IRibbonControl, ByRef label)
     
     Select Case ctlId
     Case "menu-RectCorner"
-        label = "Wert " & AdjustmentValue & " von 8"
+        label = "Wert " & AdjustmentValue & "/8"
     End Select
 
 Exit Sub
