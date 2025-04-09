@@ -13,8 +13,8 @@
 					<box id="shapePositionBox1" boxStyle="horizontal">
 						<editBox id="ebPosTop" label="Position oben" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" imageMso="ObjectNudgeDown" />
 						<buttonGroup id="ebPosTop-buttons">
-							<button id="decPosTop" label="🢐" showLabel="true" screentip="Position oben verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incPosTop" label="🢒" showLabel="true" screentip="Position oben vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decPosTop" label="‹" showLabel="true" screentip="Position oben verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incPosTop" label="›" showLabel="true" screentip="Position oben vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 					</box>
 						<!-- <labelControl id="shapePosBox1-spacer" label=" " /> -->
@@ -22,8 +22,8 @@
 					<box id="shapePositionBox3" boxStyle="horizontal">
 						<editBox id="ebPosLeft" label="Position links" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" imageMso="ObjectNudgeRight" />
 						<buttonGroup id="ebPosLeft-buttons">
-							<button id="decPosLeft" label="🢐" showLabel="true" screentip="Position links verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incPosLeft" label="🢒" showLabel="true" screentip="Position links vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decPosLeft" label="‹" showLabel="true" screentip="Position links verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incPosLeft" label="›" showLabel="true" screentip="Position links vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 					</box>
 
@@ -33,16 +33,16 @@
 					<box id="shapePositionBox2" boxStyle="horizontal">
 						<editBox id="ebPosBottom" label="Höhe" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" imageMso="ShapeHeight" />
 						<buttonGroup id="ebPosBottom-buttons">
-							<button id="decPosBottom" label="🢐" showLabel="true" screentip="Höhe verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incPosBottom" label="🢒" showLabel="true" screentip="Höhe vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decPosBottom" label="‹" showLabel="true" screentip="Höhe verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incPosBottom" label="›" showLabel="true" screentip="Höhe vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 					</box>
 
 					<box id="shapePositionBox4" boxStyle="horizontal">
 						<editBox id="ebPosRight" label="Breite" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" imageMso="ShapeWidth" />
 						<buttonGroup id="ebPosRight-buttons">
-							<button id="decPosRight" label="🢐" showLabel="true" screentip="Breite verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incPosRight" label="🢒" showLabel="true" screentip="Breite vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decPosRight" label="‹" showLabel="true" screentip="Breite verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incPosRight" label="›" showLabel="true" screentip="Breite vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 					</box>
 					<!-- <box id="shapePositionBox3" boxStyle="horizontal"> -->
@@ -66,32 +66,32 @@
 					<box id="parFirstBox" boxStyle="horizontal">
 						<editBox id="ebParIndentFirst" label="Sondereinzug" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" image="first_line_indent" />
 						<buttonGroup id="ebParIndentFirst-buttons">
-							<button id="decParIndentFirst" label="🢐" showLabel="true" screentip="Sondereinzug verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incParIndentFirst" label="🢒" showLabel="true" screentip="Sondereinzug vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decParIndentFirst" label="‹" showLabel="true" screentip="Sondereinzug verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incParIndentFirst" label="›" showLabel="true" screentip="Sondereinzug vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 					</box>
 
 					<box id="parLeftBox" boxStyle="horizontal">
 						<editBox id="ebParIndentLeft" label="Absatzeinzug links" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" imageMso="ParagraphIndentLeft"/>
 						<buttonGroup id="ebParIndentLeft-buttons">
-							<button id="decParIndentLeft" label="🢐" showLabel="true" screentip="Absatzeinzug links verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incParIndentLeft" label="🢒" showLabel="true" screentip="Absatzeinzug links vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decParIndentLeft" label="‹" showLabel="true" screentip="Absatzeinzug links verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incParIndentLeft" label="›" showLabel="true" screentip="Absatzeinzug links vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 					</box>
 
 					<box id="parRightBox" boxStyle="horizontal">
 						<editBox id="ebParIndentRight" label="Einzug rechts" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" imageMso="ParagraphIndentRight" />
 						<buttonGroup id="ebParIndentRight-buttons">
-							<button id="decParIndentRight" label="🢐" showLabel="true" screentip="Einzug rechts verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled"  />
-							<button id="incParIndentRight" label="🢒" showLabel="true" screentip="Einzug rechts vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled"  />
+							<button id="decParIndentRight" label="‹" showLabel="true" screentip="Einzug rechts verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled"  />
+							<button id="incParIndentRight" label="›" showLabel="true" screentip="Einzug rechts vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled"  />
 						</buttonGroup>
 					</box>
 
 					<box id="parWithinBox" boxStyle="horizontal">
 						<editBox id="ebParWithin" label="Zeilenabstand" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" imageMso="LineSpacing"/>
 						<buttonGroup id="ebParWithin-buttons">
-							<button id="decParWithin" label="🢐" showLabel="true" screentip="Zeilenabstand verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incParWithin" label="🢒" showLabel="true" screentip="Zeilenabstand vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decParWithin" label="‹" showLabel="true" screentip="Zeilenabstand verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incParWithin" label="›" showLabel="true" screentip="Zeilenabstand vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 					</box>
 
@@ -107,24 +107,24 @@
 					<box id="fillTransp" boxStyle="horizontal">
 						<editBox id="ebTranspFill" label="Transparenz Hintergrund" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebIntValue_onChange" getEnabled="isEnabled" image="fill_transparency" />
 						<buttonGroup id="ebTranspFill-buttons">
-							<button id="decTranspFill" label="🢐" showLabel="true" screentip="Transparenz verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incTranspFill" label="🢒" showLabel="true" screentip="Transparenz vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decTranspFill" label="‹" showLabel="true" screentip="Transparenz verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incTranspFill" label="›" showLabel="true" screentip="Transparenz vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 					</box>
 
 					<box id="lineTransp" boxStyle="horizontal">
 						<editBox id="ebTranspLine" label="Transparenz Linie/Rahmen" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebIntValue_onChange" getEnabled="isEnabled" image="line_transparency" />
 						<buttonGroup id="ebTranspLine-buttons">
-							<button id="decTranspLine" label="🢐" showLabel="true" screentip="Transparenz verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incTranspLine" label="🢒" showLabel="true" screentip="Transparenz vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decTranspLine" label="‹" showLabel="true" screentip="Transparenz verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incTranspLine" label="›" showLabel="true" screentip="Transparenz vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 					</box>
 
 					<box id="lineWeight" boxStyle="horizontal">
 						<editBox id="ebLineWeight" label="Dicke Linie/Rahmen" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" imageMso="LineThickness"/>
 						<buttonGroup id="ebLineWeight-buttons">
-							<button id="decLineWeight" label="🢐" showLabel="true" screentip="Rahmen/Linie verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incLineWeight" label="🢒" showLabel="true" screentip="Rahmen/Linie vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decLineWeight" label="‹" showLabel="true" screentip="Rahmen/Linie verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incLineWeight" label="›" showLabel="true" screentip="Rahmen/Linie vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 					</box>
 
@@ -154,16 +154,16 @@
 					<box id="splitRows" boxStyle="horizontal">
 						<editBox id="ebSplitRows" label="Anzahl Zeilen/Spalten" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebIntValue_onChange" imageMso="TableRowsDistribute"/>
 						<buttonGroup id="ebSplitRows-buttons">
-							<button id="decSplitRows" label="🢐" showLabel="true" screentip="Anzahl Zeilen/Spalten verkleinern" onAction="DecreasePixelValue" />
-							<button id="incSplitRows" label="🢒" showLabel="true" screentip="Anzahl Zeilen/Spalten vergrößern" onAction="IncreasePixelValue" />
+							<button id="decSplitRows" label="‹" showLabel="true" screentip="Anzahl Zeilen/Spalten verkleinern" onAction="DecreasePixelValue" />
+							<button id="incSplitRows" label="›" showLabel="true" screentip="Anzahl Zeilen/Spalten vergrößern" onAction="IncreasePixelValue" />
 						</buttonGroup>
 					</box>
 
 					<box id="splitSep" boxStyle="horizontal">
 						<editBox id="ebSplitSep" label="Zeilen-/Spaltenabstand" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" imageMso="RowHeight"/>
 						<buttonGroup id="ebSplitSep-buttons">
-							<button id="decSplitSep" label="🢐" showLabel="true" screentip="Zeilen-/Spaltenabstand verkleinern" onAction="DecreasePixelValue" />
-							<button id="incSplitSep" label="🢒" showLabel="true" screentip="Zeilen-/Spaltenabstand vergrößern" onAction="IncreasePixelValue" />
+							<button id="decSplitSep" label="‹" showLabel="true" screentip="Zeilen-/Spaltenabstand verkleinern" onAction="DecreasePixelValue" />
+							<button id="incSplitSep" label="›" showLabel="true" screentip="Zeilen-/Spaltenabstand vergrößern" onAction="IncreasePixelValue" />
 						</buttonGroup>
 					</box>
 				</group>
@@ -209,8 +209,8 @@
 				<!--<group id="absatzEinzug" label="Absatzeinzug">
 					<box id="parPositionBox1" boxStyle="horizontal">
 						<editBox id="ebParIndent" label="Absatzeinzug" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" imageMso="WordIndent"/>
-						<button id="decParIndent" label="🢐" showLabel="true" screentip="Absatzeinzug verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" size="normal"/>
-						<button id="incParIndent" label="🢒" showLabel="true" screentip="Absatzeinzug vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" size="normal"/>
+						<button id="decParIndent" label="‹" showLabel="true" screentip="Absatzeinzug verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" size="normal"/>
+						<button id="incParIndent" label="›" showLabel="true" screentip="Absatzeinzug vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" size="normal"/>
 					</box>
 					<dialogBoxLauncher>
 						<button idMso="PowerPointParagraphDialog" />
@@ -525,16 +525,16 @@
 						<button id="resVSep" label="Objekte vertikal stapeln" showLabel="false" getEnabled="isEnabled" size="normal" imageMso="VerticalSpacingIncrease" onAction="ResetPixelValue" />
 						<editBox id="ebVSep" label="Objektabstand vertikal" showLabel="false" sizeString="-###" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" showImage="false" />
 						<buttonGroup id="vSep-buttons">
-							<button id="decVSep" label="🢐" showLabel="true" screentip="Objektabstand vertikal verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incVSep" label="🢒" showLabel="true" screentip="Objektabstand vertikal vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decVSep" label="‹" showLabel="true" screentip="Objektabstand vertikal verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incVSep" label="›" showLabel="true" screentip="Objektabstand vertikal vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 					</box>
 					<box id="hSep" boxStyle="horizontal">
 						<button id="resHSep" label="Objekte horizontal stapeln" showLabel="false" getEnabled="isEnabled" size="normal" imageMso="HorizontalSpacingIncrease" onAction="ResetPixelValue" />
 						<editBox id="ebHSep" label="Objektabstand horizontal" showLabel="false" sizeString="-###" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" showImage="false" />
 						<buttonGroup id="hSep-buttons">
-							<button id="decHSep" label="🢐" showLabel="true" screentip="Objektabstand horizontal verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incHSep" label="🢒" showLabel="true" screentip="Objektabstand horizontal vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decHSep" label="‹" showLabel="true" screentip="Objektabstand horizontal verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incHSep" label="›" showLabel="true" screentip="Objektabstand horizontal vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 					</box>
 					<box id="shapeRotation" boxStyle="horizontal">
@@ -542,8 +542,8 @@
 						<button id="resRotation" label="Rotation auf 0" showLabel="false" getEnabled="isEnabled" size="normal" imageMso="ArrangeByRecurrence" onAction="ResetPixelValue" />
 						<editBox id="ebRotation" label="Rotation" showLabel="false" sizeString="-###" getText="ebPixelValue_init" onChange="ebIntValue_onChange" getEnabled="isEnabled" showImage="false" /> <!--alternate imageMso: Repeat-->
 						<buttonGroup id="shapeRotation-buttons">
-							<button id="decRotation" label="🢐" showLabel="true" screentip="Rotation verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incRotation" label="🢒" showLabel="true" screentip="Rotation vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decRotation" label="‹" showLabel="true" screentip="Rotation verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incRotation" label="›" showLabel="true" screentip="Rotation vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 					</box>
 				</group>
@@ -552,8 +552,8 @@
 						<labelControl id="lbShapeMarginTop" label="         ​" />
 						<editBox id="ebMarginTop" label="Innenabstand Oben" showLabel="false" sizeString="###" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" imageMso="FillDown" />
 						<buttonGroup id="ebMarginTop-buttons">
-							<button id="decMarginTop" label="🢐" showLabel="true" screentip="Innenabstand oben verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incMarginTop" label="🢒" showLabel="true" screentip="Innenabstand oben vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decMarginTop" label="‹" showLabel="true" screentip="Innenabstand oben verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incMarginTop" label="›" showLabel="true" screentip="Innenabstand oben vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 						<labelControl id="lbShapeMarginTop2" label="    ​" />
 						<button id="textMarginZero" label="= 0" showLabel="true" screentip="Innenabstand an allen Seiten auf Null" onAction="btnAction" getEnabled="isEnabled" size="normal" />
@@ -562,14 +562,14 @@
 					<box id="textMarginBox2" boxStyle="horizontal">
 						<editBox id="ebMarginLeft" label="Innenabstand links" showLabel="false" sizeString="###" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" imageMso="FillRight" />
 						<buttonGroup id="ebMarginLeft-buttons">
-							<button id="decMarginLeft" label="🢐" showLabel="true" screentip="Innenabstand links verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incMarginLeft" label="🢒" showLabel="true" screentip="Innenabstand links vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decMarginLeft" label="‹" showLabel="true" screentip="Innenabstand links verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incMarginLeft" label="›" showLabel="true" screentip="Innenabstand links vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 
 						<editBox id="ebMarginRight" label="Innenabstand rechts" showLabel="false" sizeString="###" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" imageMso="FillLeft" />
 						<buttonGroup id="ebMarginRight-buttons">
-							<button id="decMarginRight" label="🢐" showLabel="true" screentip="Innenabstand rechts verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incMarginRight" label="🢒" showLabel="true" screentip="Innenabstand rechts vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decMarginRight" label="‹" showLabel="true" screentip="Innenabstand rechts verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incMarginRight" label="›" showLabel="true" screentip="Innenabstand rechts vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 					</box>
 
@@ -577,8 +577,8 @@
 						<labelControl id="lbShapeMarginBottom" label="         ​" />
 						<editBox id="ebMarginBottom" label="Innenabstand unten" showLabel="false" sizeString="###" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" imageMso="FillUp" />
 						<buttonGroup id="ebMarginBottom-buttons">
-							<button id="decMarginBottom" label="🢐" showLabel="true" screentip="Innenabstand unten verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incMarginBottom" label="🢒" showLabel="true" screentip="Innenabstand unten vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decMarginBottom" label="‹" showLabel="true" screentip="Innenabstand unten verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incMarginBottom" label="›" showLabel="true" screentip="Innenabstand unten vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 					</box>
 
@@ -586,8 +586,8 @@
 
 					<!-- <box id="textMarginBox3" boxStyle="horizontal">
 						<editBox id="ebMarginRight" label="Innenabstand rechts" showLabel="false" sizeString="###" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" imageMso="FillLeft" />
-						<button id="decMarginRight" label="🢐" showLabel="true" screentip="Innenabstand rechts verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" size="normal" />
-						<button id="incMarginRight" label="🢒" showLabel="true" screentip="Innenabstand rechts vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" size="normal" />
+						<button id="decMarginRight" label="‹" showLabel="true" screentip="Innenabstand rechts verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" size="normal" />
+						<button id="incMarginRight" label="›" showLabel="true" screentip="Innenabstand rechts vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" size="normal" />
 					</box> -->
 
 					<!-- <labelControl id="lbShapeMarginWrapper" label=" ​" /> -->
@@ -614,16 +614,16 @@
 						<!-- ParagraphSpacingIncrease, WordOpenParaAbove -->
 						<editBox id="ebParPreSep" label="Absatzabstand oben" showLabel="false" sizeString="#.#" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" image="par_above" />
 						<buttonGroup id="ebParPreSep-buttons">
-							<button id="decParPreSep" label="🢐" showLabel="true" screentip="Absatzabstand oben verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incParPreSep" label="🢒" showLabel="true" screentip="Absatzabstand oben vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decParPreSep" label="‹" showLabel="true" screentip="Absatzabstand oben verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incParPreSep" label="›" showLabel="true" screentip="Absatzabstand oben vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 					</box>
 					<box id="parPositionBox3" boxStyle="horizontal">
 						<!-- WordOpenParaBelow -->
 						<editBox id="ebParPostSep" label="Absatzabstand unten" showLabel="false" sizeString="#.#" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" image="par_below" />
 						<buttonGroup id="ebParPostSep-buttons">
-							<button id="decParPostSep" label="🢐" showLabel="true" screentip="Absatzabstand unten verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incParPostSep" label="🢒" showLabel="true" screentip="Absatzabstand unten vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decParPostSep" label="‹" showLabel="true" screentip="Absatzabstand unten verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incParPostSep" label="›" showLabel="true" screentip="Absatzabstand unten vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 					</box>
 					<dialogBoxLauncher>
@@ -645,14 +645,14 @@
 					<box id="rectCorner" boxStyle="horizontal">
 						<editBox id="ebRectCorner" label="Rundung/Spitze/Ecke" showLabel="false" sizeString="#.##" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" getShowImage="isVisibleWin" imageMso="ShapeArc" showImage="false" />
 						<buttonGroup id="ebRectCorner-buttons">
-							<button id="decRectCorner" label="🢐" showLabel="true" screentip="Rundung verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incRectCorner" label="🢒" showLabel="true" screentip="Rundung vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							<button id="decRectCorner" label="‹" showLabel="true" screentip="Rundung verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+							<button id="incRectCorner" label="›" showLabel="true" screentip="Rundung vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 					</box>
 					<!-- <box id="rectCorner2" boxStyle="horizontal">
 						<editBox id="ebRectCorner2" label="Rundung 2" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" imageMso="ShapeCurve" />
-						<button id="decRectCorner2" label="🢐" showLabel="true" screentip="Rundung verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" size="normal" />
-						<button id="incRectCorner2" label="🢒" showLabel="true" screentip="Rundung vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" size="normal" />
+						<button id="decRectCorner2" label="‹" showLabel="true" screentip="Rundung verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" size="normal" />
+						<button id="incRectCorner2" label="›" showLabel="true" screentip="Rundung vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" size="normal" />
 					</box> -->
 				</group>
 				<group idQ="nsBktLegacy:info" label="Info" imageMso="Info">
