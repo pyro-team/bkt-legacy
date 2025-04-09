@@ -144,12 +144,12 @@
 				</group>
 
 				<group id="splitGroup" label="Teilen/Vervielfachen" image="split_horizontal">
-					<box id="splitButtons" boxStyle="horizontal">
-						<button id="actSplitVertical" onAction="btnAction" getEnabled="isEnabled" label="Vertikal teilen" showLabel="false" size="normal" screentip="Vertikal teilen" supertip="Shape vertikal in mehrere Shapes teilen, entsprechend der angegebenen Anzahl und mit angegebenem Abstand zwischen den Shapes." image="split_horizontal" />
-						<button id="actSplitHorizontal" onAction="btnAction" getEnabled="isEnabled" label="Horizontal teilen" showLabel="false" size="normal" screentip="Horizontal teilen" supertip="Shape horizontal in mehrere Shapes teilen, entsprechend der angegebenen Anzahl und mit angegebenem Abstand zwischen den Shapes." image="split_vertical" />
-						<button id="actMultiplyVertical" onAction="btnAction" getEnabled="isEnabled" label="Vertikal vervielfachen" showLabel="false" size="normal" screentip="Vertikal vervielfachen" supertip="Shape mehrfach dublizieren, entsprechend der angegebenen Anzahl. Shapes werden nebeneinander angeordnet mit dem angegebenem Abstand zwischen den Shapes." image="multiply_vertical" />
-						<button id="actMultiplyHorizontal" onAction="btnAction" getEnabled="isEnabled" label="Horizontal vervielfachen" showLabel="false" size="normal" screentip="Horizontal vervielfachen" supertip="Shape mehrfach dublizieren, entsprechend der angegebenen Anzahl. Shapes werden untereinander angeordnet mit dem angegebenem Abstand zwischen den Shapes." image="multiply_horizontal" />
-					</box>
+					<buttonGroup id="splitButtons">
+						<button id="actSplitVertical" onAction="btnAction" getEnabled="isEnabled" label="Vertikal teilen" showLabel="false" screentip="Vertikal teilen" supertip="Shape vertikal in mehrere Shapes teilen, entsprechend der angegebenen Anzahl und mit angegebenem Abstand zwischen den Shapes." image="split_horizontal" />
+						<button id="actSplitHorizontal" onAction="btnAction" getEnabled="isEnabled" label="Horizontal teilen" showLabel="false" screentip="Horizontal teilen" supertip="Shape horizontal in mehrere Shapes teilen, entsprechend der angegebenen Anzahl und mit angegebenem Abstand zwischen den Shapes." image="split_vertical" />
+						<button id="actMultiplyVertical" onAction="btnAction" getEnabled="isEnabled" label="Vertikal vervielfachen" showLabel="false" screentip="Vertikal vervielfachen" supertip="Shape mehrfach dublizieren, entsprechend der angegebenen Anzahl. Shapes werden nebeneinander angeordnet mit dem angegebenem Abstand zwischen den Shapes." image="multiply_vertical" />
+						<button id="actMultiplyHorizontal" onAction="btnAction" getEnabled="isEnabled" label="Horizontal vervielfachen" showLabel="false" screentip="Horizontal vervielfachen" supertip="Shape mehrfach dublizieren, entsprechend der angegebenen Anzahl. Shapes werden untereinander angeordnet mit dem angegebenem Abstand zwischen den Shapes." image="multiply_horizontal" />
+					</buttonGroup>
 
 					<box id="splitRows" boxStyle="horizontal">
 						<editBox id="ebSplitRows" label="Anzahl Zeilen/Spalten" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebIntValue_onChange" imageMso="TableRowsDistribute"/>
@@ -224,7 +224,7 @@
 
 			<tab idQ="nsBktLegacy:Toolbox" label="Toolbox" insertBeforeQ="nsBktLegacy:Toolbox-p2">
 				<group id="copypaste" label="Ablage" insertBeforeQ="nsBktLegacy:ThinkCell" imageMso="ObjectsMultiSelect">
-					<splitButton id="slides-paste-splitbutton" showLabel="false" size="normal">
+					<buttonGroup id="spltbtn-fix-1"><splitButton id="slides-paste-splitbutton" showLabel="false">
 						<button idMso="PasteSpecialDialog" showLabel="false" />
 						<menu id="slides-paste-menu" label="Einfügen-Menü">
 							<button idMso="PasteSpecialDialog" />
@@ -235,9 +235,9 @@
 							<menuSeparator id="slides-paste-seperator-2" />
 							<control idMso="ShowClipboard" />
 						</menu>
-					</splitButton>
+					</splitButton></buttonGroup>
 					<button idMso="Cut" showLabel="false" size="normal" />
-					<splitButton idMso="CopySplitButton" showLabel="false" size="normal" />
+					<buttonGroup id="spltbtn-fix-2"><splitButton idMso="CopySplitButton" showLabel="false" /></buttonGroup>
 					<button idMso="PasteApplyStyle" showLabel="false" size="normal" />
 					<button idMso="PickUpStyle" showLabel="false" size="normal" />
 					<control idMso="FormatPainter" showLabel="false" size="normal" />
@@ -249,7 +249,7 @@
 					<button id="actSelectByLine" label="Auswahl von Shapes mit gleichem Rahmen" showLabel="false" onAction="btnAction" getEnabled="isEnabled" size="normal" imageMso="ControlSpecialEffectEtched" />
 				</group>
 				<group id="slides" label="Folien" insertBeforeQ="nsBktLegacy:ThinkCell" imageMso="SlideNewGallery">
-					<control idMso="SlideNewGallery" showLabel="false" size="normal" />
+					<buttonGroup id="spltbtn-fix-3"><control idMso="SlideNewGallery" showLabel="false" /></buttonGroup>
 					<control idMso="SlideLayoutGallery" showLabel="false" size="normal" />
 					<!-- <control idMso="SlideReset" showLabel="false" size="normal" /> -->
 					<!-- <control idMso="SlideHide" showLabel="false" size="normal"/> -->
@@ -327,8 +327,10 @@
 				</group>
 				<group id="custom_paragraph" label="Absatz" insertBeforeQ="nsBktLegacy:ThinkCell" imageMso="GroupParagraph">
 					<box id="custom_paragraph-bullets" boxStyle="horizontal">
-						<control idMso="BulletsGallery" showLabel="false" />
-						<control idMso="NumberingGallery" showLabel="false" />
+						<buttonGroup id="spltbtn-fix-4">
+							<control idMso="BulletsGallery" showLabel="false" />
+							<control idMso="NumberingGallery" showLabel="false" />
+						</buttonGroup>
 						<buttonGroup id="custom_paragraph-bullets-btg">
 							<control idMso="IndentDecrease" showLabel="false" />
 							<control idMso="IndentIncrease" showLabel="false" />
@@ -423,11 +425,11 @@
 				//-->
 				<group id="styles" label="Stile" insertBeforeQ="nsBktLegacy:ThinkCell" imageMso="ShapeFillColorPicker">
 					<!-- label wird bei gallery-Einträgen immer angezeigt, also überall label auf Leertaste ändern -->
-					<control showLabel="false" size="normal" idMso="ShapeFillColorPicker" />
-					<control showLabel="false" size="normal" idMso="ShapeOutlineColorPicker" />
+					<buttonGroup id="spltbtn-fix-5"><control showLabel="false" idMso="ShapeFillColorPicker" /></buttonGroup>
+					<buttonGroup id="spltbtn-fix-6"><control showLabel="false" idMso="ShapeOutlineColorPicker" /></buttonGroup>
 					<control showLabel="false" size="normal" idMso="ShapeEffectsMenu" />
-					<control showLabel="false" size="normal" idMso="TextFillColorPicker" />
-					<control showLabel="false" size="normal" idMso="TextOutlineColorPicker" />
+					<buttonGroup id="spltbtn-fix-7"><control showLabel="false" idMso="TextFillColorPicker" /></buttonGroup>
+					<buttonGroup id="spltbtn-fix-8"><control showLabel="false" idMso="TextOutlineColorPicker" /></buttonGroup>
 					<control showLabel="false" size="normal" idMso="TextEffectsMenu" />
 					<control showLabel="false" size="normal" idMso="OutlineWeightGallery" />
 					<control showLabel="false" size="normal" idMso="OutlineDashesGallery" />
@@ -471,29 +473,29 @@
 				</group>
 				<group id="align" label="Anordnen" insertBeforeQ="nsBktLegacy:ThinkCell" imageMso="ObjectsArrangeMenu">
 
-					<splitButton id="actSplitSameHeight" showLabel="false" size="normal" getEnabled="isEnabled">
+					<buttonGroup id="spltbtn-fix-9"><splitButton id="actSplitSameHeight" showLabel="false" getEnabled="isEnabled">
 						<button id="actSameHeight" label="Gleiche Höhe" showLabel="false" onAction="btnAction" imageMso="ShapeHeight" screentip="Höhe der Shapes einheitlich" supertip="Standardmäßig Ausrichtung am höchsten Shape. Mit gedrückter SHIFT-Taste Ausrichtung am niedrigsten Shape." />
 						<menu id="split-sameheight-menu" label="Gleiche Höhe Menü">
 							<button id="actSameHeight2" label="Gleiche Höhe wie höchstes Shape" onAction="btnAction" imageMso="ShapeHeight" screentip="Höhe der Shapes wie höchstes Shape" supertip="Standardmäßig Ausrichtung am höchsten Shape. Mit gedrückter SHIFT-Taste Ausrichtung am niedrigsten Shape." />
 							<button id="actSameHeightMin" label="Gleiche Höhe wie niedrigstes Shape [SHIFT]" onAction="btnAction" screentip="Höhe der Shapes wie niedrigstes Shape" supertip="Ausrichtung am niedrigsten Shape." />
 						</menu>
-					</splitButton>
+					</splitButton></buttonGroup>
 
-					<splitButton id="actSplitSameWidth" showLabel="false" size="normal" getEnabled="isEnabled">
+					<buttonGroup id="spltbtn-fix-10"><splitButton id="actSplitSameWidth" showLabel="false" getEnabled="isEnabled">
 						<button id="actSameWidth" label="Gleiche Breite" showLabel="false" onAction="btnAction" imageMso="ShapeWidth" screentip="Breite der Shapes einheitlich" supertip="Standardmäßig Ausrichtung am breitesten Shape. Mit gedrückter SHIFT-Taste Ausrichtung am schmalsten Shape." />
 						<menu id="split-samewidth-menu" label="Gleiche Breite Menü">
 							<button id="actSameWidth2" label="Gleiche Breite wie breitestes Shape" onAction="btnAction" imageMso="ShapeWidth" screentip="Breite der Shapes wie breitestes Shape" supertip="Standardmäßig Ausrichtung am breitesten Shape. Mit gedrückter SHIFT-Taste Ausrichtung am schmalsten Shape." />
 							<button id="actSameWidthMin" label="Gleiche Breite wie schmalstes Shape [SHIFT]" onAction="btnAction" screentip="Breite der Shapes wie schmalstes Shape" supertip="Ausrichtung am schmalsten Shape." />
 						</menu>
-					</splitButton>
+					</splitButton></buttonGroup>
 
-					<splitButton id="actSplitSwap" showLabel="false" size="normal" getEnabled="isEnabled">
+					<buttonGroup id="spltbtn-fix-11"><splitButton id="actSplitSwap" showLabel="false" getEnabled="isEnabled">
 						<button id="actSwap" label="Tausche Position" showLabel="false" onAction="btnAction" imageMso="CircularReferences" screentip="Shape-Position tauschen (left/top)" />
 						<menu id="split-swap-menu" label="Tauschen Menü">
 							<button id="actSwap2" label="Tausche Position" onAction="btnAction" imageMso="CircularReferences" screentip="Shape-Position tauschen (left/top)" />
 							<button id="actSwapSize" label="Tausche Position und Größe [SHIFT]" onAction="btnAction" screentip="Shape-Position und -Größe tauschen" />
 						</menu>
-					</splitButton>
+					</splitButton></buttonGroup>
 					
 					<button idMso="ObjectsAlignLeftSmart" showLabel="false" size="normal" />
 					<button idMso="ObjectsAlignRightSmart" showLabel="false" size="normal" />
@@ -655,7 +657,7 @@
 						<button id="incRectCorner2" label="›" showLabel="true" screentip="Rundung vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" size="normal" />
 					</box> -->
 				</group>
-				<group idQ="nsBktLegacy:info" label="Info" imageMso="Info">
+				<group idQ="nsBktLegacy:info" label="BKT" imageMso="Info">
 					<menu id="info-menu" label="Info" imageMso="Info" showLabel="false">
 						<button id="reloadValues" label="Werte aktualisieren" onAction="ReloadValues" imageMso="Refresh" />
 						<menuSeparator id="info-menu-seperator-1" />
