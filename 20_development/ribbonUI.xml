@@ -525,28 +525,34 @@
 				<group id="objectsep" label="Abstand/Rotation" imageMso="VerticalSpacingIncrease" insertBeforeQ="nsBktLegacy:ThinkCell">
 					<box id="vSep" boxStyle="horizontal">
 						<button id="resVSep" label="Objekte vertikal stapeln" showLabel="false" getEnabled="isEnabled" size="normal" imageMso="VerticalSpacingIncrease" onAction="ResetPixelValue" />
-						<editBox id="ebVSep" label="Objektabstand vertikal" showLabel="false" sizeString="-###" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" showImage="false" />
-						<buttonGroup id="vSep-buttons">
-							<button id="decVSep" label="‹" showLabel="true" screentip="Objektabstand vertikal verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incVSep" label="›" showLabel="true" screentip="Objektabstand vertikal vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
-						</buttonGroup>
+						<box id="vSepInner" boxStyle="horizontal">
+							<editBox id="ebVSep" label="Objektabstand vertikal" showLabel="false" sizeString="-###" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" showImage="false" />
+							<buttonGroup id="vSep-buttons">
+								<button id="decVSep" label="‹" showLabel="true" screentip="Objektabstand vertikal verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+								<button id="incVSep" label="›" showLabel="true" screentip="Objektabstand vertikal vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							</buttonGroup>
+						</box>
 					</box>
 					<box id="hSep" boxStyle="horizontal">
 						<button id="resHSep" label="Objekte horizontal stapeln" showLabel="false" getEnabled="isEnabled" size="normal" imageMso="HorizontalSpacingIncrease" onAction="ResetPixelValue" />
-						<editBox id="ebHSep" label="Objektabstand horizontal" showLabel="false" sizeString="-###" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" showImage="false" />
-						<buttonGroup id="hSep-buttons">
-							<button id="decHSep" label="‹" showLabel="true" screentip="Objektabstand horizontal verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incHSep" label="›" showLabel="true" screentip="Objektabstand horizontal vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
-						</buttonGroup>
+						<box id="hSepInner" boxStyle="horizontal">
+							<editBox id="ebHSep" label="Objektabstand horizontal" showLabel="false" sizeString="-###" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" showImage="false" />
+							<buttonGroup id="hSep-buttons">
+								<button id="decHSep" label="‹" showLabel="true" screentip="Objektabstand horizontal verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+								<button id="incHSep" label="›" showLabel="true" screentip="Objektabstand horizontal vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							</buttonGroup>
+						</box>
 					</box>
 					<box id="shapeRotation" boxStyle="horizontal">
 						<!--labelControl id="lbShapeRotation" label="&#8635;" -->
 						<button id="resRotation" label="Rotation auf 0" showLabel="false" getEnabled="isEnabled" size="normal" imageMso="ArrangeByRecurrence" onAction="ResetPixelValue" />
-						<editBox id="ebRotation" label="Rotation" showLabel="false" sizeString="-###" getText="ebPixelValue_init" onChange="ebIntValue_onChange" getEnabled="isEnabled" showImage="false" /> <!--alternate imageMso: Repeat-->
-						<buttonGroup id="shapeRotation-buttons">
-							<button id="decRotation" label="‹" showLabel="true" screentip="Rotation verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
-							<button id="incRotation" label="›" showLabel="true" screentip="Rotation vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
-						</buttonGroup>
+						<box id="shapeRotationInner" boxStyle="horizontal">
+							<editBox id="ebRotation" label="Rotation" showLabel="false" sizeString="-###" getText="ebPixelValue_init" onChange="ebIntValue_onChange" getEnabled="isEnabled" showImage="false" /> <!--alternate imageMso: Repeat-->
+							<buttonGroup id="shapeRotation-buttons">
+								<button id="decRotation" label="‹" showLabel="true" screentip="Rotation verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
+								<button id="incRotation" label="›" showLabel="true" screentip="Rotation vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
+							</buttonGroup>
+						</box>
 					</box>
 				</group>
 				<group id="textMargin" label="Textfeld Innenabstand" imageMso="TextAlignGallery" insertBeforeQ="nsBktLegacy:ThinkCell">
