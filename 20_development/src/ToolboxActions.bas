@@ -77,6 +77,46 @@ End Sub
 
 
 
+Public Sub AddProcessShapes(Optional numSteps As Long = 3)
+    Dim sld As Slide
+    Dim shp As Shape
+    Dim i As Long
+    Dim baseLeft As Single
+    Dim baseTop As Single
+    Dim shapeWidth As Single
+    Dim shapeHeight As Single
+    Dim minDimension As Single
+    Dim adjustmentValue As Single
+    Dim shapeNames() As Variant
+
+    If numSteps < 1 Then Exit Sub
+
+    Set sld = ActiveWindow.View.Slide
+
+    baseLeft = 100
+    baseTop = 100
+    shapeWidth = 120
+    shapeHeight = 60
+
+    minDimension = shapeWidth
+    If shapeHeight < minDimension Then minDimension = shapeHeight
+    adjustmentValue = CentimetersToPoints(0.5) / minDimension
+
+    ReDim shapeNames(1 To numSteps)
+
+    For i = 1 To numSteps
+        If i = 1 Then
+            Set shp = sld.shapes.AddShape(msoShapePentagon, baseLeft + (i - 1) * shapeWidth, baseTop, shapeWidth, shapeHeight)
+        Else
+            Set shp = sld.shapes.AddShape(msoShapeChevron, baseLeft + (i - 1) * shapeWidth, baseTop, shapeWidth, shapeHeight)
+        End If
+
+        shp.Adjustments(1) = adjustmentValue
+        shapeNames(i) = shp.Name
+    Next i
+
+    sld.shapes.Range(shapeNames).Select
+End Sub
 
 
 Public Sub AddConnectorShapeLeftRight()
@@ -489,14 +529,19 @@ End Sub
 
 Private Sub PasteAndReplaceShape(shp As Shape)
     Dim sld As Slide
-    Dim pastedShape As ShapeRange
+    Dim pastedShapes As ShapeRange
+    Dim pastedShape As Shape
+    Dim targetZ As Long
     
     Set sld = ActiveWindow.View.Slide
-    Set pastedShape = sld.shapes.Paste
+    targetZ = shp.ZOrderPosition
+    Set pastedShapes = sld.shapes.Paste
     
-'    If pastedShape.Count > 1 Then
-'        Set pastedShape = pastedShape.Group
-'    End If
+    If pastedShapes.Count > 1 Then
+        Set pastedShape = pastedShapes.Group
+    Else
+        Set pastedShape = pastedShapes(1)
+    End If
     
     pastedShape.Width = shp.Width
     If pastedShape.LockAspectRatio = 0 Or pastedShape.Height > shp.Height Then
@@ -507,9 +552,75 @@ Private Sub PasteAndReplaceShape(shp As Shape)
     pastedShape.Top = shp.Top
     pastedShape.Left = shp.Left
     pastedShape.Rotation = shp.Rotation
+    SetShapeZOrder pastedShape, targetZ
     
     shp.Delete
     pastedShape.Select msoFalse
+End Sub
+
+Public Sub ReplaceKeepSize()
+    Dim selection As ShapeRange
+    Dim masterShape As Shape
+    Dim refShape As Shape
+    Dim newShape As Shape
+    Dim duplicatedRange As ShapeRange
+    Dim refs As New Collection
+    Dim i As Long
+    Dim targetZ As Long
+    
+    If ActiveWindow.Selection.Type <> ppSelectionShapes Then Exit Sub
+    
+    Set selection = ActiveWindow.Selection.ShapeRange
+    If selection.Count < 2 Then Exit Sub
+    
+    Set masterShape = selection(1)
+
+    For i = 2 To selection.Count
+        refs.Add selection(i)
+    Next i
+    
+    For i = 1 To refs.Count
+        Set refShape = refs(i)
+        targetZ = refShape.ZOrderPosition
+        
+        If i = 1 Then
+            Set newShape = masterShape
+        Else
+            Set duplicatedRange = masterShape.Duplicate()
+            Set newShape = duplicatedRange(1)
+        End If
+        
+        newShape.Rotation = refShape.Rotation
+        newShape.Width = refShape.Width
+        If newShape.LockAspectRatio = 0 Or newShape.Height > refShape.Height Then
+            newShape.Height = refShape.Height
+        End If
+        newShape.Top = refShape.Top
+        newShape.Left = refShape.Left
+        
+        SetShapeZOrder newShape, targetZ
+        
+        refShape.Delete
+        newShape.Select msoFalse
+    Next i
+End Sub
+
+Private Sub SetShapeZOrder(ByVal shp As Shape, ByVal targetPosition As Long)
+    Dim prevPosition As Long
+    
+    On Error Resume Next
+    
+    Do While shp.ZOrderPosition > targetPosition
+        prevPosition = shp.ZOrderPosition
+        shp.ZOrder msoSendBackward
+        If shp.ZOrderPosition = prevPosition Then Exit Do
+    Loop
+    
+    Do While shp.ZOrderPosition < targetPosition
+        prevPosition = shp.ZOrderPosition
+        shp.ZOrder msoBringForward
+        If shp.ZOrderPosition = prevPosition Then Exit Do
+    Loop
 End Sub
 
 Public Sub SetFillTransparency(transp As Single)

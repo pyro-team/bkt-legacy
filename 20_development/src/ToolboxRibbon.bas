@@ -1061,6 +1061,10 @@ Sub btnAction(control As IRibbonControl)
         End If
     Case "actSameHeightMin"
         SetSameHeight "Min"
+    Case "actSameHeightMean"
+        SetSameHeight "Mean"
+    Case "actSameHeightLast"
+        SetSameHeight "Last"
     
     Case "actSameWidth", "actSameWidth2"
         If IsShiftKeyDown Then
@@ -1070,10 +1074,17 @@ Sub btnAction(control As IRibbonControl)
         End If
     Case "actSameWidthMin"
         SetSameWidth "Min"
+    Case "actSameWidthMean"
+        SetSameWidth "Mean"
+    Case "actSameWidthLast"
+        SetSameWidth "Last"
+
     Case "actSwap", "actSwap2"
         SwapPosition
     Case "actSwapSize"
         SwapPositionSize
+    case "actReplaceKeepSize"
+        ReplaceKeepSize
     
     ' Horizontaler/Vertikaler Verbinder
     Case "actHConnect"
@@ -1122,6 +1133,10 @@ Sub btnAction(control As IRibbonControl)
     'Sticker
     Case "actSticker"
         AddSticker
+        
+    'Process
+    Case "actProcessAdd"
+        AddProcessShapes
     
     ' Slides / Templates
     Case "actSlideNumbering"

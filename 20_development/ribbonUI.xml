@@ -394,6 +394,8 @@
 						<menuSeparator id="shapes-more-seperator-6" />
 						<button id="actShapeTextRemove" label="Shape-Texte löschen" showLabel="true" screentip="Text aller gewählten Shapes löschen" onAction="btnAction" getEnabled="isEnabled" imageMso="ReviewDeleteMarkup"/>
 						<button id="actShapeTextReplace" label="Shape-Texte ersetzen" showLabel="true" screentip="Text aller gewählten Shapes mit eingegebenen Text ersetzen" onAction="btnAction" getEnabled="isEnabled" imageMso="ReplaceDialog"/>
+						<menuSeparator id="shapes-more-seperator-9" title="Prozess" />
+						<button id="actProcessAdd" label="Prozess einfügen" showLabel="true" screentip="Fügt einen 3-schrittigen Prozess ein" onAction="btnAction" image="process_chevrons" />
 						<menuSeparator id="shapes-more-seperator-7" title="Verbindungsflächen" />
 						<button id="actHConnect" label="Horizontale Verbindungsfläche" showLabel="true" screentip="Horizontale Verbindungsfläche zwischen zwei Formen erstellen" onAction="btnAction" getEnabled="isEnabled" image="connectorHorizontal" />
 						<button id="actVConnect" label="Vertikale Verbindungsfläche" showLabel="true" screentip="Vertikale Verbindungsfläche zwischen zwei Formen erstellen" onAction="btnAction" getEnabled="isEnabled" image="connectorVertical" />
@@ -478,6 +480,8 @@
 						<menu id="split-sameheight-menu" label="Gleiche Höhe Menü">
 							<button id="actSameHeight2" label="Gleiche Höhe wie höchstes Shape" onAction="btnAction" imageMso="ShapeHeight" screentip="Höhe der Shapes wie höchstes Shape" supertip="Standardmäßig Ausrichtung am höchsten Shape. Mit gedrückter SHIFT-Taste Ausrichtung am niedrigsten Shape." />
 							<button id="actSameHeightMin" label="Gleiche Höhe wie niedrigstes Shape [SHIFT]" onAction="btnAction" screentip="Höhe der Shapes wie niedrigstes Shape" supertip="Ausrichtung am niedrigsten Shape." />
+							<button id="actSameHeightMean" label="Gleiche Höhe wie Mittelwert der Shapes" onAction="btnAction" screentip="Höhe der Shapes wie Mittelwert der Shapes" supertip="Ausrichtung am Mittelwert." />
+							<button id="actSameHeightLast" label="Gleiche Höhe wie zuletzt markiertes Shape" onAction="btnAction" screentip="Höhe der Shapes wie zuletzt markiertes Shape" supertip="Ausrichtung am zuletzt markierten Shape." />
 						</menu>
 					</splitButton></buttonGroup>
 
@@ -486,6 +490,8 @@
 						<menu id="split-samewidth-menu" label="Gleiche Breite Menü">
 							<button id="actSameWidth2" label="Gleiche Breite wie breitestes Shape" onAction="btnAction" imageMso="ShapeWidth" screentip="Breite der Shapes wie breitestes Shape" supertip="Standardmäßig Ausrichtung am breitesten Shape. Mit gedrückter SHIFT-Taste Ausrichtung am schmalsten Shape." />
 							<button id="actSameWidthMin" label="Gleiche Breite wie schmalstes Shape [SHIFT]" onAction="btnAction" screentip="Breite der Shapes wie schmalstes Shape" supertip="Ausrichtung am schmalsten Shape." />
+							<button id="actSameWidthMean" label="Gleiche Breite wie Mittelwert der Shapes" onAction="btnAction" screentip="Breite der Shapes wie Mittelwert der Shapes" supertip="Ausrichtung am Mittelwert." />
+							<button id="actSameWidthLast" label="Gleiche Breite wie zuletzt markiertes Shape" onAction="btnAction" screentip="Breite der Shapes wie zuletzt markiertes Shape" supertip="Ausrichtung am zuletzt markierten Shape." />
 						</menu>
 					</splitButton></buttonGroup>
 
@@ -494,6 +500,7 @@
 						<menu id="split-swap-menu" label="Tauschen Menü">
 							<button id="actSwap2" label="Tausche Position" onAction="btnAction" imageMso="CircularReferences" screentip="Shape-Position tauschen (left/top)" />
 							<button id="actSwapSize" label="Tausche Position und Größe [SHIFT]" onAction="btnAction" screentip="Shape-Position und -Größe tauschen" />
+							<button id="actReplaceKeepSize" label="Ersetzen und Größe erhalten" onAction="btnAction" screentip="Shape ersetzen und Größe erhalten" />
 						</menu>
 					</splitButton></buttonGroup>
 					
