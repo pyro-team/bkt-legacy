@@ -1,27 +1,64 @@
 #!/bin/bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PPTM_FILE="$SCRIPT_DIR/BKT-Legacy.pptm"
+TEMP_ZIP="$SCRIPT_DIR/temp.zip"
+UNZIP_DIR="$SCRIPT_DIR/unzipped"
+CUSTOMUI_XML="$UNZIP_DIR/customUI/customUI14.xml"
+CUSTOMUI_RELS="$UNZIP_DIR/customUI/_rels/customUI14.xml.rels"
+CUSTOMUI_IMAGES_DIR="$UNZIP_DIR/customUI/images"
+IMAGE_REL_TYPE="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image"
+
+cd "$SCRIPT_DIR"
+
+# Alte temporäre Artefakte entfernen
+rm -rf "$UNZIP_DIR" "$TEMP_ZIP"
 
 # PowerPoint-Datei entpacken
 echo "PowerPoint-Datei entpacken..."
-cp BKT-Legacy.pptm temp.zip
-unzip -q -d unzipped temp.zip
+cp "$PPTM_FILE" "$TEMP_ZIP"
+unzip -oq "$TEMP_ZIP" -d "$UNZIP_DIR"
 
 # Custom-UI aus separater Datei kopieren
 echo "Custom UI kopieren..."
-cp ribbonUI.xml unzipped/customUI/customUI14.xml
+cp "$SCRIPT_DIR/ribbonUI.xml" "$CUSTOMUI_XML"
+
 # Alle Bilder kopieren und vorhandene ersetzen
 echo "Icons kopieren..."
-cp icons/* unzipped/customUI/images/
+mkdir -p "$CUSTOMUI_IMAGES_DIR"
+cp "$SCRIPT_DIR/icons"/* "$CUSTOMUI_IMAGES_DIR/"
+
+# Relationship-Datei komplett aus den kopierten Icons neu erstellen
+echo "customUI14.xml.rels regenerieren..."
+mkdir -p "$(dirname "$CUSTOMUI_RELS")"
+{
+  printf '%s\n' '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+  printf '%s\n' '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+
+  # IDs folgen dem Basis-Dateinamen der Icon-Datei (z.B. process_chevrons.png -> Id="process_chevrons")
+  while IFS= read -r icon_file; do
+    icon_name="$(basename "$icon_file")"
+    icon_id="${icon_name%.*}"
+    printf '  <Relationship Id="%s" Type="%s" Target="images/%s"/>\n' "$icon_id" "$IMAGE_REL_TYPE" "$icon_name"
+  done < <(find "$CUSTOMUI_IMAGES_DIR" -maxdepth 1 -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.gif' -o -iname '*.bmp' \) -print | sort)
+
+  printf '%s\n' '</Relationships>'
+} > "$CUSTOMUI_RELS"
 
 # Neue PowerPoint-Datei packen
 echo "PowerPoint-Datei packen..."
-cd unzipped
-zip -q -r newzipped.zip *
-cd ..
+(
+  cd "$UNZIP_DIR"
+  zip -q -r newzipped.zip .
+)
+
 # Alte PowerPoint-Datei ueberschreiben
-mv unzipped/newzipped.zip BKT-Legacy.pptm
+mv "$UNZIP_DIR/newzipped.zip" "$PPTM_FILE"
 
 # temporäre Dateien löschen
 echo "Temp-Dateien entfernen..."
-rm -R unzipped
-rm temp.zip
+rm -rf "$UNZIP_DIR"
+rm -f "$TEMP_ZIP"
+
 echo "done."
