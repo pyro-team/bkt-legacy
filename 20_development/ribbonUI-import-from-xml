@@ -8,6 +8,9 @@ unzip -q -d unzipped temp.zip
 # Custom-UI aus separater Datei kopieren
 echo "Custom UI kopieren..."
 cp ribbonUI.xml unzipped/customUI/customUI14.xml
+# Alle Bilder kopieren und vorhandene ersetzen
+echo "Icons kopieren..."
+cp icons/* unzipped/customUI/images/
 
 # Neue PowerPoint-Datei packen
 echo "PowerPoint-Datei packen..."
@@ -17,7 +20,7 @@ cd ..
 # Alte PowerPoint-Datei ueberschreiben
 mv unzipped/newzipped.zip BKT-Legacy.pptm
 
-# temporäre Dateien löschen
+# temporÃ¤re Dateien lÃ¶schen
 echo "Temp-Dateien entfernen..."
 rm -R unzipped
 rm temp.zip
