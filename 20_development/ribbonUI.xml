@@ -668,12 +668,16 @@
 						<button id="reloadValues" label="Werte aktualisieren" onAction="ReloadValues" imageMso="Refresh" />
 						<menuSeparator id="info-menu-seperator-1" />
 						<button id="lblxCtrl" label="Ctrl=Kleine Schritte (bei Spinner)" getVisible="isVisibleWin" />
+						<button id="lblxShift" label="Shift=Große Schritte (bei Spinner)" getVisible="isVisibleWin" />
 						<button id="lblxAlt" label="Alt=Werte nicht angleichen (Delta pro Shape)" getVisible="isVisibleWin" />
-						<button id="lblxKeyMac" label="Ctrl/Alt nicht verfügbar auf Mac" getVisible="isVisibleMac" />
+						<button id="lblxMacCommand" label="⌘=Kleine Schritte (bei Spinner)" getVisible="isVisibleMac" />
+						<button id="lblxMacShift" label="⇧=Große Schritte (bei Spinner)" getVisible="isVisibleMac" />
+						<button id="lblxMacOption" label="⌥=Werte nicht angleichen (Delta pro Shape)" getVisible="isVisibleMac" />
 						<menuSeparator id="info-menu-seperator-2" />
 						<button id="lblxInfo" label="BKT Legacy Toolbox v1.6.2" onAction="btnAction" />
 						<button id="lblxWebsite" label="www.bkt-toolbox.de/legacy" onAction="btnAction" />
 					</menu>
+					<toggleButton id="toggleMacKeys" label="⇧⌘⌥" getPressed="cbValue_init" screentip="Mac-Tasten de-/aktivieren" onAction="cbValue_onChange" getVisible="isVisibleMac" />
 				</group>
 			</tab>
 		</tabs>

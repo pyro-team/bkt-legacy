@@ -49,6 +49,8 @@ Sub ribbonLoaded(Ribbon As IRibbonUI)
     
     ScaleFrom = msoScaleFromTopLeft
     
+    KeysEnabled = True
+    
     AdjustmentValue = 1
     SplitRowsCols = 2
     SplitSep = CentimetersToPoints(0.2)
@@ -119,16 +121,16 @@ Sub isEnabled(control As IRibbonControl, ByRef enabled)
         enabled = True
         
     Case Else
-        ' Enabled-Status von Selection abhängig
+        ' Enabled-Status von Selection abhÃ¤ngig
         If ActiveWindow.selection.Type = ppSelectionNone Then
             enabled = False
         Else
             Select Case ctlId
-            Case "ebVSep", "ebHSep", "actJoinShapesWithText", "actSplitSameWidth", "actSplitSameHeight"
+            Case "ebVSep", "ebHSep", "actJoinShapesWithText", "actSplitSameWidth", "actSplitSameHeight", "actSplitSwap"
                 ' Enabled bei Selection-Count > 1
                 enabled = (ActiveWindow.selection.ShapeRange.Count > 1)
                 
-            Case "actHConnect", "actVConnect", "actTextIntoShape", "actSplitSwap"
+            Case "actHConnect", "actVConnect", "actTextIntoShape"
                 ' Enabled bei Selection-Count = 2
                 enabled = (ActiveWindow.selection.ShapeRange.Count = 2)
                 
@@ -161,7 +163,7 @@ End Sub
 
 
 
-' Initialisierungsfunktion für CheckBoxen
+' Initialisierungsfunktion fÃ¼r CheckBoxen
 ' Gibt anhand der control.id den Pressed-Status der Ceckboxen zurueck
 Function cbValue_init(control As IRibbonControl, ByRef returnedVal) As Boolean
     
@@ -204,6 +206,9 @@ Function cbValue_init(control As IRibbonControl, ByRef returnedVal) As Boolean
     Case "toggleLocPin3"
         returnedVal = (ScaleFrom = msoScaleFromBottomRight)
         Exit Function
+    Case "toggleMacKeys"
+        returnedVal = KeysEnabled
+        Exit Function
     End Select
     
     If ActiveWindow.selection.Type = ppSelectionNone Then
@@ -227,8 +232,8 @@ Err_Handler:
 End Function
 
 
-' Funktion für Änderungen an Checkboxen
-' Zu control.id gehörige Eigenschaft wird an dem Pressed-Status der Checkbox angepasst
+' Funktion fÃ¼r Ã„nderungen an Checkboxen
+' Zu control.id gehÃ¶rige Eigenschaft wird an dem Pressed-Status der Checkbox angepasst
 Sub cbValue_onChange(control As IRibbonControl, pressed As Boolean)
     Dim shp As Shape
     
@@ -261,8 +266,11 @@ Sub cbValue_onChange(control As IRibbonControl, pressed As Boolean)
     Case "toggleLocPin3"
         ScaleFrom = msoScaleFromBottomRight
     
+    Case "toggleMacKeys"
+        KeysEnabled = pressed
+    
     Case Else:
-        ' Alle Controls die selektierte Shapes benötigen
+        ' Alle Controls die selektierte Shapes benÃ¶tigen
         If ActiveWindow.selection.Type = ppSelectionNone Then Exit Sub
     
         For Each shp In ActiveWindow.selection.ShapeRange
@@ -285,7 +293,7 @@ Err_Handler:
 End Sub
 
 
-' Initialisierungsfunktion für TextBoxen
+' Initialisierungsfunktion fÃ¼r TextBoxen
 ' Liefert Wert zu control.id, der in den Ribbon-Textboxen angezeigt wird
 Sub ebPixelValue_init(control As IRibbonControl, ByRef returnedVal)
     
@@ -456,8 +464,8 @@ Err_Handler:
 End Function
 
 
-' Funktion für Änderungen an Textboxen mit Integer-Werten
-' Zu control.id gehörige Eigenschaft wird an dem Wert in der Textbox angepasst
+' Funktion fÃ¼r Ã„nderungen an Textboxen mit Integer-Werten
+' Zu control.id gehÃ¶rige Eigenschaft wird an dem Wert in der Textbox angepasst
 Sub ebIntValue_onChange(control As IRibbonControl, text As String)
     Dim value As Integer
     Dim shp As Shape
@@ -493,8 +501,8 @@ Exit Sub
 Err_Handler:
 End Sub
 
-' Funktion für Änderungen an Textboxen mit Pixel-Werten (Längen)
-' Zu control.id gehörige Eigenschaft wird an dem Wert in der Textbox angepasst
+' Funktion fÃ¼r Ã„nderungen an Textboxen mit Pixel-Werten (LÃ¤ngen)
+' Zu control.id gehÃ¶rige Eigenschaft wird an dem Wert in der Textbox angepasst
 Sub ebPixelValue_onChange(control As IRibbonControl, text As String)
     Dim value As Single
     Dim shp As Shape
@@ -662,9 +670,9 @@ Exit Sub
 Err_Handler:
 End Sub
 
-' Zu control.id gehörige Eigenschaft wird um value erhöht/verringert
+' Zu control.id gehÃ¶rige Eigenschaft wird um value erhÃ¶ht/verringert
 ' Je nach control.id erfolgt Umrechnung von cm in punkte
-' Bei nicht gedrückter control-taste wird ein Vielfaches von value verwendet
+' Bei nicht gedrÃ¼ckter control-taste wird ein Vielfaches von value verwendet
 Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
     Dim shp As Shape
     Dim delta As Single
@@ -683,7 +691,11 @@ Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
     ptValue = value
     cmValue = value * 0.1
     intValue = value
-    If Not IsControlKeyDown Then
+    If IsShiftKeyDown Then
+        ptValue = 10 * ptValue
+        cmValue = 10 * cmValue
+        intValue = 10 * intValue
+    ElseIf Not IsControlKeyDown Then
         ptValue = 3 * ptValue
         cmValue = 2 * cmValue
         intValue = 5 * intValue
@@ -724,6 +736,10 @@ Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
     Case "incParIndentFirst", "decParIndentFirst"
         newValue = CentimetersToPoints(Round(PointsToCentimeters(oldValue), 1) + cmValue)
     Case "incRotation", "decRotation"
+        If intValue = value * 10 Then
+            'Make rotation big step 45 degree
+            intValue = intValue * 4.5
+        End If
         newValue = Round(oldValue) + intValue
     Case "incTranspFill", "decTranspFill", "incTranspLine", "decTranspLine"
         newValue = Min(oldValue + (intValue / 100), 1)
@@ -783,9 +799,9 @@ End Sub
 
 
 
-' Liefert die Größe der Rundung eines abgerundeten Rechtecks in pt
-' Prozent-Wert in den adjustments des shapes wird anhand der Recheckgröße umgerechnet
-' Funktioniert auch für Pfeile (Fünfecke)
+' Liefert die GrÃ¶ÃŸe der Rundung eines abgerundeten Rechtecks in pt
+' Prozent-Wert in den adjustments des shapes wird anhand der RecheckgrÃ¶ÃŸe umgerechnet
+' Funktioniert auch fÃ¼r Pfeile (FÃ¼nfecke)
 Private Function RoundedCornerSize(ByVal shp As Shape, Optional adj As Integer = 1) As Double
     Dim ref As Double
     
@@ -799,7 +815,7 @@ Private Function RoundedCornerSize(ByVal shp As Shape, Optional adj As Integer =
         Exit Function
     End If
     
-    ' Umrechnung Prozent zu Minimum aus Höhe und Breite bei bekannten Shape-Typen
+    ' Umrechnung Prozent zu Minimum aus HÃ¶he und Breite bei bekannten Shape-Typen
     If adj = 1 Then
         Select Case shp.AutoShapeType
         Case msoShapePentagon, msoShapeChevron, msoShapeHexagon, msoShapeRoundedRectangle, msoShapeSnip1Rectangle, msoShapeSnip2DiagRectangle, msoShapeSnip2SameRectangle, msoShapeSnipRoundRectangle, msoShapeRound1Rectangle, msoShapeRound2DiagRectangle, msoShapeRound2SameRectangle
@@ -818,15 +834,15 @@ Exit Function
 Err_Handler:
 End Function
 
-' Ändert die Größe der Rundung eines abgerundeten Rechtecks
-' Wert (in pt) wird anhand der Reckeckgröße auf Prozent-Wert in den adjustments des shapes umgerechnet
-' Funktioniert auch für Pfeile (Fünfecke)
+' Ã„ndert die GrÃ¶ÃŸe der Rundung eines abgerundeten Rechtecks
+' Wert (in pt) wird anhand der ReckeckgrÃ¶ÃŸe auf Prozent-Wert in den adjustments des shapes umgerechnet
+' Funktioniert auch fÃ¼r Pfeile (FÃ¼nfecke)
 Public Function SetRoundedCornerSize(ByVal shp As Shape, ByVal newValue As Double, Optional adj As Integer = 1)
     Dim ref As Double
     
     On Error GoTo Err_Handler
     
-    ' Umrechnung Prozent zu Minimum aus Höhe und Breite bei bekannten Shape-Typen
+    ' Umrechnung Prozent zu Minimum aus HÃ¶he und Breite bei bekannten Shape-Typen
     If adj = 1 Then
         Select Case shp.AutoShapeType
         Case msoShapePentagon, msoShapeChevron, msoShapeHexagon, msoShapeRoundedRectangle, msoShapeSnip1Rectangle, msoShapeSnip2DiagRectangle, msoShapeSnip2SameRectangle, msoShapeSnipRoundRectangle, msoShapeRound1Rectangle, msoShapeRound2DiagRectangle, msoShapeRound2SameRectangle
@@ -1071,13 +1087,13 @@ Sub btnAction(control As IRibbonControl)
     Case "actTextOutOfShape"
         MoveTextOutOfShapes
     
-    ' Texte ersetzen/löschen
+    ' Texte ersetzen/lÃ¶schen
     Case "actShapeTextReplace"
         ReplaceAllText
     Case "actShapeTextRemove"
         RemoveAllText
     
-    ' Einfügen
+    ' EinfÃ¼gen
 '    Case "actPasteAsPicturePng"
 '        PasteAsPicturePng
     Case "actPasteToSlides"
@@ -1085,7 +1101,7 @@ Sub btnAction(control As IRibbonControl)
     Case "actPasteAndReplace"
         PasteAndReplace
         
-    ' Aufräumen
+    ' AufrÃ¤umen
     Case "actCleanAuthor"
         CleanAuthor
     Case "actCleanSlideMasters"
@@ -1097,7 +1113,7 @@ Sub btnAction(control As IRibbonControl)
     Case "actShapesShow"
         ShowShapes
     
-    ' Objekte zerlegen/zusammenführen
+    ' Objekte zerlegen/zusammenfÃ¼hren
     Case "actSplitShapeByParagraphs"
         SplitShapeByParagraphs
     Case "actJoinShapesWithText"

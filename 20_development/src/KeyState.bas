@@ -1,5 +1,6 @@
 Attribute VB_Name = "KeyState"
 ' http://www.cpearson.com/excel/keytest.aspx
+' https://macexcel.com/examples/setupinfo/detectkeypress/
 
 Option Explicit
 Option Compare Text
@@ -11,45 +12,43 @@ Option Compare Text
 ' keys.
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
+Public KeysEnabled As Boolean
 
+'''''''''''''''''''''''''''''''''''''''''''''''''''''
+' Platform API declarations for key state detection.
 ''''''''''''''''''''''''''''''''''''''''''''''''''''
-' Declaration of GetKeyState API function. This
-' tests the state of a specified key.
-''''''''''''''''''''''''''''''''''''''''''''''''''''
-Private Declare PtrSafe Function GetKeyState Lib "user32" (ByVal vKey As Long) As Integer
-    
-''''''''''''''''''''''''''''''''''''''''''
-' This constant is used in a bit-wise AND
-' operation with the result of GetKeyState
-' to determine if the specified key is
-' down.
-''''''''''''''''''''''''''''''''''''''''''
-Private Const KEY_MASK As Integer = &HFF80 ' decimal -128
+#If Mac Then
+    'Private Declare PtrSafe Function AppleScriptTask Lib "AppleScriptTask" (ByVal ScriptFile As String, ByVal HandlerName As String, ByVal ParameterString As String) As String
 
-'''''''''''''''''''''''''''''''''''''''''
-' KEY CONSTANTS. Values taken
-' from VC++ 6.0 WinUser.h file.
-'''''''''''''''''''''''''''''''''''''''''
-Private Const VK_LSHIFT = &HA0
-Private Const VK_RSHIFT = &HA1
-Private Const VK_LCONTROL = &HA2
-Private Const VK_RCONTROL = &HA3
-Private Const VK_LMENU = &HA4
-Private Const VK_RMENU = &HA5
-'''''''''''''''''''''''''''''''''''''''''
-' The following four constants simply
-' provide other names, CTRL and ALT,
-' for CONTROL and MENU. "CTRL" and
-' "ALT" are more familiar than
-' "CONTROL" and "MENU". These constants
-' provide no additional functionality.
-' They simply provide more familiar
-' names.
-'''''''''''''''''''''''''''''''''''''''''
-Private Const VK_LALT = VK_LMENU
-Private Const VK_RALT = VK_RMENU
-Private Const VK_LCTRL = VK_LCONTROL
-Private Const VK_RCTRL = VK_RCONTROL
+    ' Script file + handler used by AppleScriptTask on macOS.
+    Private Const MAC_SCRIPT_FILE As String = "BKTKeyState.scpt"
+    Private Const MAC_SCRIPT_HANDLER_MODIFIER_FLAGS As String = "modifierFlags"
+
+    ' NSEventModifierFlags bit masks.
+    Private Const MAC_MOD_SHIFT As Long = 131072
+    Private Const MAC_MOD_OPTION As Long = 524288
+    Private Const MAC_MOD_COMMAND As Long = 1048576
+#Else
+    Private Declare PtrSafe Function GetKeyState Lib "user32" (ByVal vKey As Long) As Integer
+
+    ' This constant is used in a bit-wise AND operation with the result of
+    ' GetKeyState to determine if the specified key is down.
+    Private Const KEY_MASK As Integer = &HFF80 ' decimal -128
+
+    ' KEY CONSTANTS. Values taken from VC++ 6.0 WinUser.h file.
+    Private Const VK_LSHIFT = &HA0
+    Private Const VK_RSHIFT = &HA1
+    Private Const VK_LCONTROL = &HA2
+    Private Const VK_RCONTROL = &HA3
+    Private Const VK_LMENU = &HA4
+    Private Const VK_RMENU = &HA5
+
+    ' Familiar aliases.
+    Private Const VK_LALT = VK_LMENU
+    Private Const VK_RALT = VK_RMENU
+    Private Const VK_LCTRL = VK_LCONTROL
+    Private Const VK_RCTRL = VK_RCONTROL
+#End If
 
 ''''''''''''''''''''''''''''''''''''''''''''
 ' The following constants are used to specify,
@@ -67,6 +66,35 @@ Public Const BothLeftAndRightKeys = 0
 Public Const LeftKey = 1
 Public Const RightKey = 2
 Public Const LeftKeyOrRightKey = 3
+
+#If Mac Then
+Private Function TryGetMacModifierFlags(ByRef ModifierFlags As Long) As Boolean
+    Dim resultText As String
+
+    On Error GoTo ErrHandler
+
+    resultText = AppleScriptTask(MAC_SCRIPT_FILE, MAC_SCRIPT_HANDLER_MODIFIER_FLAGS, "")
+    ModifierFlags = CLng(Trim$(resultText))
+    TryGetMacModifierFlags = True
+    Exit Function
+
+ErrHandler:
+    ' Never break ribbon actions because key-state probing failed.
+    ModifierFlags = 0
+    TryGetMacModifierFlags = False
+End Function
+
+Private Function IsMacModifierDown(ByVal ModifierMask As Long) As Boolean
+    Dim flags As Long
+
+    If TryGetMacModifierFlags(flags) Then
+        IsMacModifierDown = ((flags And ModifierMask) <> 0)
+    Else
+        IsMacModifierDown = False
+    End If
+End Function
+#End If
+
 
 
 Public Function IsShiftKeyDown(Optional LeftOrRightKey As Long = LeftKeyOrRightKey) As Boolean
@@ -88,8 +116,13 @@ Public Function IsShiftKeyDown(Optional LeftOrRightKey As Long = LeftKeyOrRightK
 ''''''''''''''''''''''''''''''''''''''''''''''''
     Dim Res As Long
     
-    #If Mac Then
+    If Not KeysEnabled Then
         IsShiftKeyDown = False
+        Exit Function
+    End If
+    
+    #If Mac Then
+        IsShiftKeyDown = IsMacModifierDown(MAC_MOD_SHIFT)
     #Else
     
         Select Case LeftOrRightKey
@@ -127,8 +160,13 @@ Public Function IsControlKeyDown(Optional LeftOrRightKey As Long = LeftKeyOrRigh
 ''''''''''''''''''''''''''''''''''''''''''''''''
     Dim Res As Long
     
-    #If Mac Then
+    If Not KeysEnabled Then
         IsControlKeyDown = False
+        Exit Function
+    End If
+    
+    #If Mac Then
+        IsControlKeyDown = IsMacModifierDown(MAC_MOD_COMMAND)
     #Else
     
         Select Case LeftOrRightKey
@@ -167,8 +205,13 @@ Public Function IsAltKeyDown(Optional LeftOrRightKey As Long = LeftKeyOrRightKey
 ''''''''''''''''''''''''''''''''''''''''''''''''
     Dim Res As Long
     
-    #If Mac Then
+    If Not KeysEnabled Then
         IsAltKeyDown = False
+        Exit Function
+    End If
+    
+    #If Mac Then
+        IsAltKeyDown = IsMacModifierDown(MAC_MOD_OPTION)
     #Else
     
         Select Case LeftOrRightKey
