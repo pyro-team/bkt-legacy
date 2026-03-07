@@ -70,7 +70,7 @@ Public Sub AddSticker()
         End If
     End With
     
-    ' Text auswählen
+    ' Text auswï¿½hlen
     shp.Select
     shp.TextFrame.TextRange.Select
 End Sub
@@ -159,39 +159,67 @@ Public Sub SetSameWidth(Optional func As String = "Max")
 End Sub
 
 Public Sub SwapPosition()
-    Dim shape1 As Shape
-    Dim shape2 As Shape
-    Dim tmpLeft As Single
-    Dim tmpTop As Single
+    Dim shpRange As ShapeRange
+    Dim i As Long
+    Dim n As Long
+    Dim lastLeft As Single
+    Dim lastTop As Single
     
-    Set shape1 = ActiveWindow.selection.ShapeRange(1)
-    Set shape2 = ActiveWindow.selection.ShapeRange(2)
+    If ActiveWindow.Selection.Type <> ppSelectionShapes Then Exit Sub
     
-    tmpLeft = shape1.Left
-    tmpTop = shape1.Top
-    shape1.Left = shape2.Left
-    shape1.Top = shape2.Top
-    shape2.Left = tmpLeft
-    shape2.Top = tmpTop
+    Set shpRange = ActiveWindow.Selection.ShapeRange
+    n = shpRange.Count
+    If n < 2 Then Exit Sub
+    
+    ' Store last shape position
+    lastLeft = shpRange(n).Left
+    lastTop = shpRange(n).Top
+    
+    ' Shift positions down: shape(i) <- shape(i-1)
+    For i = n To 2 Step -1
+        shpRange(i).Left = shpRange(i - 1).Left
+        shpRange(i).Top = shpRange(i - 1).Top
+    Next i
+    
+    ' Put last position on first shape
+    shpRange(1).Left = lastLeft
+    shpRange(1).Top = lastTop
 End Sub
 
 Public Sub SwapPositionSize()
-    Dim shape1 As Shape
-    Dim shape2 As Shape
-    Dim tmpWidth As Single
-    Dim tmpHeight As Single
+    Dim shpRange As ShapeRange
+    Dim i As Long
+    Dim n As Long
+    Dim lastLeft As Single
+    Dim lastTop As Single
+    Dim lastWidth As Single
+    Dim lastHeight As Single
     
-    Set shape1 = ActiveWindow.selection.ShapeRange(1)
-    Set shape2 = ActiveWindow.selection.ShapeRange(2)
+    If ActiveWindow.Selection.Type <> ppSelectionShapes Then Exit Sub
     
-    tmpWidth = shape1.Width
-    tmpHeight = shape1.Height
-    shape1.Width = shape2.Width
-    shape1.Height = shape2.Height
-    shape2.Width = tmpWidth
-    shape2.Height = tmpHeight
+    Set shpRange = ActiveWindow.Selection.ShapeRange
+    n = shpRange.Count
+    If n < 2 Then Exit Sub
     
-    SwapPosition
+    ' Store last shape position and size
+    lastLeft = shpRange(n).Left
+    lastTop = shpRange(n).Top
+    lastWidth = shpRange(n).Width
+    lastHeight = shpRange(n).Height
+    
+    ' Shift position and size down: shape(i) <- shape(i-1)
+    For i = n To 2 Step -1
+        shpRange(i).Left = shpRange(i - 1).Left
+        shpRange(i).Top = shpRange(i - 1).Top
+        shpRange(i).Width = shpRange(i - 1).Width
+        shpRange(i).Height = shpRange(i - 1).Height
+    Next i
+    
+    ' Put last values on first shape
+    shpRange(1).Left = lastLeft
+    shpRange(1).Top = lastTop
+    shpRange(1).Width = lastWidth
+    shpRange(1).Height = lastHeight
 End Sub
 
 
@@ -222,7 +250,7 @@ Public Sub MoveTextOutOfShapes()
             shpTxt.TextFrame.TextRange.Paste
             'shp.TextFrame.TextRange.text = ""
             shp.TextFrame.DeleteText
-            ' Größe wiederherstellen
+            ' Grï¿½ï¿½e wiederherstellen
             shp.Top = shpTxt.Top
             shp.Height = shpTxt.Height
             shp.Width = shpTxt.Width
@@ -239,7 +267,7 @@ Public Sub MoveTextIntoShape()
     Dim shpTxt As Shape
     
     If ActiveWindow.selection.ShapeRange.Count <> 2 Then
-        MsgBox "Bitte eine Textbox und ein Shape-Objekt auswählen.", vbInformation
+        MsgBox "Bitte eine Textbox und ein Shape-Objekt auswï¿½hlen.", vbInformation
         Exit Sub
     End If
     
@@ -301,7 +329,7 @@ Public Sub SplitShapeByParagraphs()
                 ' Shape Hoehe abhaengig von Absaetzhoehe
                 shpCopy.Height = ParagraphHeight(shpCopy.TextFrame.TextRange.Paragraphs(1)) + shpCopy.TextFrame.MarginTop + shpCopy.TextFrame.MarginBottom
                 
-                ' --> ein Absatz bleibt übrig
+                ' --> ein Absatz bleibt ï¿½brig
             Next
             
             ' letzten Shape nach unten schieben
@@ -333,7 +361,7 @@ Public Sub JoinShapesWithText()
     
     ' Shapes nach top sortieren
     shapes = ActiveWindowSelectionSortedByTop
-    ' Anapssung Größe des ersten Shapes (Master-Shape)
+    ' Anapssung Grï¿½ï¿½e des ersten Shapes (Master-Shape)
     Set shp = shapes(1)
     shp.Height = Max(shp.Height, shapes(UBound(shapes)).Top + shapes(UBound(shapes)).Height - shp.Top)
     
@@ -366,7 +394,7 @@ Public Sub ReplaceAllText()
     On Error Resume Next
     
     newText = InputBox("Neuen Text eingeben", "Text ersetzen", "tbd")
-    ' Bei Abbruch ist Rückgabewert leer
+    ' Bei Abbruch ist Rï¿½ckgabewert leer
     If newText = "" Then Exit Sub
     
     For Each shp In selection
@@ -533,7 +561,7 @@ Public Sub CleanSlideMasters()
         Next i
     End With
     
-    MsgBox "Es wurden " & deletedLayouts & " ungenutzte Folienlayouts und " & deletedDesigns & " nicht mehr verwendete Designs gelöscht!", vbInformation
+    MsgBox "Es wurden " & deletedLayouts & " ungenutzte Folienlayouts und " & deletedDesigns & " nicht mehr verwendete Designs gelï¿½scht!", vbInformation
 End Sub
 
 Sub SendEmailFromSlideSelection()
@@ -564,19 +592,19 @@ Sub SendEmailFromSlideSelection()
     ' Dateiendung
     fileName = fileName & ".pptx"
     fileName = InputBox("Dateiname eingeben", "Markierte Folien per Mail versenden", fileName)
-    ' Bei Abbruch ist Rückgabewert leer
+    ' Bei Abbruch ist Rï¿½ckgabewert leer
     If fileName = "" Then Exit Sub
     
-    ' Kopie speichern und öffnen
+    ' Kopie speichern und ï¿½ffnen
     tempFullName = Environ("temp") & "\" & fileName
     ActiveWindow.Presentation.SaveCopyAs tempFullName
     Set newPres = Application.Presentations.Open(tempFullName, msoFalse, msoFalse, msoFalse)
     
-    ' Folien entfernen, die nicht ausgewählt waren
+    ' Folien entfernen, die nicht ausgewï¿½hlt waren
     On Error GoTo ErrorClosePres
     DeleteUnselectedSlides newPres, sldRange
     
-    ' Speichern und schließen
+    ' Speichern und schlieï¿½en
     tempFullName = newPres.FullName
     newPres.Save
     newPres.Saved = msoTrue
@@ -616,24 +644,26 @@ Sub CreatePresentationFromSlideSelection()
     Dim fileName As String
     
     If ActiveWindow.Presentation.Path = "" Then
-        MsgBox "Bitte Präsentation erst speichern", vbExclamation
+        MsgBox "Bitte Prï¿½sentation erst speichern", vbExclamation
         Exit Sub
     End If
     
     Set sldRange = ActiveWindow.selection.SlideRange
     fileName = ActiveWindow.Presentation.FullName
     
-    ' Kopie öffnen
+    ' Kopie ï¿½ffnen
     Set newPres = Application.Presentations.Open(fileName, msoFalse, msoTrue, msoTrue)
     
-    ' Folien entfernen, die nicht ausgewählt waren
+    ' Folien entfernen, die nicht ausgewï¿½hlt waren
     DeleteUnselectedSlides newPres, sldRange
 End Sub
 
 Sub ApplyThemeFromFile()
-    ' File dialog not supported on mac
+    #If Mac Then
+        'not supported by mac
+    #Else
     With Application.FileDialog(msoFileDialogOpen)
-        '.Title "PowerPoint-Datei auswählen"
+        '.Title "PowerPoint-Datei auswÃ¤hlen"
         .Show
         If .SelectedItems.Count = 0 Then
             Exit Sub
@@ -641,12 +671,13 @@ Sub ApplyThemeFromFile()
             ActiveWindow.Presentation.ApplyTemplate .SelectedItems(1)
         End If
     End With
+    #End If
 End Sub
 
 
 ' Blendet Foliennummerierungen ein bzw. aus
-' Auf jeder Folie wird eine Textbox mit der Foliennr. eingefügt, welche sich
-' bei Umsortierungen der Folien nicht ändert und dadurch Diskussionen in Teams vereinfacht
+' Auf jeder Folie wird eine Textbox mit der Foliennr. eingefï¿½gt, welche sich
+' bei Umsortierungen der Folien nicht ï¿½ndert und dadurch Diskussionen in Teams vereinfacht
 Public Sub ToggleSlideNumbering()
     Dim sld As Slide
     Dim shp As Shape
@@ -673,7 +704,7 @@ Public Sub ToggleSlideNumbering()
     End If
 End Sub
 
-' Auf jeder Folie wird eine Textbox mit der Foliennr. eingefügt
+' Auf jeder Folie wird eine Textbox mit der Foliennr. eingefï¿½gt
 Private Sub AddSlideNumbers()
     Dim sld As Slide
     Dim shp As Shape
@@ -713,7 +744,7 @@ Private Sub RemoveSlideNumbers()
     Next
 End Sub
 
-' Sprache für gesamte Präsentation setzen
+' Sprache fï¿½r gesamte Prï¿½sentation setzen
 Public Sub setLanguage(ByVal langCode As Integer)
     On Error Resume Next
     Dim sld As Slide
