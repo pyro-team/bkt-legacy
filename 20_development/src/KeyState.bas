@@ -95,6 +95,30 @@ Private Function IsMacModifierDown(ByVal ModifierMask As Long) As Boolean
 End Function
 #End If
 
+Public Function IsMacScriptFileAccessible() As Boolean
+#If Mac Then
+    Dim flags As Long
+    IsMacScriptFileAccessible = TryGetMacModifierFlags(flags)
+#Else
+    IsMacScriptFileAccessible = True
+#End If
+End Function
+
+Public Sub SetKeysEnabled(Optional Enabled As Boolean = True)
+    if Enabled = False Then
+        KeysEnabled = False
+        Exit Sub
+    End If
+    If IsMacScriptFileAccessible() Then
+        KeysEnabled = True
+    Else
+        KeysEnabled = False
+#If Mac Then
+        MsgBox "Please install BKTKeyState.scpt to enable keys on Mac", vbExclamation
+#End If
+    End If
+End Sub
+
 
 
 Public Function IsShiftKeyDown(Optional LeftOrRightKey As Long = LeftKeyOrRightKey) As Boolean
@@ -230,4 +254,3 @@ Public Function IsAltKeyDown(Optional LeftOrRightKey As Long = LeftKeyOrRightKey
     #End If
 
 End Function
-

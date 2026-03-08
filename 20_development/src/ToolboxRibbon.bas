@@ -49,7 +49,7 @@ Sub ribbonLoaded(Ribbon As IRibbonUI)
     
     ScaleFrom = msoScaleFromTopLeft
     
-    KeysEnabled = True
+    KeysEnabled = IsMacScriptFileAccessible()
     
     AdjustmentValue = 1
     SplitRowsCols = 2
@@ -267,7 +267,7 @@ Sub cbValue_onChange(control As IRibbonControl, pressed As Boolean)
         ScaleFrom = msoScaleFromBottomRight
     
     Case "toggleMacKeys"
-        KeysEnabled = pressed
+        SetKeysEnabled (pressed)
     
     Case Else:
         ' Alle Controls die selektierte Shapes benötigen
