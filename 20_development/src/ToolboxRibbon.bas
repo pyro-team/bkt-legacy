@@ -1097,6 +1097,12 @@ Sub btnAction(control As IRibbonControl)
         MoveTextIntoShape
     Case "actTextOutOfShape"
         MoveTextOutOfShapes
+    Case "actAddProtectedHyphen"
+        AddProtectedHyphen
+    Case "actAddProtectedSpace"
+        AddProtectedSpace
+    Case "actAddProtectedNarrowSpace"
+        AddProtectedNarrowSpace
     
     ' Texte ersetzen/löschen
     Case "actShapeTextReplace"
@@ -1265,7 +1271,6 @@ Sub test()
     oAgenda.CreateOrUpdateAgenda
     
 End Sub
-
 
 
 

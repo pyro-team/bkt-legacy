@@ -379,6 +379,9 @@
 					<menu id="shapes-more" label="Mehr..." showLabel="false" imageMso="TableDesign" >
 						<menuSeparator id="shapes-more-seperator-3" title="Textfunktionen" />
 						<button id="actSticker" label="Sticker einfügen" showLabel="true" screentip="Sticker oben rechts auf Folie einfügen" onAction="btnAction" image="sticker"/>
+						<button id="actAddProtectedHyphen" label="Geschützter Trennstrich" showLabel="true" screentip="Geschützten Trennstrich einfügen" supertip="Fügt an der aktuellen Textcursor-Position einen geschützten Trennstrich ein. Der Trennstrich erscheint nur am Zeilenende und bleibt sonst unsichtbar." onAction="btnAction" getEnabled="isEnabled"/>
+						<button id="actAddProtectedSpace" label="Geschütztes Leerzeichen" showLabel="true" screentip="Geschütztes Leerzeichen einfügen" supertip="Fügt an der aktuellen Textcursor-Position ein geschütztes Leerzeichen ohne Zeilenumbruch ein." onAction="btnAction" getEnabled="isEnabled"/>
+						<button id="actAddProtectedNarrowSpace" label="Schmales geschütztes Leerzeichen" showLabel="true" screentip="Schmales geschütztes Leerzeichen einfügen" supertip="Fügt an der aktuellen Textcursor-Position ein schmales geschütztes Leerzeichen ohne Zeilenumbruch ein, z. B. für Abkürzungen." onAction="btnAction" getEnabled="isEnabled"/>
 						<menuSeparator id="shapes-more-seperator-4" />
 						<!-- Icon fuer Text auf Shape: TableCellCustomMarginsDialog, SlidesPerPage3Slides
 							 Icon fuer Text in Shape: TextBoxInsert, Zoom100

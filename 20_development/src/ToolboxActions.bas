@@ -169,6 +169,28 @@ Public Sub AddConnectorShapeTopBottom()
 Err_Handler:
 End Sub
 
+Public Sub AddProtectedHyphen()
+    InsertSpecialCharacter ChrW$(&HAD)
+End Sub
+
+Public Sub AddProtectedSpace()
+    InsertSpecialCharacter ChrW$(&HA0)
+End Sub
+
+Public Sub AddProtectedNarrowSpace()
+    InsertSpecialCharacter ChrW$(&H202F)
+End Sub
+
+Private Sub InsertSpecialCharacter(ByVal character As String)
+    On Error GoTo Err_Handler
+    
+    If ActiveWindow.Selection.Type <> ppSelectionText Then Exit Sub
+    ActiveWindow.Selection.TextRange2.Text = character
+    
+Exit Sub
+Err_Handler:
+End Sub
+
 
 Public Sub SetSameHeight(Optional func As String = "Max")
     Dim shp As Shape
