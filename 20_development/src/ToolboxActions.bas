@@ -195,30 +195,111 @@ End Sub
 Public Sub SetSameHeight(Optional func As String = "Max")
     Dim shp As Shape
     Dim Height As Single
+    Dim currentSize As Single
+    Dim factor As Single
     
-    Height = ActiveWindow.selection.ShapeRange(1).Height
+    Height = GetSelectedSizeValue(func, True)
     For Each shp In ActiveWindow.selection.ShapeRange
-'        height = Max(height, shp.height)
-        Height = Application.Run(func, Height, shp.Height)
-    Next
-    For Each shp In ActiveWindow.selection.ShapeRange
-        shp.Height = Height
+        currentSize = GetNormalizedShapeSize(shp, True)
+        If currentSize = 0 Then
+            If ShapeUsesSwappedSize(shp) Then
+                shp.Width = Height
+            Else
+                shp.Height = Height
+            End If
+            GoTo NextShape
+        End If
+
+        factor = Height / currentSize
+        If ShapeUsesSwappedSize(shp) Then
+            shp.ScaleWidth factor, msoFalse, msoScaleFromTopLeft
+        Else
+            shp.ScaleHeight factor, msoFalse, msoScaleFromTopLeft
+        End If
+NextShape:
     Next
 End Sub
 
 Public Sub SetSameWidth(Optional func As String = "Max")
     Dim shp As Shape
     Dim Width As Single
+    Dim currentSize As Single
+    Dim factor As Single
     
-    Width = ActiveWindow.selection.ShapeRange(1).Width
+    Width = GetSelectedSizeValue(func, False)
     For Each shp In ActiveWindow.selection.ShapeRange
-'        width = Max(width, shp.width)
-        Width = Application.Run(func, Width, shp.Width)
-    Next
-    For Each shp In ActiveWindow.selection.ShapeRange
-        shp.Width = Width
+        currentSize = GetNormalizedShapeSize(shp, False)
+        If currentSize = 0 Then
+            If ShapeUsesSwappedSize(shp) Then
+                shp.Height = Width
+            Else
+                shp.Width = Width
+            End If
+            GoTo NextShape
+        End If
+
+        factor = Width / currentSize
+        If ShapeUsesSwappedSize(shp) Then
+            shp.ScaleHeight factor, msoFalse, msoScaleFromTopLeft
+        Else
+            shp.ScaleWidth factor, msoFalse, msoScaleFromTopLeft
+        End If
+NextShape:
     Next
 End Sub
+
+Private Function GetSelectedSizeValue(ByVal func As String, ByVal useHeight As Boolean) As Single
+    Dim shpRange As ShapeRange
+    Dim shapeCount As Long
+    Dim i As Long
+    Dim currentValue As Single
+    Dim valueSum As Double
+    
+    Set shpRange = ActiveWindow.selection.ShapeRange
+    shapeCount = shpRange.Count
+    If shapeCount = 0 Then Exit Function
+    
+    GetSelectedSizeValue = GetNormalizedShapeSize(shpRange(1), useHeight)
+    
+    Select Case UCase$(func)
+        Case "LAST"
+            GetSelectedSizeValue = GetNormalizedShapeSize(shpRange(shapeCount), useHeight)
+        Case "MEAN"
+            valueSum = 0
+            For i = 1 To shapeCount
+                valueSum = valueSum + GetNormalizedShapeSize(shpRange(i), useHeight)
+            Next i
+            GetSelectedSizeValue = valueSum / shapeCount
+        Case "MIN"
+            For i = 2 To shapeCount
+                currentValue = GetNormalizedShapeSize(shpRange(i), useHeight)
+                If currentValue < GetSelectedSizeValue Then GetSelectedSizeValue = currentValue
+            Next i
+        Case Else
+            For i = 2 To shapeCount
+                currentValue = GetNormalizedShapeSize(shpRange(i), useHeight)
+                If currentValue > GetSelectedSizeValue Then GetSelectedSizeValue = currentValue
+            Next i
+    End Select
+End Function
+
+Private Function GetNormalizedShapeSize(ByRef shp As Shape, ByVal useHeight As Boolean) As Single
+    If ShapeUsesSwappedSize(shp) Then
+        If useHeight Then
+            GetNormalizedShapeSize = shp.Width
+        Else
+            GetNormalizedShapeSize = shp.Height
+        End If
+    ElseIf useHeight Then
+        GetNormalizedShapeSize = shp.Height
+    Else
+        GetNormalizedShapeSize = shp.Width
+    End If
+End Function
+
+Private Function ShapeUsesSwappedSize(ByRef shp As Shape) As Boolean
+    ShapeUsesSwappedSize = (shp.Rotation = 90 Or shp.Rotation = 270)
+End Function
 
 Public Sub SwapPosition()
     Dim shpRange As ShapeRange
