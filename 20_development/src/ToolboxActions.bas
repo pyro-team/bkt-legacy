@@ -1075,24 +1075,66 @@ End Sub
 Public Sub ArrangeByLast(Position As Integer)
     Dim selectedShapes As ShapeRange
     Dim shp As Shape, masterShp As Shape
+    Dim masterTop As Single, masterHeight As Single
+    Dim masterLeft As Single, masterWidth As Single
+    Dim masterBottom As Single, masterRight As Single
+    Dim masterCenterX As Single, masterCenterY As Single
+    Dim shpTop As Single, shpHeight As Single
+    Dim shpLeft As Single, shpWidth As Single
+    Dim dx As Single, dy As Single
     
     Set selectedShapes = ActiveWindow.selection.ShapeRange
     Set masterShp = selectedShapes(selectedShapes.Count)
     
+    GetVisualBounds masterShp, masterLeft, masterTop, masterWidth, masterHeight
+    masterBottom = masterTop + masterHeight
+    masterRight = masterLeft + masterWidth
+    masterCenterX = masterLeft + (masterWidth / 2)
+    masterCenterY = masterTop + (masterHeight / 2)
+    
     For Each shp In ActiveWindow.selection.ShapeRange
+        GetVisualBounds shp, shpLeft, shpTop, shpWidth, shpHeight
+        dx = 0
+        dy = 0
+        
         Select Case Position
             Case 1
-                shp.Top = masterShp.Top
+                dy = masterTop - shpTop
             Case 2
-                shp.Top = masterShp.Top + masterShp.Height - shp.Height
+                dy = masterBottom - (shpTop + shpHeight)
             Case 3
-                shp.Left = masterShp.Left
+                dx = masterLeft - shpLeft
             Case 4
-                shp.Left = masterShp.Left + masterShp.Width - shp.Width
+                dx = masterRight - (shpLeft + shpWidth)
             Case 5
-                shp.Top = masterShp.Top + (masterShp.Height / 2) - (shp.Height / 2)
+                dy = masterCenterY - (shpTop + shpHeight / 2)
             Case 6
-                shp.Left = masterShp.Left + (masterShp.Width / 2) - (shp.Width / 2)
+                dx = masterCenterX - (shpLeft + shpWidth / 2)
         End Select
+        
+        If dx <> 0 Then shp.Left = shp.Left + dx
+        If dy <> 0 Then shp.Top = shp.Top + dy
     Next
+End Sub
+
+Private Sub GetVisualBounds(ByVal shp As Shape, ByRef left As Single, ByRef top As Single, ByRef width As Single, ByRef height As Single)
+    Dim angleRad As Double
+    Dim cosA As Double, sinA As Double
+    Dim bbWidth As Double, bbHeight As Double
+    Dim cx As Double, cy As Double
+    
+    angleRad = shp.Rotation * (3.14159265358979# / 180#)
+    cosA = Abs(Cos(angleRad))
+    sinA = Abs(Sin(angleRad))
+    
+    bbWidth = shp.Width * cosA + shp.Height * sinA
+    bbHeight = shp.Width * sinA + shp.Height * cosA
+    
+    cx = shp.Left + shp.Width / 2
+    cy = shp.Top + shp.Height / 2
+    
+    left = cx - bbWidth / 2
+    top = cy - bbHeight / 2
+    width = bbWidth
+    height = bbHeight
 End Sub
