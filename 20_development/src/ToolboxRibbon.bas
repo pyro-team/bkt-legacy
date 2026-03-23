@@ -629,6 +629,15 @@ Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
     End Select
     
     firstDelta = newValue - oldValue
+    Dim altDown As Boolean
+    altDown = IsAltKeyDown
+
+    If Not altDown Then
+        If TrySetShapeRangePropertyValue(shpRange, propertyCtlId, newValue) Then
+            myRibbon.Invalidate
+            Exit Sub
+        End If
+    End If
     
     For shpIdx = 1 To shpRange.Count
         'For Each shp In ActiveWindow.Selection.ShapeRange
@@ -644,7 +653,7 @@ Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
                 shp.Left = lastShp.Left + lastShp.Width + newValue
             End If
         Case Else
-            If Not IsAltKeyDown Then
+            If Not altDown Then
                 SetShapeSettingSingle shp, propertyCtlId, newValue
             Else
                 oldValue = GetShapeSettingSingle(shp, propertyCtlId)
@@ -936,6 +945,46 @@ Private Function TrySetShapePropertyValue(ByVal shp As Shape, ByVal controlID As
     End Select
 
     TrySetShapePropertyValue = True
+    Exit Function
+
+ErrHandler:
+End Function
+
+Private Function TrySetShapeRangePropertyValue(ByVal shpRange As ShapeRange, ByVal controlID As String, ByVal newValue As Single) As Boolean
+    On Error GoTo ErrHandler
+
+    controlID = NormalizeShapePropertyControlId(controlID)
+
+    Select Case controlID
+    Case "ebMarginLeft"
+        shpRange.TextFrame2.MarginLeft = newValue
+    Case "ebMarginRight"
+        shpRange.TextFrame2.MarginRight = newValue
+    Case "ebMarginTop"
+        shpRange.TextFrame2.MarginTop = newValue
+    Case "ebMarginBottom"
+        shpRange.TextFrame2.MarginBottom = newValue
+    Case "ebPosLeft"
+        shpRange.Left = newValue
+    Case "ebPosTop"
+        shpRange.Top = newValue
+    Case "ebPosRight"
+        shpRange.Width = newValue
+    Case "ebPosBottom"
+        shpRange.Height = newValue
+    Case "ebRotation"
+        shpRange.Rotation = newValue
+    Case "ebTranspFill"
+        shpRange.Fill.Transparency = Min(1, Max(0, newValue))
+    Case "ebTranspLine"
+        shpRange.Line.Transparency = Min(1, Max(0, newValue))
+    Case "ebLineWeight"
+        shpRange.Line.Weight = Max(0, newValue)
+    Case Else
+        Exit Function
+    End Select
+
+    TrySetShapeRangePropertyValue = True
     Exit Function
 
 ErrHandler:

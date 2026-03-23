@@ -551,12 +551,20 @@ Public Sub ReplaceAllText()
     Dim selection As ShapeRange
     Set selection = GetActiveShapeRange()
     If selection Is Nothing Then Exit Sub
-    On Error Resume Next
-    
+
     newText = InputBox("Neuen Text eingeben", "Text ersetzen", "tbd")
     ' Bei Abbruch ist R�ckgabewert leer
     If newText = "" Then Exit Sub
-    
+
+    On Error Resume Next
+    selection.TextFrame.TextRange.text = newText
+    If Err.Number = 0 Then
+        On Error GoTo 0
+        Exit Sub
+    End If
+    Err.Clear
+    On Error GoTo 0
+
     For Each shp In selection
         If shp.HasTextFrame Then
             shp.TextFrame.TextRange.text = newText
@@ -569,7 +577,16 @@ Public Sub RemoveAllText()
     Dim selection As ShapeRange
     Set selection = GetActiveShapeRange()
     If selection Is Nothing Then Exit Sub
+
     On Error Resume Next
+    selection.TextFrame.TextRange.Delete
+    If Err.Number = 0 Then
+        On Error GoTo 0
+        Exit Sub
+    End If
+    Err.Clear
+    On Error GoTo 0
+
     For Each shp In selection
         If shp.HasTextFrame Then
             shp.TextFrame.TextRange.Delete
@@ -582,7 +599,19 @@ Public Sub TextMarginZero()
     Dim selection As ShapeRange
     Set selection = GetActiveShapeRange()
     If selection Is Nothing Then Exit Sub
+
     On Error Resume Next
+    selection.TextFrame2.MarginLeft = 0
+    selection.TextFrame2.MarginRight = 0
+    selection.TextFrame2.MarginTop = 0
+    selection.TextFrame2.MarginBottom = 0
+    If Err.Number = 0 Then
+        On Error GoTo 0
+        Exit Sub
+    End If
+    Err.Clear
+    On Error GoTo 0
+
     For Each shp In selection
         If shp.HasTextFrame Then
             shp.TextFrame2.MarginLeft = 0
@@ -600,6 +629,16 @@ Public Sub HideShapes()
     
     Set selection = GetActiveShapeRange()
     If selection Is Nothing Then Exit Sub
+
+    On Error Resume Next
+    selection.Visible = msoFalse
+    If Err.Number = 0 Then
+        On Error GoTo 0
+        Exit Sub
+    End If
+    Err.Clear
+    On Error GoTo 0
+
     For Each shp In selection
         shp.Visible = msoFalse
     Next
@@ -750,9 +789,18 @@ End Sub
 Public Sub SetFillTransparency(transp As Single)
     Dim shp As Shape
     Dim shpRange As ShapeRange
-    
+
     Set shpRange = GetActiveShapeRange()
     If shpRange Is Nothing Then Exit Sub
+
+    On Error Resume Next
+    shpRange.Fill.Transparency = transp
+    If Err.Number = 0 Then
+        On Error GoTo 0
+        Exit Sub
+    End If
+    Err.Clear
+    On Error GoTo 0
 
     For Each shp In shpRange
         shp.Fill.Transparency = transp
@@ -762,9 +810,18 @@ End Sub
 Public Sub SetLineTransparency(transp As Single)
     Dim shp As Shape
     Dim shpRange As ShapeRange
-    
+
     Set shpRange = GetActiveShapeRange()
     If shpRange Is Nothing Then Exit Sub
+
+    On Error Resume Next
+    shpRange.Line.Transparency = transp
+    If Err.Number = 0 Then
+        On Error GoTo 0
+        Exit Sub
+    End If
+    Err.Clear
+    On Error GoTo 0
 
     For Each shp In shpRange
         shp.Line.Transparency = transp
