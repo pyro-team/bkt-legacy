@@ -346,6 +346,7 @@ Private Function GetEditBoxValueForShapeRange(ByVal ctlId As String, ByVal shpRa
     Dim shps As Variant
     Dim firstShp As Shape
     Dim shapeCount As Long
+    Dim numericValue As Single
     
     On Error GoTo Err_Handler
     
@@ -362,39 +363,6 @@ Private Function GetEditBoxValueForShapeRange(ByVal ctlId As String, ByVal shpRa
     Set firstShp = shpRange(1)
     
     Select Case ctlId
-        ' Innenabstand
-        Case "ebMarginLeft"
-            returnedVal = firstShp.TextFrame2.MarginLeft
-            If returnedVal <> "" And ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
-        Case "ebMarginRight"
-            returnedVal = firstShp.TextFrame2.MarginRight
-            If returnedVal <> "" And ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
-        Case "ebMarginTop"
-            returnedVal = firstShp.TextFrame2.MarginTop
-            If returnedVal <> "" And ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
-        Case "ebMarginBottom"
-            returnedVal = firstShp.TextFrame2.MarginBottom
-            If returnedVal <> "" And ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
-            
-        ' Position/Groesse
-        Case "ebPosLeft"
-'            returnedVal = ActiveWindow.selection.ShapeRange(1).left
-            returnedVal = GetLeft(firstShp)
-            If returnedVal <> "" And ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
-        Case "ebPosTop"
-            returnedVal = GetTop(firstShp)
-            If returnedVal <> "" And ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
-        Case "ebPosRight"
-            returnedVal = GetWidth(firstShp)
-            If returnedVal <> "" And ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
-        Case "ebPosBottom"
-            returnedVal = GetHeight(firstShp)
-            If returnedVal <> "" And ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
-        
-        ' Rotation
-        Case "ebRotation"
-            returnedVal = firstShp.Rotation
-        
         ' Objektabstand
         Case "ebVSep"
             If shapeCount >= 2 Then
@@ -408,86 +376,13 @@ Private Function GetEditBoxValueForShapeRange(ByVal ctlId As String, ByVal shpRa
                 returnedVal = shps(2).Left - shps(1).Left - shps(1).Width
                 If returnedVal <> "" And ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
             End If
-            
-        ' Absatzabstand
-'        Case "ebParIndent"
-'            returnedVal = Round(PointsToCentimeters(ActiveWindow.selection.ShapeRange(1).TextFrame.Ruler.Levels(1).FirstMargin), 2)
-        Case "ebParIndentLeft"
-            ' returnedVal = Round(PointsToCentimeters(ActiveWindow.selection.ShapeRange(1).TextFrame.Ruler.Levels(1).LeftMargin), 2)
-            With firstShp.TextFrame2.TextRange
-                If .Paragraphs.Count > 0 Then
-                    returnedVal = Round(PointsToCentimeters(.Paragraphs(1).ParagraphFormat.LeftIndent), 2)
-                Else
-                    returnedVal = Round(PointsToCentimeters(.ParagraphFormat.LeftIndent), 2)
-                End If
-            End With
-        Case "ebParIndentRight"
-            With firstShp.TextFrame2.TextRange
-                If .Paragraphs.Count > 0 Then
-                    returnedVal = Round(PointsToCentimeters(.Paragraphs(1).ParagraphFormat.RightIndent), 2)
-                Else
-                    returnedVal = Round(PointsToCentimeters(.ParagraphFormat.RightIndent), 2)
-                End If
-            End With
-        Case "ebParIndentFirst"
-            With firstShp.TextFrame2.TextRange
-                If .Paragraphs.Count > 0 Then
-                    returnedVal = Round(PointsToCentimeters(.Paragraphs(1).ParagraphFormat.FirstLineIndent), 2)
-                Else
-                    returnedVal = Round(PointsToCentimeters(.ParagraphFormat.FirstLineIndent), 2)
-                End If
-            End With
-        Case "ebParPreSep"
-            With firstShp.TextFrame2.TextRange
-                If .Paragraphs.Count > 0 Then
-                    returnedVal = .Paragraphs(1).ParagraphFormat.SpaceBefore
-                Else
-                    returnedVal = .ParagraphFormat.SpaceBefore
-                End If
-            End With
-        Case "ebParPostSep"
-            With firstShp.TextFrame2.TextRange
-                If .Paragraphs.Count > 0 Then
-                    returnedVal = .Paragraphs(1).ParagraphFormat.SpaceAfter
-                Else
-                    returnedVal = .ParagraphFormat.SpaceAfter
-                End If
-            End With
-        Case "ebParWithin"
-            With firstShp.TextFrame2.TextRange
-                If .Paragraphs.Count > 0 Then
-                    returnedVal = .Paragraphs(1).ParagraphFormat.SpaceWithin
-                Else
-                    returnedVal = .ParagraphFormat.SpaceWithin
-                End If
-            End With
-        
-        ' Gerundete Ecken
-        Case "ebRectCorner"
-            If firstShp.Adjustments.Count >= AdjustmentValue Then
-                returnedVal = Round(RoundedCornerSize(firstShp, AdjustmentValue), 2)
-            Else
-                returnedVal = ""
-            End If
-            'If ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
-'        Case "ebRectCorner2"
-'            If ActiveWindow.selection.ShapeRange(1).Adjustments.Count >= AdjustmentValue + 1 Then
-'                returnedVal = Round(RoundedCornerSize(ActiveWindow.selection.ShapeRange(1), AdjustmentValue + 1), 2)
-'            Else
-'                returnedVal = ""
-'            End If
-'            'If ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
-        
-        ' Transparenz und Rahmen
-        Case "ebTranspFill"
-            returnedVal = Max(0, Round(firstShp.Fill.Transparency * 100))
-        Case "ebTranspLine"
-            returnedVal = Max(0, Round(firstShp.Line.Transparency * 100))
-        Case "ebLineWeight"
-            returnedVal = Max(0, Round(firstShp.Line.Weight, 2))
         
         Case Else
-            Debug.Print ctlId
+            If TryGetShapePropertyValue(firstShp, ctlId, numericValue) Then
+                returnedVal = FormatShapePropertyValue(ctlId, numericValue)
+            Else
+                Debug.Print ctlId
+            End If
     End Select
     GetEditBoxValueForShapeRange = returnedVal
 
@@ -914,179 +809,207 @@ Private Function NormalizeShapePropertyControlId(ByVal controlID As String) As S
     End If
 End Function
 
-Function GetShapeSettingSingle(ByVal shp As Shape, controlID As String) As Single
+Private Function FormatShapePropertyValue(ByVal controlID As String, ByVal value As Single) As String
     controlID = NormalizeShapePropertyControlId(controlID)
 
     Select Case controlID
-    ' Innenabstand
-    Case "ebMarginLeft", "decMarginLeft", "incMarginLeft"
-        GetShapeSettingSingle = shp.TextFrame2.MarginLeft
-    Case "ebMarginRight", "decMarginRight", "incMarginRight"
-        GetShapeSettingSingle = shp.TextFrame2.MarginRight
-    Case "ebMarginTop", "decMarginTop", "incMarginTop"
-        GetShapeSettingSingle = shp.TextFrame2.MarginTop
-    Case "ebMarginBottom", "decMarginBottom", "incMarginBottom"
-        GetShapeSettingSingle = shp.TextFrame2.MarginBottom
-    
-    ' Position/Groesse
-    Case "ebPosLeft", "decPosLeft", "incPosLeft"
-        GetShapeSettingSingle = GetLeft(shp)
-    Case "ebPosTop", "decPosTop", "incPosTop"
-        GetShapeSettingSingle = GetTop(shp)
-    Case "ebPosRight", "decPosRight", "incPosRight"
-        GetShapeSettingSingle = GetWidth(shp)
-    Case "ebPosBottom", "decPosBottom", "incPosBottom"
-        GetShapeSettingSingle = GetHeight(shp)
-    
-    ' Rotation
-    Case "ebRotation", "decRotation", "incRotation"
-        GetShapeSettingSingle = shp.Rotation
-    
-    ' Transparency
-    Case "ebTranspFill", "decTranspFill", "incTranspFill"
-        GetShapeSettingSingle = Max(0, shp.Fill.Transparency)
-    Case "ebTranspLine", "decTranspLine", "incTranspLine"
-        GetShapeSettingSingle = Max(0, shp.Line.Transparency)
-        
-    ' Line Weight
-    Case "ebLineWeight", "decLineWeight", "incLineWeight"
-        GetShapeSettingSingle = Max(0, shp.Line.Weight)
-    
-    ' Objektabstand
-    Case "ebVSep"
-    Case "ebHSep"
-        
-    ' Absatzabstand
-'    Case "ebParIndent", "decParIndent", "incParIndent"
-'        GetShapeSettingSingle = shp.TextFrame.Ruler.Levels(1).FirstMargin
-        
-    Case "ebParIndentFirst", "decParIndentFirst", "incParIndentFirst"
-        With shp.TextFrame2.TextRange
-            If .Paragraphs.Count > 0 Then
-                GetShapeSettingSingle = .Paragraphs(1).ParagraphFormat.FirstLineIndent
-            Else
-                GetShapeSettingSingle = .ParagraphFormat.FirstLineIndent
-            End If
-        End With
-    Case "ebParIndentLeft", "decParIndentLeft", "incParIndentLeft"
-        With shp.TextFrame2.TextRange
-            If .Paragraphs.Count > 0 Then
-                GetShapeSettingSingle = .Paragraphs(1).ParagraphFormat.LeftIndent
-            Else
-                GetShapeSettingSingle = .ParagraphFormat.LeftIndent
-            End If
-        End With
-    Case "ebParIndentRight", "decParIndentRight", "incParIndentRight"
-        With shp.TextFrame2.TextRange
-            If .Paragraphs.Count > 0 Then
-                GetShapeSettingSingle = .Paragraphs(1).ParagraphFormat.RightIndent
-            Else
-                GetShapeSettingSingle = .ParagraphFormat.RightIndent
-            End If
-        End With
-    Case "ebParPreSep", "decParPreSep", "incParPreSep"
-        With shp.TextFrame2.TextRange
-            If .Paragraphs.Count > 0 Then
-                GetShapeSettingSingle = .Paragraphs(1).ParagraphFormat.SpaceBefore
-            Else
-                GetShapeSettingSingle = .ParagraphFormat.SpaceBefore
-            End If
-        End With
-    Case "ebParPostSep", "decParPostSep", "incParPostSep"
-        With shp.TextFrame2.TextRange
-            If .Paragraphs.Count > 0 Then
-                GetShapeSettingSingle = .Paragraphs(1).ParagraphFormat.SpaceAfter
-            Else
-                GetShapeSettingSingle = .ParagraphFormat.SpaceAfter
-            End If
-        End With
-    Case "ebParWithin", "decParWithin", "incParWithin"
-        With shp.TextFrame2.TextRange
-            If .Paragraphs.Count > 0 Then
-                GetShapeSettingSingle = .Paragraphs(1).ParagraphFormat.SpaceWithin
-            Else
-                GetShapeSettingSingle = .ParagraphFormat.SpaceWithin
-            End If
-        End With
-    
-    ' Gerundete Ecken
-    Case "ebRectCorner", "decRectCorner", "incRectCorner"
-        GetShapeSettingSingle = RoundedCornerSize(shp, AdjustmentValue)
-'    Case "ebRectCorner2", "decRectCorner2", "incRectCorner2"
-'        GetShapeSettingSingle = RoundedCornerSize(shp, AdjustmentValue + 1)
+    Case "ebTranspFill", "ebTranspLine"
+        FormatShapePropertyValue = Max(0, Round(value * 100))
+    Case "ebLineWeight", "ebRectCorner"
+        FormatShapePropertyValue = Max(0, Round(value, 2))
+    Case "ebParPreSep", "ebParPostSep", "ebParWithin", "ebRotation"
+        FormatShapePropertyValue = value
     Case Else
-        Debug.Print controlID
+        If ConvertPointsToCentimeters Then
+            FormatShapePropertyValue = Round(PointsToCentimeters(value), 2)
+        Else
+            FormatShapePropertyValue = value
+        End If
     End Select
 End Function
 
-Sub SetShapeSettingSingle(ByVal shp As Shape, controlID As String, ByVal newValue As Single)
+Private Function GetParagraphFormat(ByVal shp As Shape) As TextFrame2
+    Set GetParagraphFormat = shp.TextFrame2
+End Function
+
+Private Function TryGetParagraphPropertyValue(ByVal shp As Shape, ByVal controlID As String, ByRef value As Single) As Boolean
+    Dim textRange As TextRange2
+
+    On Error GoTo ErrHandler
+
+    controlID = NormalizeShapePropertyControlId(controlID)
+    Set textRange = GetParagraphFormat(shp).TextRange
+
+    If textRange.Paragraphs.Count > 0 Then
+        Select Case controlID
+        Case "ebParIndentFirst"
+            value = textRange.Paragraphs(1).ParagraphFormat.FirstLineIndent
+        Case "ebParIndentLeft"
+            value = textRange.Paragraphs(1).ParagraphFormat.LeftIndent
+        Case "ebParIndentRight"
+            value = textRange.Paragraphs(1).ParagraphFormat.RightIndent
+        Case "ebParPreSep"
+            value = textRange.Paragraphs(1).ParagraphFormat.SpaceBefore
+        Case "ebParPostSep"
+            value = textRange.Paragraphs(1).ParagraphFormat.SpaceAfter
+        Case "ebParWithin"
+            value = textRange.Paragraphs(1).ParagraphFormat.SpaceWithin
+        Case Else
+            Exit Function
+        End Select
+    Else
+        Select Case controlID
+        Case "ebParIndentFirst"
+            value = textRange.ParagraphFormat.FirstLineIndent
+        Case "ebParIndentLeft"
+            value = textRange.ParagraphFormat.LeftIndent
+        Case "ebParIndentRight"
+            value = textRange.ParagraphFormat.RightIndent
+        Case "ebParPreSep"
+            value = textRange.ParagraphFormat.SpaceBefore
+        Case "ebParPostSep"
+            value = textRange.ParagraphFormat.SpaceAfter
+        Case "ebParWithin"
+            value = textRange.ParagraphFormat.SpaceWithin
+        Case Else
+            Exit Function
+        End Select
+    End If
+
+    TryGetParagraphPropertyValue = True
+    Exit Function
+
+ErrHandler:
+End Function
+
+Private Function TryGetShapePropertyValue(ByVal shp As Shape, ByVal controlID As String, ByRef value As Single) As Boolean
+    On Error GoTo ErrHandler
+
     controlID = NormalizeShapePropertyControlId(controlID)
 
     Select Case controlID
-    ' Innenabstand
-    Case "ebMarginLeft", "decMarginLeft", "incMarginLeft"
-        shp.TextFrame2.MarginLeft = newValue
-    Case "ebMarginRight", "decMarginRight", "incMarginRight"
-        shp.TextFrame2.MarginRight = newValue
-    Case "ebMarginTop", "decMarginTop", "incMarginTop"
-        shp.TextFrame2.MarginTop = newValue
-    Case "ebMarginBottom", "decMarginBottom", "incMarginBottom"
-        shp.TextFrame2.MarginBottom = newValue
-    
-    ' Position/Groesse
-    Case "ebPosLeft", "decPosLeft", "incPosLeft"
-        SetLeft shp, newValue
-    Case "ebPosTop", "decPosTop", "incPosTop"
-        SetTop shp, newValue
-    Case "ebPosRight", "decPosRight", "incPosRight"
-        SetWidth shp, newValue
-    Case "ebPosBottom", "decPosBottom", "incPosBottom"
-        SetHeight shp, newValue
-    
-    ' Rotation
-    Case "ebRotation", "decRotation", "incRotation"
-        shp.Rotation = newValue
-    
-    ' Transparency
-    Case "ebTranspFill", "decTranspFill", "incTranspFill"
-        shp.Fill.Transparency = Min(1, Max(0, newValue))
-    Case "ebTranspLine", "decTranspLine", "incTranspLine"
-        shp.Line.Transparency = Min(1, Max(0, newValue))
-        
-    ' Line Weight
-    Case "ebLineWeight", "decLineWeight", "incLineWeight"
-        shp.Line.Weight = Max(0, newValue)
-    
-    
-    ' Objektabstand
-    Case "ebVSep"
-    Case "ebHSep"
-        
-    ' Absatzabstand
-'    Case "ebParIndent", "decParIndent", "incParIndent"
-'        shp.TextFrame.Ruler.Levels(1).FirstMargin = newValue
-        
-    Case "ebParIndentFirst", "decParIndentFirst", "incParIndentFirst"
-        shp.TextFrame2.TextRange.ParagraphFormat.FirstLineIndent = newValue
-    Case "ebParIndentLeft", "decParIndentLeft", "incParIndentLeft"
-        shp.TextFrame2.TextRange.ParagraphFormat.LeftIndent = newValue
-    Case "ebParIndentRight", "decParIndentRight", "incParIndentRight"
-        shp.TextFrame2.TextRange.ParagraphFormat.RightIndent = newValue
-    Case "ebParPreSep", "decParPreSep", "incParPreSep"
-        shp.TextFrame2.TextRange.ParagraphFormat.SpaceBefore = newValue
-    Case "ebParPostSep", "decParPostSep", "incParPostSep"
-        shp.TextFrame2.TextRange.ParagraphFormat.SpaceAfter = newValue
-    Case "ebParWithin", "decParWithin", "incParWithin"
-        shp.TextFrame2.TextRange.ParagraphFormat.SpaceWithin = newValue
-    
-    ' Gerundete Ecken
-    Case "ebRectCorner", "decRectCorner", "incRectCorner"
-        SetRoundedCornerSize shp, newValue, AdjustmentValue
-'    Case "ebRectCorner2", "decRectCorner2", "incRectCorner2"
-'        SetRoundedCornerSize shp, newValue, AdjustmentValue + 1
+    Case "ebMarginLeft"
+        value = shp.TextFrame2.MarginLeft
+    Case "ebMarginRight"
+        value = shp.TextFrame2.MarginRight
+    Case "ebMarginTop"
+        value = shp.TextFrame2.MarginTop
+    Case "ebMarginBottom"
+        value = shp.TextFrame2.MarginBottom
+    Case "ebPosLeft"
+        value = GetLeft(shp)
+    Case "ebPosTop"
+        value = GetTop(shp)
+    Case "ebPosRight"
+        value = GetWidth(shp)
+    Case "ebPosBottom"
+        value = GetHeight(shp)
+    Case "ebRotation"
+        value = shp.Rotation
+    Case "ebTranspFill"
+        value = Max(0, shp.Fill.Transparency)
+    Case "ebTranspLine"
+        value = Max(0, shp.Line.Transparency)
+    Case "ebLineWeight"
+        value = Max(0, shp.Line.Weight)
+    Case "ebRectCorner"
+        If shp.Adjustments.Count < AdjustmentValue Then Exit Function
+        value = RoundedCornerSize(shp, AdjustmentValue)
     Case Else
-        Debug.Print controlID
+        TryGetShapePropertyValue = TryGetParagraphPropertyValue(shp, controlID, value)
+        Exit Function
     End Select
+
+    TryGetShapePropertyValue = True
+    Exit Function
+
+ErrHandler:
+End Function
+
+Private Function TrySetParagraphPropertyValue(ByVal shp As Shape, ByVal controlID As String, ByVal newValue As Single) As Boolean
+    Dim textRange As TextRange2
+
+    On Error GoTo ErrHandler
+
+    controlID = NormalizeShapePropertyControlId(controlID)
+    Set textRange = GetParagraphFormat(shp).TextRange
+
+    Select Case controlID
+    Case "ebParIndentFirst"
+        textRange.ParagraphFormat.FirstLineIndent = newValue
+    Case "ebParIndentLeft"
+        textRange.ParagraphFormat.LeftIndent = newValue
+    Case "ebParIndentRight"
+        textRange.ParagraphFormat.RightIndent = newValue
+    Case "ebParPreSep"
+        textRange.ParagraphFormat.SpaceBefore = newValue
+    Case "ebParPostSep"
+        textRange.ParagraphFormat.SpaceAfter = newValue
+    Case "ebParWithin"
+        textRange.ParagraphFormat.SpaceWithin = newValue
+    Case Else
+        Exit Function
+    End Select
+
+    TrySetParagraphPropertyValue = True
+    Exit Function
+
+ErrHandler:
+End Function
+
+Private Function TrySetShapePropertyValue(ByVal shp As Shape, ByVal controlID As String, ByVal newValue As Single) As Boolean
+    On Error GoTo ErrHandler
+
+    controlID = NormalizeShapePropertyControlId(controlID)
+
+    Select Case controlID
+    Case "ebMarginLeft"
+        shp.TextFrame2.MarginLeft = newValue
+    Case "ebMarginRight"
+        shp.TextFrame2.MarginRight = newValue
+    Case "ebMarginTop"
+        shp.TextFrame2.MarginTop = newValue
+    Case "ebMarginBottom"
+        shp.TextFrame2.MarginBottom = newValue
+    Case "ebPosLeft"
+        SetLeft shp, newValue
+    Case "ebPosTop"
+        SetTop shp, newValue
+    Case "ebPosRight"
+        SetWidth shp, newValue
+    Case "ebPosBottom"
+        SetHeight shp, newValue
+    Case "ebRotation"
+        shp.Rotation = newValue
+    Case "ebTranspFill"
+        shp.Fill.Transparency = Min(1, Max(0, newValue))
+    Case "ebTranspLine"
+        shp.Line.Transparency = Min(1, Max(0, newValue))
+    Case "ebLineWeight"
+        shp.Line.Weight = Max(0, newValue)
+    Case "ebRectCorner"
+        SetRoundedCornerSize shp, newValue, AdjustmentValue
+    Case Else
+        TrySetShapePropertyValue = TrySetParagraphPropertyValue(shp, controlID, newValue)
+        Exit Function
+    End Select
+
+    TrySetShapePropertyValue = True
+    Exit Function
+
+ErrHandler:
+End Function
+
+Function GetShapeSettingSingle(ByVal shp As Shape, controlID As String) As Single
+    If Not TryGetShapePropertyValue(shp, controlID, GetShapeSettingSingle) Then
+        Debug.Print controlID
+    End If
+End Function
+
+Sub SetShapeSettingSingle(ByVal shp As Shape, controlID As String, ByVal newValue As Single)
+    If Not TrySetShapePropertyValue(shp, controlID, newValue) Then
+        Debug.Print controlID
+    End If
 End Sub
 
 
@@ -1323,8 +1246,5 @@ Sub test()
     oAgenda.CreateOrUpdateAgenda
     
 End Sub
-
-
-
 
 
