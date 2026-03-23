@@ -145,6 +145,12 @@ Sub isEnabled(control As IRibbonControl, ByRef enabled)
                 enabled = (Not firstShp Is Nothing And firstShp.Adjustments.Count >= AdjustmentValue)
 '            Case "ebRectCorner2"
 '                enabled = (ActiveWindow.selection.ShapeRange(1).Adjustments.Count >= AdjustmentValue + 1)
+
+            Case "ebMarginLeft", "ebMarginRight", "ebMarginTop", "ebMarginBottom", _
+                 "ebParIndent", "ebParIndentFirst", "ebParIndentLeft", "ebParIndentRight", _
+                 "ebParPreSep", "ebParPostSep", "ebParWithin", _
+                 "cbWordWrap", "cbWordWrap2", "cbAutoSize", "cbAutoSize2"
+                enabled = SelectionContainsTextFrame(shpRange)
     
             Case Else
                 If Left(ctlId, 2) = "eb" Then
@@ -171,6 +177,8 @@ End Sub
 ' Initialisierungsfunktion für CheckBoxen
 ' Gibt anhand der control.id den Pressed-Status der Ceckboxen zurueck
 Function cbValue_init(control As IRibbonControl, ByRef returnedVal) As Boolean
+    Dim shpRange As ShapeRange
+    Dim firstShp As Shape
     
     On Error GoTo Err_Handler
     
@@ -216,18 +224,20 @@ Function cbValue_init(control As IRibbonControl, ByRef returnedVal) As Boolean
         Exit Function
     End Select
     
-    If ActiveWindow.selection.Type = ppSelectionNone Then
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then
         returnedVal = False
     Else
+        Set firstShp = shpRange(1)
         Select Case control.Id
         ' Textboxen
         Case "cbWordWrap", "cbWordWrap2"
-            returnedVal = (ActiveWindow.selection.ShapeRange(1).TextFrame.WordWrap = msoTrue)
+            returnedVal = (firstShp.TextFrame.WordWrap = msoTrue)
         Case "cbAutoSize", "cbAutoSize2"
-            returnedVal = (ActiveWindow.selection.ShapeRange(1).TextFrame.AutoSize = ppAutoSizeShapeToFitText)
+            returnedVal = (firstShp.TextFrame.AutoSize = ppAutoSizeShapeToFitText)
         ' Shapes
         Case "cbLockAspectRatio", "cbLockAspectRatio2"
-            returnedVal = (ActiveWindow.selection.ShapeRange(1).LockAspectRatio = msoTrue)
+            returnedVal = (firstShp.LockAspectRatio = msoTrue)
         End Select
     End If
  
@@ -241,6 +251,7 @@ End Function
 ' Zu control.id gehörige Eigenschaft wird an dem Pressed-Status der Checkbox angepasst
 Sub cbValue_onChange(control As IRibbonControl, pressed As Boolean)
     Dim shp As Shape
+    Dim shpRange As ShapeRange
     
     On Error GoTo Err_Handler
     
@@ -276,9 +287,10 @@ Sub cbValue_onChange(control As IRibbonControl, pressed As Boolean)
     
     Case Else:
         ' Alle Controls die selektierte Shapes benötigen
-        If ActiveWindow.selection.Type = ppSelectionNone Then Exit Sub
+        Set shpRange = GetActiveShapeRange()
+        If shpRange Is Nothing Then Exit Sub
     
-        For Each shp In ActiveWindow.selection.ShapeRange
+        For Each shp In shpRange
             Select Case control.Id
             ' Textboxen
             Case "cbWordWrap", "cbWordWrap2"
@@ -301,6 +313,7 @@ End Sub
 ' Initialisierungsfunktion für TextBoxen
 ' Liefert Wert zu control.id, der in den Ribbon-Textboxen angezeigt wird
 Sub ebPixelValue_init(control As IRibbonControl, ByRef returnedVal)
+    Dim shpRange As ShapeRange
     
     On Error GoTo Err_Handler
     
@@ -311,10 +324,11 @@ Sub ebPixelValue_init(control As IRibbonControl, ByRef returnedVal)
         Case "ebSplitSep"
             returnedVal = Round(PointsToCentimeters(SplitSep), 2)
         Case Else
-            If ActiveWindow.selection.Type = ppSelectionNone Then
+            Set shpRange = GetActiveShapeRange()
+            If shpRange Is Nothing Then
                 returnedVal = ""
             Else
-                returnedVal = GetEditBoxValue(control.Id)
+                returnedVal = GetEditBoxValueForShapeRange(control.Id, shpRange)
             End If
     End Select
 
@@ -1309,8 +1323,6 @@ Sub test()
     oAgenda.CreateOrUpdateAgenda
     
 End Sub
-
-
 
 
 

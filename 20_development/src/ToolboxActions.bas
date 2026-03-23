@@ -197,9 +197,13 @@ Public Sub SetSameHeight(Optional func As String = "Max")
     Dim Height As Single
     Dim currentSize As Single
     Dim factor As Single
+    Dim shpRange As ShapeRange
     
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then Exit Sub
+
     Height = GetSelectedSizeValue(func, True)
-    For Each shp In ActiveWindow.selection.ShapeRange
+    For Each shp In shpRange
         currentSize = GetNormalizedShapeSize(shp, True)
         If currentSize = 0 Then
             If ShapeUsesSwappedSize(shp) Then
@@ -225,9 +229,13 @@ Public Sub SetSameWidth(Optional func As String = "Max")
     Dim Width As Single
     Dim currentSize As Single
     Dim factor As Single
+    Dim shpRange As ShapeRange
     
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then Exit Sub
+
     Width = GetSelectedSizeValue(func, False)
-    For Each shp In ActiveWindow.selection.ShapeRange
+    For Each shp In shpRange
         currentSize = GetNormalizedShapeSize(shp, False)
         If currentSize = 0 Then
             If ShapeUsesSwappedSize(shp) Then
@@ -255,7 +263,8 @@ Private Function GetSelectedSizeValue(ByVal func As String, ByVal useHeight As B
     Dim currentValue As Single
     Dim valueSum As Double
     
-    Set shpRange = ActiveWindow.selection.ShapeRange
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then Exit Function
     shapeCount = shpRange.Count
     If shapeCount = 0 Then Exit Function
     
@@ -308,9 +317,8 @@ Public Sub SwapPosition()
     Dim lastLeft As Single
     Dim lastTop As Single
     
-    If ActiveWindow.Selection.Type <> ppSelectionShapes Then Exit Sub
-    
-    Set shpRange = ActiveWindow.Selection.ShapeRange
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then Exit Sub
     n = shpRange.Count
     If n < 2 Then Exit Sub
     
@@ -338,9 +346,8 @@ Public Sub SwapPositionSize()
     Dim lastWidth As Single
     Dim lastHeight As Single
     
-    If ActiveWindow.Selection.Type <> ppSelectionShapes Then Exit Sub
-    
-    Set shpRange = ActiveWindow.Selection.ShapeRange
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then Exit Sub
     n = shpRange.Count
     If n < 2 Then Exit Sub
     
@@ -370,8 +377,12 @@ End Sub
 Public Sub MoveTextOutOfShapes()
     Dim shp As Shape
     Dim shpTxt As Shape
+    Dim shpRange As ShapeRange
     
-    For Each shp In ActiveWindow.selection.ShapeRange
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then Exit Sub
+
+    For Each shp In shpRange
         If shp.HasTextFrame And shp.TextFrame.HasText Then   'shp.TextFrame.TextRange.text <> "" Then
             Set shpTxt = ActiveWindow.View.Slide.shapes.AddTextbox(msoTextOrientationHorizontal, shp.Left, shp.Top, shp.Width, shp.Height)
             ' WordWrap / AutoSize
@@ -408,18 +419,22 @@ End Sub
 Public Sub MoveTextIntoShape()
     Dim shp As Shape
     Dim shpTxt As Shape
+    Dim shpRange As ShapeRange
     
-    If ActiveWindow.selection.ShapeRange.Count <> 2 Then
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then Exit Sub
+
+    If shpRange.Count <> 2 Then
         MsgBox "Bitte eine Textbox und ein Shape-Objekt ausw�hlen.", vbInformation
         Exit Sub
     End If
     
-    If ActiveWindow.selection.ShapeRange(1).Type = msoTextBox Then
-        Set shpTxt = ActiveWindow.selection.ShapeRange(1)
-        Set shp = ActiveWindow.selection.ShapeRange(2)
+    If shpRange(1).Type = msoTextBox Then
+        Set shpTxt = shpRange(1)
+        Set shp = shpRange(2)
     Else
-        Set shpTxt = ActiveWindow.selection.ShapeRange(2)
-        Set shp = ActiveWindow.selection.ShapeRange(1)
+        Set shpTxt = shpRange(2)
+        Set shp = shpRange(1)
     End If
     
     ' Text kopieren
@@ -442,7 +457,8 @@ Public Sub SplitShapeByParagraphs()
     Dim parHeight As Single
     Dim selection As ShapeRange
     
-    Set selection = ActiveWindow.selection.ShapeRange
+    Set selection = GetActiveShapeRange()
+    If selection Is Nothing Then Exit Sub
     For Each shp In selection
         If shp.HasTextFrame And shp.TextFrame.HasText Then   'shp.TextFrame.TextRange.text <> "" Then
             shp.Select msoTrue
@@ -487,7 +503,7 @@ Public Sub SplitShapeByParagraphs()
             ' Textbox Hoehe an Absatzhoehe anpassen
             shp.Height = ParagraphHeight(shp.TextFrame.TextRange.Paragraphs(1)) + shp.TextFrame.MarginTop + shp.TextFrame.MarginBottom
             ' Objekte vertikal verteilen
-            ActiveWindow.selection.ShapeRange.Distribute msoDistributeVertically, msoFalse
+            selection.Distribute msoDistributeVertically, msoFalse
         End If
     Next
 End Sub
@@ -533,7 +549,8 @@ Public Sub ReplaceAllText()
     Dim newText As String
     Dim shp As Shape
     Dim selection As ShapeRange
-    Set selection = ActiveWindow.selection.ShapeRange
+    Set selection = GetActiveShapeRange()
+    If selection Is Nothing Then Exit Sub
     On Error Resume Next
     
     newText = InputBox("Neuen Text eingeben", "Text ersetzen", "tbd")
@@ -550,7 +567,8 @@ End Sub
 Public Sub RemoveAllText()
     Dim shp As Shape
     Dim selection As ShapeRange
-    Set selection = ActiveWindow.selection.ShapeRange
+    Set selection = GetActiveShapeRange()
+    If selection Is Nothing Then Exit Sub
     On Error Resume Next
     For Each shp In selection
         If shp.HasTextFrame Then
@@ -562,7 +580,8 @@ End Sub
 Public Sub TextMarginZero()
     Dim shp As Shape
     Dim selection As ShapeRange
-    Set selection = ActiveWindow.selection.ShapeRange
+    Set selection = GetActiveShapeRange()
+    If selection Is Nothing Then Exit Sub
     On Error Resume Next
     For Each shp In selection
         If shp.HasTextFrame Then
@@ -579,7 +598,8 @@ Public Sub HideShapes()
     Dim shp As Shape
     Dim selection As ShapeRange
     
-    Set selection = ActiveWindow.selection.ShapeRange
+    Set selection = GetActiveShapeRange()
+    If selection Is Nothing Then Exit Sub
     For Each shp In selection
         shp.Visible = msoFalse
     Next
@@ -613,7 +633,8 @@ Public Sub PasteOnSlides()
     Dim sld As Slide
     Dim selection As SlideRange
     
-    Set selection = ActiveWindow.selection.SlideRange
+    Set selection = GetActiveSlideRange()
+    If selection Is Nothing Then Exit Sub
     For Each sld In selection
         sld.shapes.Paste
     Next
@@ -622,7 +643,8 @@ End Sub
 Public Sub PasteAndReplace()
     Dim shp As Shape
     Dim selection As ShapeRange
-    Set selection = ActiveWindow.selection.ShapeRange
+    Set selection = GetActiveShapeRange()
+    If selection Is Nothing Then Exit Sub
     
     'On Error Resume Next
     For Each shp In selection
@@ -671,9 +693,8 @@ Public Sub ReplaceKeepSize()
     Dim i As Long
     Dim targetZ As Long
     
-    If ActiveWindow.Selection.Type <> ppSelectionShapes Then Exit Sub
-    
-    Set selection = ActiveWindow.Selection.ShapeRange
+    Set selection = GetActiveShapeRange()
+    If selection Is Nothing Then Exit Sub
     If selection.Count < 2 Then Exit Sub
     
     Set masterShape = selection(1)
@@ -728,16 +749,24 @@ End Sub
 
 Public Sub SetFillTransparency(transp As Single)
     Dim shp As Shape
+    Dim shpRange As ShapeRange
     
-    For Each shp In ActiveWindow.selection.ShapeRange
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then Exit Sub
+
+    For Each shp In shpRange
         shp.Fill.Transparency = transp
     Next
 End Sub
 
 Public Sub SetLineTransparency(transp As Single)
     Dim shp As Shape
+    Dim shpRange As ShapeRange
     
-    For Each shp In ActiveWindow.selection.ShapeRange
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then Exit Sub
+
+    For Each shp In shpRange
         shp.Line.Transparency = transp
     Next
 End Sub
@@ -787,7 +816,8 @@ Sub SendEmailFromSlideSelection()
     Dim OutMail As Object
 
     ' markierte Folien
-    Set sldRange = ActiveWindow.selection.SlideRange
+    Set sldRange = GetActiveSlideRange()
+    If sldRange Is Nothing Then Exit Sub
     
     ' bisheriger Dateiname
     If InStrRev(ActiveWindow.Presentation.Name, ".") = 0 Then
@@ -862,7 +892,8 @@ Sub CreatePresentationFromSlideSelection()
         Exit Sub
     End If
     
-    Set sldRange = ActiveWindow.selection.SlideRange
+    Set sldRange = GetActiveSlideRange()
+    If sldRange Is Nothing Then Exit Sub
     fileName = ActiveWindow.Presentation.FullName
     
     ' Kopie �ffnen
@@ -1023,8 +1054,12 @@ End Sub
 Public Sub MultiplyShapes(RowsCols As Integer, Sep As Single, Optional vertical As Boolean = False)
     Dim i As Long
     Dim shp As Shape, newShp As ShapeRange
+    Dim shpRange As ShapeRange
     
-    For Each shp In ActiveWindow.selection.ShapeRange
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then Exit Sub
+
+    For Each shp In shpRange
         For i = 1 To RowsCols - 1
             Set newShp = shp.Duplicate
             
@@ -1045,8 +1080,12 @@ Public Sub SplitShapes(RowsCols As Integer, Sep As Single, Optional vertical As 
     Dim i As Long
     Dim shp As Shape, newShp As ShapeRange
     Dim targetSize As Single
+    Dim shpRange As ShapeRange
     
-    For Each shp In ActiveWindow.selection.ShapeRange
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then Exit Sub
+
+    For Each shp In shpRange
         If vertical = False Then
             targetSize = (shp.Width - (RowsCols - 1) * Sep) / RowsCols
             shp.Width = targetSize
@@ -1083,7 +1122,8 @@ Public Sub ArrangeByLast(Position As Integer)
     Dim shpLeft As Single, shpWidth As Single
     Dim dx As Single, dy As Single
     
-    Set selectedShapes = ActiveWindow.selection.ShapeRange
+    Set selectedShapes = GetActiveShapeRange()
+    If selectedShapes Is Nothing Then Exit Sub
     Set masterShp = selectedShapes(selectedShapes.Count)
     
     GetVisualBounds masterShp, masterLeft, masterTop, masterWidth, masterHeight
@@ -1092,7 +1132,7 @@ Public Sub ArrangeByLast(Position As Integer)
     masterCenterX = masterLeft + (masterWidth / 2)
     masterCenterY = masterTop + (masterHeight / 2)
     
-    For Each shp In ActiveWindow.selection.ShapeRange
+    For Each shp In selectedShapes
         GetVisualBounds shp, shpLeft, shpTop, shpWidth, shpHeight
         dx = 0
         dy = 0
