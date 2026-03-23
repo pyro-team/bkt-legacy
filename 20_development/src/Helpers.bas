@@ -100,6 +100,15 @@ Public Sub DeleteUnselectedSlides(ByRef newPres As Presentation, ByRef selectedS
     Next
 End Sub
 
+Public Function GetSelectionShapeRange(ByRef sel As Selection) As ShapeRange
+    If sel Is Nothing Then Exit Function
+    If sel.HasChildShapeRange Then
+        Set GetSelectionShapeRange = sel.ChildShapeRange
+    ElseIf sel.Type = ppSelectionShapes Or sel.Type = ppSelectionText Then
+        Set GetSelectionShapeRange = sel.ShapeRange
+    End If
+End Function
+
 
 ' Funktionen für top, left, width, height unter Berücksichtigung der ScaleFrom-Einstellung
 

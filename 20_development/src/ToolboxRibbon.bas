@@ -106,12 +106,17 @@ End Sub
 Sub isEnabled(control As IRibbonControl, ByRef enabled)
     Dim ctlId As String
     Dim oAgenda As ToolboxAgenda
+    Dim shpRange As ShapeRange
+    Dim firstShp As Shape
+    Dim shapeCount As Long
     
     On Error GoTo Err_Handler
     
-    ctlId = control.Id
-    If Left(ctlId, 3) = "inc" Or Left(ctlId, 3) = "dec" Or Left(ctlId, 3) = "res" Then
-        ctlId = "eb" & Mid(ctlId, 4)
+    ctlId = NormalizeShapePropertyControlId(control.Id)
+    Set shpRange = GetActiveShapeRange()
+    If Not shpRange Is Nothing Then
+        shapeCount = shpRange.Count
+        If shapeCount > 0 Then Set firstShp = shpRange(1)
     End If
     
     Select Case ctlId
@@ -122,35 +127,35 @@ Sub isEnabled(control As IRibbonControl, ByRef enabled)
         
     Case Else
         ' Enabled-Status von Selection abhängig
-        If ActiveWindow.selection.Type = ppSelectionNone Then
+        If shpRange Is Nothing Then
             enabled = False
         Else
             Select Case ctlId
             Case "ebVSep", "ebHSep", "actJoinShapesWithText", "actSplitSameWidth", "actSplitSameHeight", "actSplitSwap"
                 ' Enabled bei Selection-Count > 1
-                enabled = (ActiveWindow.selection.ShapeRange.Count > 1)
+                enabled = (shapeCount > 1)
                 
             Case "actHConnect", "actVConnect", "actTextIntoShape"
                 ' Enabled bei Selection-Count = 2
-                enabled = (ActiveWindow.selection.ShapeRange.Count = 2)
+                enabled = (shapeCount = 2)
                 
             Case "ebRectCorner"
                 ' Enabled von Shape-Typ abhaengig
                 ' enabled = (ActiveWindow.selection.ShapeRange(1).AutoShapeType = 51 Or ActiveWindow.selection.ShapeRange(1).AutoShapeType = 52 Or ActiveWindow.selection.ShapeRange(1).AutoShapeType = msoShapeRoundedRectangle)
-                enabled = (ActiveWindow.selection.ShapeRange(1).Adjustments.Count >= AdjustmentValue)
+                enabled = (Not firstShp Is Nothing And firstShp.Adjustments.Count >= AdjustmentValue)
 '            Case "ebRectCorner2"
 '                enabled = (ActiveWindow.selection.ShapeRange(1).Adjustments.Count >= AdjustmentValue + 1)
     
             Case Else
                 If Left(ctlId, 2) = "eb" Then
                     ' Enabled bei Textboxen, wenn Wert nicht-leer
-                    enabled = (GetEditBoxValue(ctlId) <> "")
+                    enabled = (GetEditBoxValueForShapeRange(ctlId, shpRange) <> "")
                 'ElseIf Left(ctlId, 3) = "act" Then
                 '    ' Enabled bei Selection-Count = 1
                 '    enabled = True
                 Else
                     ' Enabled bei Selection-Count >= 1
-                    enabled = (ActiveWindow.selection.Type <> ppSelectionNone)
+                    enabled = (shapeCount > 0)
                 End If
             End Select
         End If
@@ -319,58 +324,73 @@ Err_Handler:
 End Sub
 
 Private Function GetEditBoxValue(ByVal ctlId As String) As String
+    GetEditBoxValue = GetEditBoxValueForShapeRange(ctlId, GetActiveShapeRange())
+End Function
+
+Private Function GetEditBoxValueForShapeRange(ByVal ctlId As String, ByVal shpRange As ShapeRange) As String
     Dim returnedVal As String
     Dim shps As Variant
+    Dim firstShp As Shape
+    Dim shapeCount As Long
     
     On Error GoTo Err_Handler
     
-    If ActiveWindow.selection.Type = ppSelectionNone Then
-        returnedVal = ""
-    Else
-        Select Case ctlId
+    If shpRange Is Nothing Then
+        GetEditBoxValueForShapeRange = ""
+        Exit Function
+    End If
+    
+    shapeCount = shpRange.Count
+    If shapeCount = 0 Then
+        GetEditBoxValueForShapeRange = ""
+        Exit Function
+    End If
+    Set firstShp = shpRange(1)
+    
+    Select Case ctlId
         ' Innenabstand
         Case "ebMarginLeft"
-            returnedVal = ActiveWindow.selection.ShapeRange(1).TextFrame2.MarginLeft
+            returnedVal = firstShp.TextFrame2.MarginLeft
             If returnedVal <> "" And ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
         Case "ebMarginRight"
-            returnedVal = ActiveWindow.selection.ShapeRange(1).TextFrame2.MarginRight
+            returnedVal = firstShp.TextFrame2.MarginRight
             If returnedVal <> "" And ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
         Case "ebMarginTop"
-            returnedVal = ActiveWindow.selection.ShapeRange(1).TextFrame2.MarginTop
+            returnedVal = firstShp.TextFrame2.MarginTop
             If returnedVal <> "" And ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
         Case "ebMarginBottom"
-            returnedVal = ActiveWindow.selection.ShapeRange(1).TextFrame2.MarginBottom
+            returnedVal = firstShp.TextFrame2.MarginBottom
             If returnedVal <> "" And ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
             
         ' Position/Groesse
         Case "ebPosLeft"
 '            returnedVal = ActiveWindow.selection.ShapeRange(1).left
-            returnedVal = GetLeft(ActiveWindow.selection.ShapeRange(1))
+            returnedVal = GetLeft(firstShp)
             If returnedVal <> "" And ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
         Case "ebPosTop"
-            returnedVal = GetTop(ActiveWindow.selection.ShapeRange(1))
+            returnedVal = GetTop(firstShp)
             If returnedVal <> "" And ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
         Case "ebPosRight"
-            returnedVal = GetWidth(ActiveWindow.selection.ShapeRange(1))
+            returnedVal = GetWidth(firstShp)
             If returnedVal <> "" And ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
         Case "ebPosBottom"
-            returnedVal = GetHeight(ActiveWindow.selection.ShapeRange(1))
+            returnedVal = GetHeight(firstShp)
             If returnedVal <> "" And ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
         
         ' Rotation
         Case "ebRotation"
-            returnedVal = ActiveWindow.selection.ShapeRange(1).Rotation
+            returnedVal = firstShp.Rotation
         
         ' Objektabstand
         Case "ebVSep"
-            If ActiveWindow.selection.ShapeRange.Count >= 2 Then
-                shps = ActiveWindowSelectionSortedByTop
+            If shapeCount >= 2 Then
+                shps = ShapeRangeSortedByTop(shpRange)
                 returnedVal = shps(2).Top - shps(1).Top - shps(1).Height
                 If returnedVal <> "" And ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
             End If
         Case "ebHSep"
-            If ActiveWindow.selection.ShapeRange.Count >= 2 Then
-                shps = ActiveWindowSelectionSortedByLeft
+            If shapeCount >= 2 Then
+                shps = ShapeRangeSortedByLeft(shpRange)
                 returnedVal = shps(2).Left - shps(1).Left - shps(1).Width
                 If returnedVal <> "" And ConvertPointsToCentimeters Then returnedVal = Round(PointsToCentimeters(returnedVal), 2)
             End If
@@ -380,7 +400,7 @@ Private Function GetEditBoxValue(ByVal ctlId As String) As String
 '            returnedVal = Round(PointsToCentimeters(ActiveWindow.selection.ShapeRange(1).TextFrame.Ruler.Levels(1).FirstMargin), 2)
         Case "ebParIndentLeft"
             ' returnedVal = Round(PointsToCentimeters(ActiveWindow.selection.ShapeRange(1).TextFrame.Ruler.Levels(1).LeftMargin), 2)
-            With ActiveWindow.selection.ShapeRange(1).TextFrame2.TextRange
+            With firstShp.TextFrame2.TextRange
                 If .Paragraphs.Count > 0 Then
                     returnedVal = Round(PointsToCentimeters(.Paragraphs(1).ParagraphFormat.LeftIndent), 2)
                 Else
@@ -388,7 +408,7 @@ Private Function GetEditBoxValue(ByVal ctlId As String) As String
                 End If
             End With
         Case "ebParIndentRight"
-            With ActiveWindow.selection.ShapeRange(1).TextFrame2.TextRange
+            With firstShp.TextFrame2.TextRange
                 If .Paragraphs.Count > 0 Then
                     returnedVal = Round(PointsToCentimeters(.Paragraphs(1).ParagraphFormat.RightIndent), 2)
                 Else
@@ -396,7 +416,7 @@ Private Function GetEditBoxValue(ByVal ctlId As String) As String
                 End If
             End With
         Case "ebParIndentFirst"
-            With ActiveWindow.selection.ShapeRange(1).TextFrame2.TextRange
+            With firstShp.TextFrame2.TextRange
                 If .Paragraphs.Count > 0 Then
                     returnedVal = Round(PointsToCentimeters(.Paragraphs(1).ParagraphFormat.FirstLineIndent), 2)
                 Else
@@ -404,7 +424,7 @@ Private Function GetEditBoxValue(ByVal ctlId As String) As String
                 End If
             End With
         Case "ebParPreSep"
-            With ActiveWindow.selection.ShapeRange(1).TextFrame2.TextRange
+            With firstShp.TextFrame2.TextRange
                 If .Paragraphs.Count > 0 Then
                     returnedVal = .Paragraphs(1).ParagraphFormat.SpaceBefore
                 Else
@@ -412,7 +432,7 @@ Private Function GetEditBoxValue(ByVal ctlId As String) As String
                 End If
             End With
         Case "ebParPostSep"
-            With ActiveWindow.selection.ShapeRange(1).TextFrame2.TextRange
+            With firstShp.TextFrame2.TextRange
                 If .Paragraphs.Count > 0 Then
                     returnedVal = .Paragraphs(1).ParagraphFormat.SpaceAfter
                 Else
@@ -420,7 +440,7 @@ Private Function GetEditBoxValue(ByVal ctlId As String) As String
                 End If
             End With
         Case "ebParWithin"
-            With ActiveWindow.selection.ShapeRange(1).TextFrame2.TextRange
+            With firstShp.TextFrame2.TextRange
                 If .Paragraphs.Count > 0 Then
                     returnedVal = .Paragraphs(1).ParagraphFormat.SpaceWithin
                 Else
@@ -430,8 +450,8 @@ Private Function GetEditBoxValue(ByVal ctlId As String) As String
         
         ' Gerundete Ecken
         Case "ebRectCorner"
-            If ActiveWindow.selection.ShapeRange(1).Adjustments.Count >= AdjustmentValue Then
-                returnedVal = Round(RoundedCornerSize(ActiveWindow.selection.ShapeRange(1), AdjustmentValue), 2)
+            If firstShp.Adjustments.Count >= AdjustmentValue Then
+                returnedVal = Round(RoundedCornerSize(firstShp, AdjustmentValue), 2)
             Else
                 returnedVal = ""
             End If
@@ -446,21 +466,20 @@ Private Function GetEditBoxValue(ByVal ctlId As String) As String
         
         ' Transparenz und Rahmen
         Case "ebTranspFill"
-            returnedVal = Max(0, Round(ActiveWindow.selection.ShapeRange(1).Fill.Transparency * 100))
+            returnedVal = Max(0, Round(firstShp.Fill.Transparency * 100))
         Case "ebTranspLine"
-            returnedVal = Max(0, Round(ActiveWindow.selection.ShapeRange(1).Line.Transparency * 100))
+            returnedVal = Max(0, Round(firstShp.Line.Transparency * 100))
         Case "ebLineWeight"
-            returnedVal = Max(0, Round(ActiveWindow.selection.ShapeRange(1).Line.Weight, 2))
+            returnedVal = Max(0, Round(firstShp.Line.Weight, 2))
         
         Case Else
             Debug.Print ctlId
-        End Select
-    End If
-    GetEditBoxValue = returnedVal
+    End Select
+    GetEditBoxValueForShapeRange = returnedVal
 
 Exit Function
 Err_Handler:
-    GetEditBoxValue = ""
+    GetEditBoxValueForShapeRange = ""
 End Function
 
 
@@ -469,6 +488,7 @@ End Function
 Sub ebIntValue_onChange(control As IRibbonControl, text As String)
     Dim value As Integer
     Dim shp As Shape
+    Dim shpRange As ShapeRange
     
     On Error GoTo Err_Handler
     
@@ -481,9 +501,10 @@ Sub ebIntValue_onChange(control As IRibbonControl, text As String)
         Exit Sub
     End If
     
-    If ActiveWindow.selection.Type = ppSelectionNone Then Exit Sub
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then Exit Sub
     
-    For Each shp In ActiveWindow.selection.ShapeRange
+    For Each shp In shpRange
         Select Case control.Id
         ' Rotation
         Case "ebRotation"
@@ -510,6 +531,7 @@ Sub ebPixelValue_onChange(control As IRibbonControl, text As String)
     Dim lastShp As Shape
     Dim shps As Variant
     Dim shpIdx As Integer
+    Dim shpRange As ShapeRange
     
     On Error GoTo Err_Handler
     
@@ -520,20 +542,21 @@ Sub ebPixelValue_onChange(control As IRibbonControl, text As String)
         Exit Sub
     End If
     
-    If ActiveWindow.selection.Type = ppSelectionNone Then Exit Sub
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then Exit Sub
     
     Select Case control.Id
     Case "ebHSep"
-        shps = ActiveWindowSelectionSortedByLeft
+        shps = ShapeRangeSortedByLeft(shpRange)
         value = CSng(text)
     Case "ebVSep"
-        shps = ActiveWindowSelectionSortedByTop
+        shps = ShapeRangeSortedByTop(shpRange)
         value = CSng(text)
     Case "ebRectCorner", "ebParFirst" ', "ebRectCorner2"
-        Set shps = ActiveWindow.selection.ShapeRange
+        Set shps = shpRange
         value = CSng(text)
     Case Else
-        Set shps = ActiveWindow.selection.ShapeRange
+        Set shps = shpRange
         value = Max(0, CSng(text))
     End Select
     
@@ -543,7 +566,7 @@ Sub ebPixelValue_onChange(control As IRibbonControl, text As String)
         If ConvertPointsToCentimeters Then value = CentimetersToPoints(value)
     End Select
     
-    For shpIdx = 1 To ActiveWindow.selection.ShapeRange.Count
+    For shpIdx = 1 To shpRange.Count
         'For Each shp In ActiveWindow.Selection.ShapeRange
         Set shp = shps(shpIdx)
         Select Case control.Id
@@ -630,21 +653,25 @@ Sub ResetPixelValue(control As IRibbonControl)
     Dim shps As Variant
     Dim shpIdx As Integer
     Dim lastShp As Shape
+    Dim shpRange As ShapeRange
+    Dim propertyCtlId As String
     
     On Error GoTo Err_Handler
     
-    If ActiveWindow.selection.Type = ppSelectionNone Then Exit Sub
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then Exit Sub
+    propertyCtlId = NormalizeShapePropertyControlId(control.Id)
     
     Select Case control.Id
     Case "resHSep"
-        shps = ActiveWindowSelectionSortedByLeft
+        shps = ShapeRangeSortedByLeft(shpRange)
     Case "resVSep"
-        shps = ActiveWindowSelectionSortedByTop
+        shps = ShapeRangeSortedByTop(shpRange)
     Case Else
-        Set shps = ActiveWindow.selection.ShapeRange
+        Set shps = shpRange
     End Select
     
-    For shpIdx = 1 To ActiveWindow.selection.ShapeRange.Count
+    For shpIdx = 1 To shpRange.Count
         'For Each shp In ActiveWindow.Selection.ShapeRange
         Set shp = shps(shpIdx)
         Select Case control.Id
@@ -653,13 +680,13 @@ Sub ResetPixelValue(control As IRibbonControl)
             If Not lastShp Is Nothing Then
                 shp.Top = lastShp.Top + lastShp.Height
             End If
-        Case "resHSep", "decHSep"
+        Case "resHSep"
             If Not lastShp Is Nothing Then
                 shp.Left = lastShp.Left + lastShp.Width
             End If
         
         Case Else
-            SetShapeSettingSingle shp, "eb" & Mid(control.Id, 4), 0
+            SetShapeSettingSingle shp, propertyCtlId, 0
         End Select
         Set lastShp = shp
     Next
@@ -685,6 +712,8 @@ Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
     Dim newValue As Single
     Dim oldValue As Single
     Dim firstDelta As Single
+    Dim shpRange As ShapeRange
+    Dim propertyCtlId As String
     
     On Error GoTo Err_Handler
     
@@ -713,19 +742,21 @@ Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
             Exit Sub
     End Select
     
-    If ActiveWindow.selection.Type = ppSelectionNone Then Exit Sub
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then Exit Sub
+    propertyCtlId = NormalizeShapePropertyControlId(control.Id)
     
     Select Case control.Id
     Case "incHSep", "decHSep"
-        shps = ActiveWindowSelectionSortedByLeft
+        shps = ShapeRangeSortedByLeft(shpRange)
         oldValue = shps(2).Left - shps(1).Left - shps(1).Width
     Case "incVSep", "decVSep"
-        shps = ActiveWindowSelectionSortedByTop
+        shps = ShapeRangeSortedByTop(shpRange)
         oldValue = shps(2).Top - shps(1).Top - shps(1).Height
     Case Else
         ' cmValue
-        Set shps = ActiveWindow.selection.ShapeRange
-        oldValue = GetShapeSettingSingle(shps(1), control.Id)
+        Set shps = shpRange
+        oldValue = GetShapeSettingSingle(shps(1), propertyCtlId)
     End Select
     
     Select Case control.Id
@@ -755,7 +786,7 @@ Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
     
     firstDelta = newValue - oldValue
     
-    For shpIdx = 1 To ActiveWindow.selection.ShapeRange.Count
+    For shpIdx = 1 To shpRange.Count
         'For Each shp In ActiveWindow.Selection.ShapeRange
         Set shp = shps(shpIdx)
         Select Case control.Id
@@ -782,10 +813,10 @@ Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
         
         Case Else
             If Not IsAltKeyDown Then
-                SetShapeSettingSingle shp, control.Id, newValue
+                SetShapeSettingSingle shp, propertyCtlId, newValue
             Else
-                oldValue = GetShapeSettingSingle(shp, control.Id)
-                SetShapeSettingSingle shp, control.Id, oldValue + firstDelta
+                oldValue = GetShapeSettingSingle(shp, propertyCtlId)
+                SetShapeSettingSingle shp, propertyCtlId, oldValue + firstDelta
             End If
         End Select
         Set lastShp = shp
@@ -861,12 +892,17 @@ Exit Function
 Err_Handler:
 End Function
 
-
-
-
-
+Private Function NormalizeShapePropertyControlId(ByVal controlID As String) As String
+    If Left$(controlID, 3) = "inc" Or Left$(controlID, 3) = "dec" Or Left$(controlID, 3) = "res" Then
+        NormalizeShapePropertyControlId = "eb" & Mid$(controlID, 4)
+    Else
+        NormalizeShapePropertyControlId = controlID
+    End If
+End Function
 
 Function GetShapeSettingSingle(ByVal shp As Shape, controlID As String) As Single
+    controlID = NormalizeShapePropertyControlId(controlID)
+
     Select Case controlID
     ' Innenabstand
     Case "ebMarginLeft", "decMarginLeft", "incMarginLeft"
@@ -970,6 +1006,8 @@ Function GetShapeSettingSingle(ByVal shp As Shape, controlID As String) As Singl
 End Function
 
 Sub SetShapeSettingSingle(ByVal shp As Shape, controlID As String, ByVal newValue As Single)
+    controlID = NormalizeShapePropertyControlId(controlID)
+
     Select Case controlID
     ' Innenabstand
     Case "ebMarginLeft", "decMarginLeft", "incMarginLeft"
@@ -1271,13 +1309,6 @@ Sub test()
     oAgenda.CreateOrUpdateAgenda
     
 End Sub
-
-
-
-
-
-
-
 
 
 
