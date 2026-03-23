@@ -298,8 +298,8 @@
 				<!-- <group idMso="GroupFont" insertBeforeQ="nsBktLegacy:ThinkCell" /> --> <!-- doesnt work on mac -->
 				<!-- <group idMso="GroupParagraph" insertBeforeQ="nsBktLegacy:ThinkCell" /> --> <!-- doesnt work on mac -->
 				<group id="custom_font" label="Schriftart" insertBeforeQ="nsBktLegacy:ThinkCell" imageMso="GroupFont">
-					<control idMso="Font" getVisible="isVisibleMac" />
-					<comboBox idMso="Font" getVisible="isVisibleWin" sizeString="WWWWWWWI" /> <!-- doesnt work on mac -->
+					<control idMso="Font" getVisible="isVisibleMac" showLabel="false" />
+					<comboBox idMso="Font" getVisible="isVisibleWin" showLabel="false" sizeString="WWWWWWWI" /> <!-- doesnt work on mac -->
 					<buttonGroup id="custom_font-styles">
 						<control idMso="Bold" showLabel="false" />
 						<control idMso="Italic" showLabel="false" />
@@ -312,7 +312,7 @@
 						<control idMso="ClearFormatting" showLabel="false" />
 					</box>
 
-					<control idMso="FontSize" />
+					<control idMso="FontSize" showLabel="false" />
 					<buttonGroup id="custom_font-size">
 						<control idMso="FontSizeIncrease" showLabel="false" />
 						<control idMso="FontSizeDecrease" showLabel="false" />
