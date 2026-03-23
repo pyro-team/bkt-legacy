@@ -105,7 +105,6 @@ End Sub
 
 Sub isEnabled(control As IRibbonControl, ByRef enabled)
     Dim ctlId As String
-    Dim oAgenda As ToolboxAgenda
     Dim shpRange As ShapeRange
     Dim firstShp As Shape
     Dim shapeCount As Long
@@ -140,14 +139,10 @@ Sub isEnabled(control As IRibbonControl, ByRef enabled)
                 enabled = (shapeCount = 2)
                 
             Case "ebRectCorner"
-                ' Enabled von Shape-Typ abhaengig
-                ' enabled = (ActiveWindow.selection.ShapeRange(1).AutoShapeType = 51 Or ActiveWindow.selection.ShapeRange(1).AutoShapeType = 52 Or ActiveWindow.selection.ShapeRange(1).AutoShapeType = msoShapeRoundedRectangle)
                 enabled = (Not firstShp Is Nothing And firstShp.Adjustments.Count >= AdjustmentValue)
-'            Case "ebRectCorner2"
-'                enabled = (ActiveWindow.selection.ShapeRange(1).Adjustments.Count >= AdjustmentValue + 1)
 
             Case "ebMarginLeft", "ebMarginRight", "ebMarginTop", "ebMarginBottom", _
-                 "ebParIndent", "ebParIndentFirst", "ebParIndentLeft", "ebParIndentRight", _
+                 "ebParIndentFirst", "ebParIndentLeft", "ebParIndentRight", _
                  "ebParPreSep", "ebParPostSep", "ebParWithin", _
                  "cbWordWrap", "cbWordWrap2", "cbAutoSize", "cbAutoSize2"
                 enabled = SelectionContainsTextFrame(shpRange)
@@ -337,10 +332,6 @@ Err_Handler:
     returnedVal = ""
 End Sub
 
-Private Function GetEditBoxValue(ByVal ctlId As String) As String
-    GetEditBoxValue = GetEditBoxValueForShapeRange(ctlId, GetActiveShapeRange())
-End Function
-
 Private Function GetEditBoxValueForShapeRange(ByVal ctlId As String, ByVal shpRange As ShapeRange) As String
     Dim returnedVal As String
     Dim shps As Variant
@@ -436,11 +427,11 @@ End Sub
 Sub ebPixelValue_onChange(control As IRibbonControl, text As String)
     Dim value As Single
     Dim shp As Shape
-    Dim delta As Single
     Dim lastShp As Shape
     Dim shps As Variant
     Dim shpIdx As Integer
     Dim shpRange As ShapeRange
+    Dim propertyCtlId As String
     
     On Error GoTo Err_Handler
     
@@ -453,54 +444,26 @@ Sub ebPixelValue_onChange(control As IRibbonControl, text As String)
     
     Set shpRange = GetActiveShapeRange()
     If shpRange Is Nothing Then Exit Sub
+    propertyCtlId = NormalizeShapePropertyControlId(control.Id)
     
-    Select Case control.Id
+    Select Case propertyCtlId
     Case "ebHSep"
         shps = ShapeRangeSortedByLeft(shpRange)
-        value = CSng(text)
     Case "ebVSep"
         shps = ShapeRangeSortedByTop(shpRange)
-        value = CSng(text)
-    Case "ebRectCorner", "ebParFirst" ', "ebRectCorner2"
-        Set shps = shpRange
-        value = CSng(text)
     Case Else
         Set shps = shpRange
-        value = Max(0, CSng(text))
     End Select
     
-    Select Case control.Id
-    Case "ebParPreSep", "ebParPostSep", "ebParWithin", "ebRotation", "ebLineWeight", "ebRectCorner" ', "ebRectCorner2"
-    Case Else
-        If ConvertPointsToCentimeters Then value = CentimetersToPoints(value)
-    End Select
+    value = ParseShapePropertyInputValue(propertyCtlId, text)
+    If RequiresPointConversion(propertyCtlId) Then
+        value = CentimetersToPoints(value)
+    End If
     
     For shpIdx = 1 To shpRange.Count
         'For Each shp In ActiveWindow.Selection.ShapeRange
         Set shp = shps(shpIdx)
-        Select Case control.Id
-        ' Innenabstand
-        Case "ebMarginLeft"
-            shp.TextFrame2.MarginLeft = value
-        Case "ebMarginRight"
-            shp.TextFrame2.MarginRight = value
-        Case "ebMarginTop"
-            shp.TextFrame2.MarginTop = value
-        Case "ebMarginBottom"
-            shp.TextFrame2.MarginBottom = value
-        
-        ' Position/Groesse
-        Case "ebPosLeft"
-'            shp.left = value
-            SetLeft shp, value
-        Case "ebPosTop"
-            SetTop shp, value
-        Case "ebPosRight"
-            SetWidth shp, value
-        Case "ebPosBottom"
-            SetHeight shp, value
-        
-        ' Objektabstand
+        Select Case propertyCtlId
         Case "ebVSep"
             If Not lastShp Is Nothing Then
                 shp.Top = lastShp.Top + lastShp.Height + value
@@ -509,35 +472,8 @@ Sub ebPixelValue_onChange(control As IRibbonControl, text As String)
             If Not lastShp Is Nothing Then
                 shp.Left = lastShp.Left + lastShp.Width + value
             End If
-        
-        ' Absatzabstand
-'        Case "ebParIndent"
-'            delta = value - shp.TextFrame.Ruler.Levels(1).FirstMargin
-'            shp.TextFrame.Ruler.Levels(1).FirstMargin = value
-'            shp.TextFrame.Ruler.Levels(1).LeftMargin = shp.TextFrame.Ruler.Levels(1).LeftMargin + delta
-            
-        Case "ebParIndentFirst"
-            shp.TextFrame2.TextRange.ParagraphFormat.FirstLineIndent = value
-        Case "ebParIndentLeft"
-            shp.TextFrame2.TextRange.ParagraphFormat.LeftIndent = value
-        Case "ebParIndentRight"
-            shp.TextFrame2.TextRange.ParagraphFormat.RightIndent = value
-        Case "ebParPreSep"
-            shp.TextFrame2.TextRange.ParagraphFormat.SpaceBefore = value
-        Case "ebParPostSep"
-            shp.TextFrame2.TextRange.ParagraphFormat.SpaceAfter = value
-        Case "ebParWithin"
-            shp.TextFrame2.TextRange.ParagraphFormat.SpaceWithin = value
-        ' Rechteck Rundungen
-        Case "ebRectCorner"
-            SetRoundedCornerSize shp, value, AdjustmentValue
-'        Case "ebRectCorner2"
-'            SetRoundedCornerSize shp, value, AdjustmentValue + 1
-
-        ' Line Weight
-        Case "ebLineWeight"
-            shp.Line.Weight = value
-        
+        Case Else
+            SetShapeSettingSingle shp, propertyCtlId, value
         End Select
         Set lastShp = shp
     Next
@@ -611,7 +547,6 @@ End Sub
 ' Bei nicht gedrückter control-taste wird ein Vielfaches von value verwendet
 Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
     Dim shp As Shape
-    Dim delta As Single
     Dim ptValue As Single
     Dim cmValue As Single
     Dim intValue As Single
@@ -708,18 +643,6 @@ Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
             If Not lastShp Is Nothing Then
                 shp.Left = lastShp.Left + lastShp.Width + newValue
             End If
-        ' Absatzabstand
-'        Case "incParIndent", "decParIndent"
-'            If Not IsAltKeyDown Then
-'                oldValue = shp.TextFrame.Ruler.Levels(1).FirstMargin
-'                delta = newValue - oldValue
-'                shp.TextFrame.Ruler.Levels(1).FirstMargin = shp.TextFrame.Ruler.Levels(1).FirstMargin + delta
-'                shp.TextFrame.Ruler.Levels(1).LeftMargin = shp.TextFrame.Ruler.Levels(1).LeftMargin + delta
-'            Else
-'                shp.TextFrame.Ruler.Levels(1).FirstMargin = shp.TextFrame.Ruler.Levels(1).FirstMargin + firstDelta
-'                shp.TextFrame.Ruler.Levels(1).LeftMargin = shp.TextFrame.Ruler.Levels(1).LeftMargin + firstDelta
-'            End If
-        
         Case Else
             If Not IsAltKeyDown Then
                 SetShapeSettingSingle shp, propertyCtlId, newValue
@@ -809,6 +732,28 @@ Private Function NormalizeShapePropertyControlId(ByVal controlID As String) As S
     End If
 End Function
 
+Private Function ParseShapePropertyInputValue(ByVal controlID As String, ByVal text As String) As Single
+    controlID = NormalizeShapePropertyControlId(controlID)
+
+    Select Case controlID
+    Case "ebHSep", "ebVSep", "ebRectCorner"
+        ParseShapePropertyInputValue = CSng(text)
+    Case Else
+        ParseShapePropertyInputValue = Max(0, CSng(text))
+    End Select
+End Function
+
+Private Function RequiresPointConversion(ByVal controlID As String) As Boolean
+    controlID = NormalizeShapePropertyControlId(controlID)
+
+    Select Case controlID
+    Case "ebParPreSep", "ebParPostSep", "ebParWithin", "ebRotation", "ebLineWeight", "ebRectCorner"
+        RequiresPointConversion = False
+    Case Else
+        RequiresPointConversion = ConvertPointsToCentimeters
+    End Select
+End Function
+
 Private Function FormatShapePropertyValue(ByVal controlID As String, ByVal value As Single) As String
     controlID = NormalizeShapePropertyControlId(controlID)
 
@@ -828,17 +773,13 @@ Private Function FormatShapePropertyValue(ByVal controlID As String, ByVal value
     End Select
 End Function
 
-Private Function GetParagraphFormat(ByVal shp As Shape) As TextFrame2
-    Set GetParagraphFormat = shp.TextFrame2
-End Function
-
 Private Function TryGetParagraphPropertyValue(ByVal shp As Shape, ByVal controlID As String, ByRef value As Single) As Boolean
     Dim textRange As TextRange2
 
     On Error GoTo ErrHandler
 
     controlID = NormalizeShapePropertyControlId(controlID)
-    Set textRange = GetParagraphFormat(shp).TextRange
+    Set textRange = shp.TextFrame2.TextRange
 
     If textRange.Paragraphs.Count > 0 Then
         Select Case controlID
@@ -932,7 +873,7 @@ Private Function TrySetParagraphPropertyValue(ByVal shp As Shape, ByVal controlI
     On Error GoTo ErrHandler
 
     controlID = NormalizeShapePropertyControlId(controlID)
-    Set textRange = GetParagraphFormat(shp).TextRange
+    Set textRange = shp.TextFrame2.TextRange
 
     Select Case controlID
     Case "ebParIndentFirst"
@@ -1237,14 +1178,3 @@ Sub GetThinkCellMenuContent(control As IRibbonControl, ByRef xmlStr)
 '             "<button id=""xxbutton3"" label=""Button 3"" />" & vbNewLine & _
 '             "</menu>"
 End Sub
-
-Sub test()
-    Dim oAgenda As ToolboxAgenda
-    
-    Set oAgenda = New ToolboxAgenda
-    
-    oAgenda.CreateOrUpdateAgenda
-    
-End Sub
-
-
