@@ -7,11 +7,19 @@ Public Function GetActiveShapeRange() As ShapeRange
     On Error GoTo ErrHandler
 
     Set sel = ActiveWindow.Selection
-    Set GetActiveShapeRange = GetSelectionShapeRange(sel)
-    If GetActiveShapeRange Is Nothing Then
-        Set GetActiveShapeRange = GetTextSelectionShapeRange(sel)
+    If sel Is Nothing Then Exit Function
+    
+    If sel.HasChildShapeRange Then
+        Set GetActiveShapeRange = sel.ChildShapeRange
+    ElseIf sel.Type = ppSelectionShapes Or sel.Type = ppSelectionText Then
+        Set GetActiveShapeRange = sel.ShapeRange
     End If
-    Exit Function
+    
+'    Set GetActiveShapeRange = GetSelectionShapeRange(sel)
+'    If GetActiveShapeRange Is Nothing Then
+'        Set GetActiveShapeRange = GetTextSelectionShapeRange(sel)
+'    End If
+'    Exit Function
 
 ErrHandler:
 End Function
@@ -121,69 +129,69 @@ Private Function SortShapeRange(ByVal shpRange As ShapeRange, ByVal sortByTop As
     SortShapeRange = result
 End Function
 
-Private Function GetTextSelectionShapeRange(ByVal sel As Selection) As ShapeRange
-    Dim candidateShape As Shape
-    Dim shapeNames(0 To 0) As String
+'Private Function GetTextSelectionShapeRange(ByVal sel As Selection) As ShapeRange
+'    Dim candidateShape As Shape
+'    Dim shapeNames(0 To 0) As String
+'
+'    On Error GoTo ErrHandler
+'
+'    If sel Is Nothing Then Exit Function
+'    If sel.Type <> ppSelectionText Then Exit Function
+'
+'    If sel.HasChildShapeRange Then
+'        Set GetTextSelectionShapeRange = sel.ChildShapeRange
+'        Exit Function
+'    End If
+'
+'    Set candidateShape = TryGetShapeFromTextParent(sel.TextRange2)
+'    If candidateShape Is Nothing Then
+'        Set candidateShape = TryGetShapeFromTextParent(sel.TextRange)
+'    End If
+'    If candidateShape Is Nothing Then
+'        Set candidateShape = TryGetSelectionShape(sel)
+'    End If
+'
+'    If candidateShape Is Nothing Then Exit Function
+'
+'    shapeNames(0) = candidateShape.Name
+'    Set GetTextSelectionShapeRange = ActiveWindow.View.Slide.Shapes.Range(shapeNames)
+'    Exit Function
+'
+'ErrHandler:
+'End Function
 
-    On Error GoTo ErrHandler
+'Private Function TryGetSelectionShape(ByVal sel As Selection) As Shape
+'    On Error GoTo ErrHandler
+'
+'    If sel Is Nothing Then Exit Function
+'    Set TryGetSelectionShape = sel.ShapeRange(1)
+'    Exit Function
+'
+'ErrHandler:
+'End Function
 
-    If sel Is Nothing Then Exit Function
-    If sel.Type <> ppSelectionText Then Exit Function
-
-    If sel.HasChildShapeRange Then
-        Set GetTextSelectionShapeRange = sel.ChildShapeRange
-        Exit Function
-    End If
-    
-    Set candidateShape = TryGetShapeFromTextParent(sel.TextRange2)
-    If candidateShape Is Nothing Then
-        Set candidateShape = TryGetShapeFromTextParent(sel.TextRange)
-    End If
-    If candidateShape Is Nothing Then
-        Set candidateShape = TryGetSelectionShape(sel)
-    End If
-
-    If candidateShape Is Nothing Then Exit Function
-
-    shapeNames(0) = candidateShape.Name
-    Set GetTextSelectionShapeRange = ActiveWindow.View.Slide.Shapes.Range(shapeNames)
-    Exit Function
-
-ErrHandler:
-End Function
-
-Private Function TryGetSelectionShape(ByVal sel As Selection) As Shape
-    On Error GoTo ErrHandler
-
-    If sel Is Nothing Then Exit Function
-    Set TryGetSelectionShape = sel.ShapeRange(1)
-    Exit Function
-
-ErrHandler:
-End Function
-
-Private Function TryGetShapeFromTextParent(ByVal sourceObject As Object) As Shape
-    Dim parentObject As Object
-
-    On Error GoTo ErrHandler
-
-    If sourceObject Is Nothing Then Exit Function
-
-    Set parentObject = sourceObject.Parent
-    If parentObject Is Nothing Then Exit Function
-
-    Select Case TypeName(parentObject)
-    Case "Shape"
-        Set TryGetShapeFromTextParent = parentObject
-    Case "TextFrame"
-        Set TryGetShapeFromTextParent = parentObject.Parent
-    Case "TextFrame2"
-        Set TryGetShapeFromTextParent = parentObject.Parent
-    End Select
-    Exit Function
-
-ErrHandler:
-End Function
+'Private Function TryGetShapeFromTextParent(ByVal sourceObject As Object) As Shape
+'    Dim parentObject As Object
+'
+'    On Error GoTo ErrHandler
+'
+'    If sourceObject Is Nothing Then Exit Function
+'
+'    Set parentObject = sourceObject.Parent
+'    If parentObject Is Nothing Then Exit Function
+'
+'    Select Case TypeName(parentObject)
+'    Case "Shape"
+'        Set TryGetShapeFromTextParent = parentObject
+'    Case "TextFrame"
+'        Set TryGetShapeFromTextParent = parentObject.Parent
+'    Case "TextFrame2"
+'        Set TryGetShapeFromTextParent = parentObject.Parent
+'    End Select
+'    Exit Function
+'
+'ErrHandler:
+'End Function
 
 Private Function ShapeContainsTextFrame(ByVal shp As Shape) As Boolean
     Dim groupItem As Shape
