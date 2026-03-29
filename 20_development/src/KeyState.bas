@@ -97,6 +97,7 @@ Private Function RefreshMacModifierSnapshot() As Boolean
 End Function
 
 Public Sub BeginModifierKeySnapshot()
+    If Not KeysEnabled Then Exit Sub
     If mMacModifierSnapshotActive Then Exit Sub
 
     mMacModifierSnapshotActive = True
@@ -112,7 +113,9 @@ End Sub
 Private Function IsMacModifierDown(ByVal ModifierMask As Long) As Boolean
     Dim flags As Long
 
-    If mMacModifierSnapshotActive Then
+    If Not KeysEnabled Then
+        IsMacModifierDown = False
+    ElseIf mMacModifierSnapshotActive Then
         If mMacModifierSnapshotValid Then
             flags = mMacModifierSnapshotFlags
             IsMacModifierDown = ((flags And ModifierMask) <> 0)
