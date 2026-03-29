@@ -4,7 +4,7 @@ Option Explicit
 
 ' Zwei-dimensionales Array nach Werten in "erster Dimension" sortieren
 ' Array besteht aus Tupeln (Wert, Objekt), Sortierung erfolgt nach Wert
-' Quelle für Quick-Sort Funktion: http://stackoverflow.com/questions/152319/vba-array-sort-function
+' Quelle fŸr Quick-Sort Funktion: http://stackoverflow.com/questions/152319/vba-array-sort-function
 Public Sub QuickSortM(vArray As Variant, inLow As Long, inHi As Long)
 
   Dim pivot   As Variant

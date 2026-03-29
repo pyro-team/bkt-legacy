@@ -33,11 +33,11 @@ Public Function LineHeight(ByVal par As TextRange) As Single
     With par
         If .ParagraphFormat.LineRuleWithin Then
             ' spacing = number of lines
-            ' Annahme zur Korrektur der Abstände: Abstand zwischen zwei Zeilen ist 0.2pt
+            ' Annahme zur Korrektur der Abst?nde: Abstand zwischen zwei Zeilen ist 0.2pt
             LineHeight = .Font.Size * (Max(0, .ParagraphFormat.SpaceWithin) + 0.2)
         Else
             ' spacing = number of pt
-            ' Annahme zur Korrektur der Abstände: Abstand zwischen zwei Zeilen ist 0.2pt
+            ' Annahme zur Korrektur der Abst?nde: Abstand zwischen zwei Zeilen ist 0.2pt
             LineHeight = .ParagraphFormat.SpaceWithin '+ 0.1 * .Font.Size
         End If
     End With
@@ -86,7 +86,7 @@ Public Sub DeleteUnselectedSlides(ByRef newPres As Presentation, ByRef selectedS
     Dim sldIndex As Long
     Dim deleteSlide As Boolean
 
-    ' Folien entfernen, die nicht ausgewählt waren
+    ' Folien entfernen, die nicht ausgew?hlt waren
     ' Folien rueckwaerts durchgehen und schauen, ob Index in Range dabei ist
     For sldIndex = newPres.Slides.Count To 1 Step -1
         deleteSlide = True
@@ -110,7 +110,7 @@ Public Function GetSelectionShapeRange(ByRef sel As Selection) As ShapeRange
 End Function
 
 
-' Funktionen für top, left, width, height unter Berücksichtigung der ScaleFrom-Einstellung
+' Funktionen f?r top, left, width, height unter Ber?cksichtigung der ScaleFrom-Einstellung
 
 Public Function GetLeft(ByRef shp As Shape) As Single
     Dim pin_add As Single
@@ -180,3 +180,4 @@ Exit Sub
 ErrFallback:
     shp.Height = hght
 End Sub
+

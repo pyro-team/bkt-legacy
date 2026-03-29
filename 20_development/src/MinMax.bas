@@ -24,17 +24,17 @@ End Function
 
 Public Function Mean(ParamArray P())
 ' Mean / average
-Dim S As Double, N As Long, i As Long
+Dim S As Double, n As Long, i As Long
   S = 0
-  N = 0
+  n = 0
   For i = LBound(P) To UBound(P)
     If IsNumeric(P(i)) Then
       S = S + CDbl(P(i))
-      N = N + 1
+      n = n + 1
     End If
   Next i
-  If N > 0 Then
-    Mean = S / N
+  If n > 0 Then
+    Mean = S / n
   Else
     Mean = Null
   End If
@@ -44,3 +44,4 @@ Public Function Last(ParamArray P())
 ' Last value
   Last = P(UBound(P))
 End Function
+

@@ -108,7 +108,7 @@ Sub isEnabled(control As IRibbonControl, ByRef enabled)
     Dim shpRange As ShapeRange
     Dim firstShp As Shape
     Dim shapeCount As Long
-    Dim sldRange As SlideRange
+'    Dim sldRange As SlideRange
     
     On Error GoTo Err_Handler
     
@@ -125,11 +125,12 @@ Sub isEnabled(control As IRibbonControl, ByRef enabled)
         'enabled = oAgenda.CanUpdateAgenda
         enabled = True
     Case "btnSendSelectionAsAttachment", "btnSelectedSlidesSaveAs"
-        Set sldRange = GetActiveSlideRange()
-        enabled = Not sldRange Is Nothing
+        enabled = True
+'        Set sldRange = GetActiveSlideRange()
+'        enabled = Not sldRange Is Nothing
         
     Case Else
-        ' Enabled-Status von Selection abh√§ngig
+        ' Enabled-Status von Selection abhängig
         If shpRange Is Nothing Then
             enabled = False
         Else
@@ -174,7 +175,7 @@ End Sub
 
 
 
-' Initialisierungsfunktion f√ºr CheckBoxen
+' Initialisierungsfunktion für CheckBoxen
 ' Gibt anhand der control.id den Pressed-Status der Ceckboxen zurueck
 Function cbValue_init(control As IRibbonControl, ByRef returnedVal) As Boolean
     Dim shpRange As ShapeRange
@@ -247,8 +248,8 @@ Err_Handler:
 End Function
 
 
-' Funktion f√ºr √Ñnderungen an Checkboxen
-' Zu control.id geh√∂rige Eigenschaft wird an dem Pressed-Status der Checkbox angepasst
+' Funktion für Änderungen an Checkboxen
+' Zu control.id gehörige Eigenschaft wird an dem Pressed-Status der Checkbox angepasst
 Sub cbValue_onChange(control As IRibbonControl, pressed As Boolean)
     Dim shp As Shape
     Dim shpRange As ShapeRange
@@ -286,7 +287,7 @@ Sub cbValue_onChange(control As IRibbonControl, pressed As Boolean)
         SetKeysEnabled (pressed)
     
     Case Else:
-        ' Alle Controls die selektierte Shapes ben√∂tigen
+        ' Alle Controls die selektierte Shapes benötigen
         Set shpRange = GetActiveShapeRange()
         If shpRange Is Nothing Then Exit Sub
     
@@ -310,7 +311,7 @@ Err_Handler:
 End Sub
 
 
-' Initialisierungsfunktion f√ºr TextBoxen
+' Initialisierungsfunktion für TextBoxen
 ' Liefert Wert zu control.id, der in den Ribbon-Textboxen angezeigt wird
 Sub ebPixelValue_init(control As IRibbonControl, ByRef returnedVal)
     Dim shpRange As ShapeRange
@@ -388,8 +389,8 @@ Err_Handler:
 End Function
 
 
-' Funktion f√ºr √Ñnderungen an Textboxen mit Integer-Werten
-' Zu control.id geh√∂rige Eigenschaft wird an dem Wert in der Textbox angepasst
+' Funktion für Änderungen an Textboxen mit Integer-Werten
+' Zu control.id gehörige Eigenschaft wird an dem Wert in der Textbox angepasst
 Sub ebIntValue_onChange(control As IRibbonControl, text As String)
     Dim value As Integer
     Dim shp As Shape
@@ -427,8 +428,8 @@ Exit Sub
 Err_Handler:
 End Sub
 
-' Funktion f√ºr √Ñnderungen an Textboxen mit Pixel-Werten (L√§ngen)
-' Zu control.id geh√∂rige Eigenschaft wird an dem Wert in der Textbox angepasst
+' Funktion für Änderungen an Textboxen mit Pixel-Werten (Längen)
+' Zu control.id gehörige Eigenschaft wird an dem Wert in der Textbox angepasst
 Sub ebPixelValue_onChange(control As IRibbonControl, text As String)
     Dim value As Single
     Dim shp As Shape
@@ -547,9 +548,9 @@ Exit Sub
 Err_Handler:
 End Sub
 
-' Zu control.id geh√∂rige Eigenschaft wird um value erh√∂ht/verringert
+' Zu control.id gehörige Eigenschaft wird um value erhöht/verringert
 ' Je nach control.id erfolgt Umrechnung von cm in punkte
-' Bei nicht gedr√ºckter control-taste wird ein Vielfaches von value verwendet
+' Bei nicht gedrückter control-taste wird ein Vielfaches von value verwendet
 Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
     Dim shp As Shape
     Dim ptValue As Single
@@ -680,9 +681,9 @@ End Sub
 
 
 
-' Liefert die Gr√∂√üe der Rundung eines abgerundeten Rechtecks in pt
-' Prozent-Wert in den adjustments des shapes wird anhand der Recheckgr√∂√üe umgerechnet
-' Funktioniert auch f√ºr Pfeile (F√ºnfecke)
+' Liefert die Größe der Rundung eines abgerundeten Rechtecks in pt
+' Prozent-Wert in den adjustments des shapes wird anhand der Recheckgröße umgerechnet
+' Funktioniert auch für Pfeile (Fünfecke)
 Private Function RoundedCornerSize(ByVal shp As Shape, Optional adj As Integer = 1) As Double
     Dim ref As Double
     
@@ -696,7 +697,7 @@ Private Function RoundedCornerSize(ByVal shp As Shape, Optional adj As Integer =
         Exit Function
     End If
     
-    ' Umrechnung Prozent zu Minimum aus H√∂he und Breite bei bekannten Shape-Typen
+    ' Umrechnung Prozent zu Minimum aus Höhe und Breite bei bekannten Shape-Typen
     If adj = 1 Then
         Select Case shp.AutoShapeType
         Case msoShapePentagon, msoShapeChevron, msoShapeHexagon, msoShapeRoundedRectangle, msoShapeSnip1Rectangle, msoShapeSnip2DiagRectangle, msoShapeSnip2SameRectangle, msoShapeSnipRoundRectangle, msoShapeRound1Rectangle, msoShapeRound2DiagRectangle, msoShapeRound2SameRectangle
@@ -715,15 +716,15 @@ Exit Function
 Err_Handler:
 End Function
 
-' √Ñndert die Gr√∂√üe der Rundung eines abgerundeten Rechtecks
-' Wert (in pt) wird anhand der Reckeckgr√∂√üe auf Prozent-Wert in den adjustments des shapes umgerechnet
-' Funktioniert auch f√ºr Pfeile (F√ºnfecke)
+' Ändert die Größe der Rundung eines abgerundeten Rechtecks
+' Wert (in pt) wird anhand der Reckeckgröße auf Prozent-Wert in den adjustments des shapes umgerechnet
+' Funktioniert auch für Pfeile (Fünfecke)
 Public Function SetRoundedCornerSize(ByVal shp As Shape, ByVal newValue As Double, Optional adj As Integer = 1)
     Dim ref As Double
     
     On Error GoTo Err_Handler
     
-    ' Umrechnung Prozent zu Minimum aus H√∂he und Breite bei bekannten Shape-Typen
+    ' Umrechnung Prozent zu Minimum aus Höhe und Breite bei bekannten Shape-Typen
     If adj = 1 Then
         Select Case shp.AutoShapeType
         Case msoShapePentagon, msoShapeChevron, msoShapeHexagon, msoShapeRoundedRectangle, msoShapeSnip1Rectangle, msoShapeSnip2DiagRectangle, msoShapeSnip2SameRectangle, msoShapeSnipRoundRectangle, msoShapeRound1Rectangle, msoShapeRound2DiagRectangle, msoShapeRound2SameRectangle
@@ -792,44 +793,44 @@ Private Function FormatShapePropertyValue(ByVal controlID As String, ByVal value
 End Function
 
 Private Function TryGetParagraphPropertyValue(ByVal shp As Shape, ByVal controlID As String, ByRef value As Single) As Boolean
-    Dim textRange As TextRange2
+    Dim txtRange As TextRange2
 
     On Error GoTo ErrHandler
 
     controlID = NormalizeShapePropertyControlId(controlID)
-    Set textRange = shp.TextFrame2.TextRange
+    Set txtRange = shp.TextFrame2.TextRange
 
-    If textRange.Paragraphs.Count > 0 Then
+    If txtRange.Paragraphs.Count > 0 Then
         Select Case controlID
         Case "ebParIndentFirst"
-            value = textRange.Paragraphs(1).ParagraphFormat.FirstLineIndent
+            value = txtRange.Paragraphs(1).ParagraphFormat.FirstLineIndent
         Case "ebParIndentLeft"
-            value = textRange.Paragraphs(1).ParagraphFormat.LeftIndent
+            value = txtRange.Paragraphs(1).ParagraphFormat.LeftIndent
         Case "ebParIndentRight"
-            value = textRange.Paragraphs(1).ParagraphFormat.RightIndent
+            value = txtRange.Paragraphs(1).ParagraphFormat.RightIndent
         Case "ebParPreSep"
-            value = textRange.Paragraphs(1).ParagraphFormat.SpaceBefore
+            value = txtRange.Paragraphs(1).ParagraphFormat.SpaceBefore
         Case "ebParPostSep"
-            value = textRange.Paragraphs(1).ParagraphFormat.SpaceAfter
+            value = txtRange.Paragraphs(1).ParagraphFormat.SpaceAfter
         Case "ebParWithin"
-            value = textRange.Paragraphs(1).ParagraphFormat.SpaceWithin
+            value = txtRange.Paragraphs(1).ParagraphFormat.SpaceWithin
         Case Else
             Exit Function
         End Select
     Else
         Select Case controlID
         Case "ebParIndentFirst"
-            value = textRange.ParagraphFormat.FirstLineIndent
+            value = txtRange.ParagraphFormat.FirstLineIndent
         Case "ebParIndentLeft"
-            value = textRange.ParagraphFormat.LeftIndent
+            value = txtRange.ParagraphFormat.LeftIndent
         Case "ebParIndentRight"
-            value = textRange.ParagraphFormat.RightIndent
+            value = txtRange.ParagraphFormat.RightIndent
         Case "ebParPreSep"
-            value = textRange.ParagraphFormat.SpaceBefore
+            value = txtRange.ParagraphFormat.SpaceBefore
         Case "ebParPostSep"
-            value = textRange.ParagraphFormat.SpaceAfter
+            value = txtRange.ParagraphFormat.SpaceAfter
         Case "ebParWithin"
-            value = textRange.ParagraphFormat.SpaceWithin
+            value = txtRange.ParagraphFormat.SpaceWithin
         Case Else
             Exit Function
         End Select
@@ -886,26 +887,26 @@ ErrHandler:
 End Function
 
 Private Function TrySetParagraphPropertyValue(ByVal shp As Shape, ByVal controlID As String, ByVal newValue As Single) As Boolean
-    Dim textRange As TextRange2
+    Dim txtRange As TextRange2
 
     On Error GoTo ErrHandler
 
     controlID = NormalizeShapePropertyControlId(controlID)
-    Set textRange = shp.TextFrame2.TextRange
+    Set txtRange = shp.TextFrame2.TextRange
 
     Select Case controlID
     Case "ebParIndentFirst"
-        textRange.ParagraphFormat.FirstLineIndent = newValue
+        txtRange.ParagraphFormat.FirstLineIndent = newValue
     Case "ebParIndentLeft"
-        textRange.ParagraphFormat.LeftIndent = newValue
+        txtRange.ParagraphFormat.LeftIndent = newValue
     Case "ebParIndentRight"
-        textRange.ParagraphFormat.RightIndent = newValue
+        txtRange.ParagraphFormat.RightIndent = newValue
     Case "ebParPreSep"
-        textRange.ParagraphFormat.SpaceBefore = newValue
+        txtRange.ParagraphFormat.SpaceBefore = newValue
     Case "ebParPostSep"
-        textRange.ParagraphFormat.SpaceAfter = newValue
+        txtRange.ParagraphFormat.SpaceAfter = newValue
     Case "ebParWithin"
-        textRange.ParagraphFormat.SpaceWithin = newValue
+        txtRange.ParagraphFormat.SpaceWithin = newValue
     Case Else
         Exit Function
     End Select
@@ -1058,7 +1059,7 @@ Sub btnAction(control As IRibbonControl)
         SwapPosition
     Case "actSwapSize"
         SwapPositionSize
-    case "actReplaceKeepSize"
+    Case "actReplaceKeepSize"
         ReplaceKeepSize
     
     ' Horizontaler/Vertikaler Verbinder
@@ -1079,13 +1080,13 @@ Sub btnAction(control As IRibbonControl)
     Case "actAddProtectedNarrowSpace"
         AddProtectedNarrowSpace
     
-    ' Texte ersetzen/l√∂schen
+    ' Texte ersetzen/löschen
     Case "actShapeTextReplace"
         ReplaceAllText
     Case "actShapeTextRemove"
         RemoveAllText
     
-    ' Einf√ºgen
+    ' Einfügen
 '    Case "actPasteAsPicturePng"
 '        PasteAsPicturePng
     Case "actPasteToSlides"
@@ -1093,7 +1094,7 @@ Sub btnAction(control As IRibbonControl)
     Case "actPasteAndReplace"
         PasteAndReplace
         
-    ' Aufr√§umen
+    ' Aufräumen
     Case "actCleanAuthor"
         CleanAuthor
     Case "actCleanUnusedDesigns"
@@ -1107,7 +1108,7 @@ Sub btnAction(control As IRibbonControl)
     Case "actShapesShow"
         ShowShapes
     
-    ' Objekte zerlegen/zusammenf√ºhren
+    ' Objekte zerlegen/zusammenführen
     Case "actSplitShapeByParagraphs"
         SplitShapeByParagraphs
     Case "actJoinShapesWithText"
@@ -1250,3 +1251,5 @@ Sub GetThinkCellMenuContent(control As IRibbonControl, ByRef xmlStr)
 '             "<button id=""xxbutton3"" label=""Button 3"" />" & vbNewLine & _
 '             "</menu>"
 End Sub
+
+

@@ -23,7 +23,7 @@ Private Sub PPTEvent_WindowActivate(ByVal pres As Presentation, ByVal Wn As Docu
     Ribbon.Invalidate
 End Sub
 
-Private Sub PPTEvent_WindowSelectionChange(ByVal Sel As selection)
+Private Sub PPTEvent_WindowSelectionChange(ByVal sel As Selection)
     On Error Resume Next
     Ribbon.Invalidate
 '    ' Immer zum Toolbox Tab wechseln

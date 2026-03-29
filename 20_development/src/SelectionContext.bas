@@ -91,7 +91,7 @@ Public Function ShapeRangeSortedByLeft(ByVal shpRange As ShapeRange) As Shape()
 End Function
 
 Private Function SortShapeRange(ByVal shpRange As ShapeRange, ByVal sortByTop As Boolean) As Shape()
-    Dim shapes() As Variant
+    Dim Shapes() As Variant
     Dim result() As Shape
     Dim i As Long
     Dim shapeCount As Long
@@ -101,21 +101,21 @@ Private Function SortShapeRange(ByVal shpRange As ShapeRange, ByVal sortByTop As
     shapeCount = shpRange.Count
     If shapeCount = 0 Then Exit Function
 
-    ReDim shapes(1 To shapeCount, 1 To 2)
+    ReDim Shapes(1 To shapeCount, 1 To 2)
     For i = 1 To shapeCount
         If sortByTop Then
-            shapes(i, 1) = shpRange(i).Top
+            Shapes(i, 1) = shpRange(i).Top
         Else
-            shapes(i, 1) = shpRange(i).Left
+            Shapes(i, 1) = shpRange(i).Left
         End If
-        Set shapes(i, 2) = shpRange(i)
+        Set Shapes(i, 2) = shpRange(i)
     Next i
 
-    QuickSortM shapes, 1, shapeCount
+    QuickSortM Shapes, 1, shapeCount
 
     ReDim result(1 To shapeCount)
     For i = 1 To shapeCount
-        Set result(i) = shapes(i, 2)
+        Set result(i) = Shapes(i, 2)
     Next i
 
     SortShapeRange = result
@@ -213,3 +213,4 @@ Private Function ShapeContainsTextFrame(ByVal shp As Shape) As Boolean
 ErrHandler:
     ShapeContainsTextFrame = False
 End Function
+

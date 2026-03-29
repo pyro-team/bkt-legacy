@@ -3,23 +3,23 @@ Option Explicit
 
 ' Liefert ein Array mit Shape-Objekten, sortiert nach Top-Wert (Abstand vom oberen Rand)
 Public Function ActiveWindowSelectionSortedByTop() As Shape()
-    Dim shapes() As Variant
+    Dim Shapes() As Variant
     Dim result() As Shape
     Dim i As Integer
     Dim Count As Integer
     
-    ' zwei-dimensionales Array aus Top-Werten und Shape-Objekten befüllen
-    ReDim shapes(1 To ActiveWindow.selection.ShapeRange.Count, 1 To 2)
-    Count = ActiveWindow.selection.ShapeRange.Count
+    ' zwei-dimensionales Array aus Top-Werten und Shape-Objekten befŸllen
+    ReDim Shapes(1 To ActiveWindow.Selection.ShapeRange.Count, 1 To 2)
+    Count = ActiveWindow.Selection.ShapeRange.Count
     For i = 1 To Count
-        shapes(i, 1) = ActiveWindow.selection.ShapeRange(i).Top
-        Set shapes(i, 2) = ActiveWindow.selection.ShapeRange(i)
+        Shapes(i, 1) = ActiveWindow.Selection.ShapeRange(i).Top
+        Set Shapes(i, 2) = ActiveWindow.Selection.ShapeRange(i)
     Next
-    QuickSortM shapes, 1, ActiveWindow.selection.ShapeRange.Count
+    QuickSortM Shapes, 1, ActiveWindow.Selection.ShapeRange.Count
     
-    ReDim result(1 To ActiveWindow.selection.ShapeRange.Count)
-    For i = 1 To ActiveWindow.selection.ShapeRange.Count
-        Set result(i) = shapes(i, 2)
+    ReDim result(1 To ActiveWindow.Selection.ShapeRange.Count)
+    For i = 1 To ActiveWindow.Selection.ShapeRange.Count
+        Set result(i) = Shapes(i, 2)
     Next
     
     ActiveWindowSelectionSortedByTop = result
@@ -27,24 +27,24 @@ End Function
 
 ' Liefert ein Array mit Shape-Objekten, sortiert nach Left-Wert (Abstand vom linken Rand)
 Public Function ActiveWindowSelectionSortedByLeft() As Shape()
-    Dim shapes() As Variant
+    Dim Shapes() As Variant
     Dim result() As Shape
     Dim i As Integer
     Dim Count As Integer
     
-    ' zwei-dimensionales Array aus Left-Werten und Shape-Objekten befüllen
-    ReDim shapes(1 To ActiveWindow.selection.ShapeRange.Count, 1 To 2)
-    Count = ActiveWindow.selection.ShapeRange.Count
+    ' zwei-dimensionales Array aus Left-Werten und Shape-Objekten befŸllen
+    ReDim Shapes(1 To ActiveWindow.Selection.ShapeRange.Count, 1 To 2)
+    Count = ActiveWindow.Selection.ShapeRange.Count
     For i = 1 To Count
-        ' Array umgekehrt befüllen, damit Reihenfolge von Shapes mit geichen Werten erhalten bleibt
-        shapes(i, 1) = ActiveWindow.selection.ShapeRange(i).Left
-        Set shapes(i, 2) = ActiveWindow.selection.ShapeRange(i)
+        ' Array umgekehrt befŸllen, damit Reihenfolge von Shapes mit geichen Werten erhalten bleibt
+        Shapes(i, 1) = ActiveWindow.Selection.ShapeRange(i).Left
+        Set Shapes(i, 2) = ActiveWindow.Selection.ShapeRange(i)
     Next
-    QuickSortM shapes, 1, ActiveWindow.selection.ShapeRange.Count
+    QuickSortM Shapes, 1, ActiveWindow.Selection.ShapeRange.Count
     
-    ReDim result(1 To ActiveWindow.selection.ShapeRange.Count)
-    For i = 1 To ActiveWindow.selection.ShapeRange.Count
-        Set result(i) = shapes(i, 2)
+    ReDim result(1 To ActiveWindow.Selection.ShapeRange.Count)
+    For i = 1 To ActiveWindow.Selection.ShapeRange.Count
+        Set result(i) = Shapes(i, 2)
     Next
     
     ActiveWindowSelectionSortedByLeft = result
@@ -54,18 +54,18 @@ End Function
 
 
 
-' Alle Shapes auswählen, bei denen Shape-Typ mit aktuellen Shpape-Typ übereinstimmt
+' Alle Shapes auswŠhlen, bei denen Shape-Typ mit aktuellen Shpape-Typ Ÿbereinstimmt
 Public Sub SelectShapesByShapeType()
     Dim shp As Shape
     Dim shpMaster As Shape
     
     On Error GoTo Err_Handler
-    If ActiveWindow.selection.Type <> ppSelectionShapes Then Exit Sub
+    If ActiveWindow.Selection.Type <> ppSelectionShapes Then Exit Sub
     
-    Set shpMaster = ActiveWindow.selection.ShapeRange(1)
-    ActiveWindow.selection.Unselect
+    Set shpMaster = ActiveWindow.Selection.ShapeRange(1)
+    ActiveWindow.Selection.Unselect
     
-    For Each shp In ActiveWindow.View.Slide.shapes
+    For Each shp In ActiveWindow.View.Slide.Shapes
         If shp.Visible And shp.Type = shpMaster.Type And shp.AutoShapeType = shpMaster.AutoShapeType Then
             shp.Select Replace:=False
         End If
@@ -76,18 +76,18 @@ Err_Handler:
     MsgBox "Fehler " & Err.Number & ":" & vbNewLine & Err.Description
 End Sub
 
-' Alle Shapes auswählen, bei denen Shape-Typ mit aktuellen Shpape-Hintergrund übereinstimmt
+' Alle Shapes auswŠhlen, bei denen Shape-Typ mit aktuellen Shpape-Hintergrund Ÿbereinstimmt
 Public Sub SelectShapesByFillType()
     Dim shp As Shape
     Dim shpMaster As Shape
     
     On Error GoTo Err_Handler
-    If ActiveWindow.selection.Type <> ppSelectionShapes Then Exit Sub
+    If ActiveWindow.Selection.Type <> ppSelectionShapes Then Exit Sub
     
-    Set shpMaster = ActiveWindow.selection.ShapeRange(1)
-    ActiveWindow.selection.Unselect
+    Set shpMaster = ActiveWindow.Selection.ShapeRange(1)
+    ActiveWindow.Selection.Unselect
     
-    For Each shp In ActiveWindow.View.Slide.shapes
+    For Each shp In ActiveWindow.View.Slide.Shapes
         If shp.Visible And shp.Fill.Visible = shpMaster.Fill.Visible And shp.Fill.Type = shpMaster.Fill.Type And shp.Fill.ForeColor.RGB = shpMaster.Fill.ForeColor.RGB Then
             shp.Select Replace:=False
         End If
@@ -98,18 +98,18 @@ Err_Handler:
     MsgBox "Fehler " & Err.Number & ":" & vbNewLine & Err.Description
 End Sub
 
-' Alle Shapes auswählen, bei denen Shape-Typ mit aktuellen Shpape-Rahmen übereinstimmt
+' Alle Shapes auswŠhlen, bei denen Shape-Typ mit aktuellen Shpape-Rahmen Ÿbereinstimmt
 Public Sub SelectShapesByLineType()
     Dim shp As Shape
     Dim shpMaster As Shape
     
     On Error GoTo Err_Handler
-    If ActiveWindow.selection.Type <> ppSelectionShapes Then Exit Sub
+    If ActiveWindow.Selection.Type <> ppSelectionShapes Then Exit Sub
     
-    Set shpMaster = ActiveWindow.selection.ShapeRange(1)
-    ActiveWindow.selection.Unselect
+    Set shpMaster = ActiveWindow.Selection.ShapeRange(1)
+    ActiveWindow.Selection.Unselect
     
-    For Each shp In ActiveWindow.View.Slide.shapes
+    For Each shp In ActiveWindow.View.Slide.Shapes
         If shp.Visible And shp.Line.Visible = shpMaster.Line.Visible And shp.Line.Weight = shpMaster.Line.Weight And shp.Line.DashStyle = shpMaster.Line.DashStyle And shp.Line.ForeColor.RGB = shpMaster.Line.ForeColor.RGB Then
             shp.Select Replace:=False
         End If

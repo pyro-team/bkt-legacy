@@ -13,7 +13,7 @@ Public Sub AddSticker()
     
     ' Shape rechts oben auf slide erstellen
     'Set shp = sld.shapes.AddShape(msoShapeRectangle, 0, 60, 100, 20)
-    Set shp = sld.shapes.AddTextbox(msoTextOrientationHorizontal, 0, 60, 100, 20)
+    Set shp = sld.Shapes.AddTextbox(msoTextOrientationHorizontal, 0, 60, 100, 20)
     ' Shape-Typ ist links-rechts-Pfeil, weil es die passenden Connector-Ecken hat
     shp.AutoShapeType = msoShapeLeftRightArrow
     ' Shape-Anpassung, so dass es wie ein Rechteck aussieht
@@ -43,7 +43,7 @@ Public Sub AddSticker()
     Set fontcol = shp.TextFrame.TextRange.Font.Color
     
     ' Connectoren erstellen und mit Connector-Ecken des Shapes verbinden
-    With sld.shapes.AddConnector(Type:=msoConnectorStraight, BeginX:=0, _
+    With sld.Shapes.AddConnector(Type:=msoConnectorStraight, BeginX:=0, _
             BeginY:=0, EndX:=100, EndY:=100)
         .ConnectorFormat.BeginConnect ConnectedShape:=shp, ConnectionSite:=1
         .ConnectorFormat.EndConnect ConnectedShape:=shp, ConnectionSite:=3
@@ -56,7 +56,7 @@ Public Sub AddSticker()
             .Line.ForeColor.RGB = fontcol.RGB
         End If
     End With
-    With sld.shapes.AddConnector(Type:=msoConnectorStraight, BeginX:=0, _
+    With sld.Shapes.AddConnector(Type:=msoConnectorStraight, BeginX:=0, _
             BeginY:=0, EndX:=100, EndY:=100)
         .ConnectorFormat.BeginConnect ConnectedShape:=shp, ConnectionSite:=5
         .ConnectorFormat.EndConnect ConnectedShape:=shp, ConnectionSite:=7
@@ -70,7 +70,7 @@ Public Sub AddSticker()
         End If
     End With
     
-    ' Text auswï¿½hlen
+    ' Text ausw?hlen
     shp.Select
     shp.TextFrame.TextRange.Select
 End Sub
@@ -86,7 +86,7 @@ Public Sub AddProcessShapes(Optional numSteps As Long = 3)
     Dim shapeWidth As Single
     Dim shapeHeight As Single
     Dim minDimension As Single
-    Dim adjustmentValue As Single
+    Dim AdjustmentValue As Single
     Dim shapeNames() As Variant
 
     If numSteps < 1 Then Exit Sub
@@ -100,22 +100,22 @@ Public Sub AddProcessShapes(Optional numSteps As Long = 3)
 
     minDimension = shapeWidth
     If shapeHeight < minDimension Then minDimension = shapeHeight
-    adjustmentValue = CentimetersToPoints(0.5) / minDimension
+    AdjustmentValue = CentimetersToPoints(0.5) / minDimension
 
     ReDim shapeNames(1 To numSteps)
 
     For i = 1 To numSteps
         If i = 1 Then
-            Set shp = sld.shapes.AddShape(msoShapePentagon, baseLeft + (i - 1) * shapeWidth, baseTop, shapeWidth, shapeHeight)
+            Set shp = sld.Shapes.AddShape(msoShapePentagon, baseLeft + (i - 1) * shapeWidth, baseTop, shapeWidth, shapeHeight)
         Else
-            Set shp = sld.shapes.AddShape(msoShapeChevron, baseLeft + (i - 1) * shapeWidth, baseTop, shapeWidth, shapeHeight)
+            Set shp = sld.Shapes.AddShape(msoShapeChevron, baseLeft + (i - 1) * shapeWidth, baseTop, shapeWidth, shapeHeight)
         End If
 
-        shp.Adjustments(1) = adjustmentValue
+        shp.Adjustments(1) = AdjustmentValue
         shapeNames(i) = shp.Name
     Next i
 
-    sld.shapes.Range(shapeNames).Select
+    sld.Shapes.Range(shapeNames).Select
 End Sub
 
 
@@ -123,16 +123,16 @@ Public Sub AddConnectorShapeLeftRight()
     Dim shpLeft As Shape
     Dim shpRight As Shape
     Dim shpConnector As Shape
-    Dim shapes As Variant
+    Dim Shapes As Variant
     
     On Error GoTo Err_Handler
     
-    shapes = ActiveWindowSelectionSortedByLeft()
+    Shapes = ActiveWindowSelectionSortedByLeft()
     
-    Set shpLeft = shapes(1)
-    Set shpRight = shapes(2)
+    Set shpLeft = Shapes(1)
+    Set shpRight = Shapes(2)
     
-    Set shpConnector = ActiveWindow.View.Slide.shapes.AddShape(msoShapeRectangle, shpLeft.Left + shpLeft.Width, shpLeft.Top, shpRight.Left - shpLeft.Left - shpLeft.Width, shpLeft.Height)
+    Set shpConnector = ActiveWindow.View.Slide.Shapes.AddShape(msoShapeRectangle, shpLeft.Left + shpLeft.Width, shpLeft.Top, shpRight.Left - shpLeft.Left - shpLeft.Width, shpLeft.Height)
     
     ' node 2: top right
     shpConnector.Nodes.SetPosition 2, shpRight.Left, shpRight.Top
@@ -148,16 +148,16 @@ Public Sub AddConnectorShapeTopBottom()
     Dim shpTop As Shape
     Dim shpBottom As Shape
     Dim shpConnector As Shape
-    Dim shapes As Variant
+    Dim Shapes As Variant
     
     On Error GoTo Err_Handler
     
-    shapes = ActiveWindowSelectionSortedByTop()
+    Shapes = ActiveWindowSelectionSortedByTop()
     
-    Set shpTop = shapes(1)
-    Set shpBottom = shapes(2)
+    Set shpTop = Shapes(1)
+    Set shpBottom = Shapes(2)
     
-    Set shpConnector = ActiveWindow.View.Slide.shapes.AddShape(msoShapeRectangle, shpTop.Left, shpTop.Top + shpTop.Height, shpTop.Width, shpBottom.Top - shpTop.Top - shpTop.Height)
+    Set shpConnector = ActiveWindow.View.Slide.Shapes.AddShape(msoShapeRectangle, shpTop.Left, shpTop.Top + shpTop.Height, shpTop.Width, shpBottom.Top - shpTop.Top - shpTop.Height)
     
     ' node 3: bottom right
     shpConnector.Nodes.SetPosition 3, shpBottom.Left + shpBottom.Width, shpBottom.Top
@@ -185,7 +185,7 @@ Private Sub InsertSpecialCharacter(ByVal character As String)
     On Error GoTo Err_Handler
     
     If ActiveWindow.Selection.Type <> ppSelectionText Then Exit Sub
-    ActiveWindow.Selection.TextRange2.Text = character
+    ActiveWindow.Selection.TextRange2.text = character
     
 Exit Sub
 Err_Handler:
@@ -384,7 +384,7 @@ Public Sub MoveTextOutOfShapes()
 
     For Each shp In shpRange
         If shp.HasTextFrame And shp.TextFrame.HasText Then   'shp.TextFrame.TextRange.text <> "" Then
-            Set shpTxt = ActiveWindow.View.Slide.shapes.AddTextbox(msoTextOrientationHorizontal, shp.Left, shp.Top, shp.Width, shp.Height)
+            Set shpTxt = ActiveWindow.View.Slide.Shapes.AddTextbox(msoTextOrientationHorizontal, shp.Left, shp.Top, shp.Width, shp.Height)
             ' WordWrap / AutoSize
             shpTxt.TextFrame.WordWrap = msoTrue
             shpTxt.TextFrame.AutoSize = ppAutoSizeNone
@@ -404,7 +404,7 @@ Public Sub MoveTextOutOfShapes()
             shpTxt.TextFrame.TextRange.Paste
             'shp.TextFrame.TextRange.text = ""
             shp.TextFrame.DeleteText
-            ' Grï¿½ï¿½e wiederherstellen
+            ' Gr??e wiederherstellen
             shp.Top = shpTxt.Top
             shp.Height = shpTxt.Height
             shp.Width = shpTxt.Width
@@ -425,7 +425,7 @@ Public Sub MoveTextIntoShape()
     If shpRange Is Nothing Then Exit Sub
 
     If shpRange.Count <> 2 Then
-        MsgBox "Bitte eine Textbox und ein Shape-Objekt auswï¿½hlen.", vbInformation
+        MsgBox "Bitte eine Textbox und ein Shape-Objekt ausw?hlen.", vbInformation
         Exit Sub
     End If
     
@@ -455,11 +455,11 @@ Public Sub SplitShapeByParagraphs()
     Dim parIndex As Long
     Dim index As Long
     Dim parHeight As Single
-    Dim selection As ShapeRange
+    Dim rngSelection As ShapeRange
     
-    Set selection = GetActiveShapeRange()
-    If selection Is Nothing Then Exit Sub
-    For Each shp In selection
+    Set rngSelection = GetActiveShapeRange()
+    If rngSelection Is Nothing Then Exit Sub
+    For Each shp In rngSelection
         If shp.HasTextFrame And shp.TextFrame.HasText Then   'shp.TextFrame.TextRange.text <> "" Then
             shp.Select msoTrue
             
@@ -488,7 +488,7 @@ Public Sub SplitShapeByParagraphs()
                 ' Shape Hoehe abhaengig von Absaetzhoehe
                 shpCopy.Height = ParagraphHeight(shpCopy.TextFrame.TextRange.Paragraphs(1)) + shpCopy.TextFrame.MarginTop + shpCopy.TextFrame.MarginBottom
                 
-                ' --> ein Absatz bleibt ï¿½brig
+                ' --> ein Absatz bleibt ?brig
             Next
             
             ' letzten Shape nach unten schieben
@@ -503,7 +503,7 @@ Public Sub SplitShapeByParagraphs()
             ' Textbox Hoehe an Absatzhoehe anpassen
             shp.Height = ParagraphHeight(shp.TextFrame.TextRange.Paragraphs(1)) + shp.TextFrame.MarginTop + shp.TextFrame.MarginBottom
             ' Objekte vertikal verteilen
-            selection.Distribute msoDistributeVertically, msoFalse
+            rngSelection.Distribute msoDistributeVertically, msoFalse
         End If
     Next
 End Sub
@@ -512,21 +512,21 @@ End Sub
 ' andere Shapes werden geloescht.
 ' Reihenfolge abhaengig von Shape.top
 Public Sub JoinShapesWithText()
-    Dim shapes As Variant
+    Dim Shapes As Variant
     Dim index As Long
     Dim txtRange As TextRange
     Dim shp As Shape
     Dim parCount As Long
     
     ' Shapes nach top sortieren
-    shapes = ActiveWindowSelectionSortedByTop
-    ' Anapssung Grï¿½ï¿½e des ersten Shapes (Master-Shape)
-    Set shp = shapes(1)
-    shp.Height = Max(shp.Height, shapes(UBound(shapes)).Top + shapes(UBound(shapes)).Height - shp.Top)
+    Shapes = ActiveWindowSelectionSortedByTop
+    ' Anapssung Gr??e des ersten Shapes (Master-Shape)
+    Set shp = Shapes(1)
+    shp.Height = Max(shp.Height, Shapes(UBound(Shapes)).Top + Shapes(UBound(Shapes)).Height - shp.Top)
     
-    For index = 2 To UBound(shapes)
+    For index = 2 To UBound(Shapes)
         ' Text aus Shape kopieren
-        shapes(index).TextFrame.TextRange.Copy
+        Shapes(index).TextFrame.TextRange.Copy
         ' neuen Absatz in Master-Shape erstellen
         parCount = shp.TextFrame.TextRange.Paragraphs.Count
         Do
@@ -540,7 +540,7 @@ Public Sub JoinShapesWithText()
             txtRange.Characters(txtRange.Length, 1).Delete
         End If
         ' Shape loeschen
-        shapes(index).Delete
+        Shapes(index).Delete
     Next
 End Sub
 
@@ -548,16 +548,16 @@ End Sub
 Public Sub ReplaceAllText()
     Dim newText As String
     Dim shp As Shape
-    Dim selection As ShapeRange
-    Set selection = GetActiveShapeRange()
-    If selection Is Nothing Then Exit Sub
+    Dim rngSelection As ShapeRange
+    Set rngSelection = GetActiveShapeRange()
+    If rngSelection Is Nothing Then Exit Sub
 
     newText = InputBox("Neuen Text eingeben", "Text ersetzen", "tbd")
-    ' Bei Abbruch ist Rï¿½ckgabewert leer
+    ' Bei Abbruch ist R?ckgabewert leer
     If newText = "" Then Exit Sub
 
     On Error Resume Next
-    selection.TextFrame.TextRange.text = newText
+    rngSelection.TextFrame.TextRange.text = newText
     If Err.Number = 0 Then
         On Error GoTo 0
         Exit Sub
@@ -565,7 +565,7 @@ Public Sub ReplaceAllText()
     Err.Clear
     On Error GoTo 0
 
-    For Each shp In selection
+    For Each shp In rngSelection
         If shp.HasTextFrame Then
             shp.TextFrame.TextRange.text = newText
         End If
@@ -574,12 +574,12 @@ End Sub
 
 Public Sub RemoveAllText()
     Dim shp As Shape
-    Dim selection As ShapeRange
-    Set selection = GetActiveShapeRange()
-    If selection Is Nothing Then Exit Sub
+    Dim rngSelection As ShapeRange
+    Set rngSelection = GetActiveShapeRange()
+    If rngSelection Is Nothing Then Exit Sub
 
     On Error Resume Next
-    selection.TextFrame.TextRange.Delete
+    rngSelection.TextFrame.TextRange.Delete
     If Err.Number = 0 Then
         On Error GoTo 0
         Exit Sub
@@ -587,7 +587,7 @@ Public Sub RemoveAllText()
     Err.Clear
     On Error GoTo 0
 
-    For Each shp In selection
+    For Each shp In rngSelection
         If shp.HasTextFrame Then
             shp.TextFrame.TextRange.Delete
         End If
@@ -596,15 +596,15 @@ End Sub
 
 Public Sub TextMarginZero()
     Dim shp As Shape
-    Dim selection As ShapeRange
-    Set selection = GetActiveShapeRange()
-    If selection Is Nothing Then Exit Sub
+    Dim rngSelection As ShapeRange
+    Set rngSelection = GetActiveShapeRange()
+    If rngSelection Is Nothing Then Exit Sub
 
     On Error Resume Next
-    selection.TextFrame2.MarginLeft = 0
-    selection.TextFrame2.MarginRight = 0
-    selection.TextFrame2.MarginTop = 0
-    selection.TextFrame2.MarginBottom = 0
+    rngSelection.TextFrame2.MarginLeft = 0
+    rngSelection.TextFrame2.MarginRight = 0
+    rngSelection.TextFrame2.MarginTop = 0
+    rngSelection.TextFrame2.MarginBottom = 0
     If Err.Number = 0 Then
         On Error GoTo 0
         Exit Sub
@@ -612,7 +612,7 @@ Public Sub TextMarginZero()
     Err.Clear
     On Error GoTo 0
 
-    For Each shp In selection
+    For Each shp In rngSelection
         If shp.HasTextFrame Then
             shp.TextFrame2.MarginLeft = 0
             shp.TextFrame2.MarginRight = 0
@@ -625,13 +625,13 @@ End Sub
 
 Public Sub HideShapes()
     Dim shp As Shape
-    Dim selection As ShapeRange
+    Dim rngSelection As ShapeRange
     
-    Set selection = GetActiveShapeRange()
-    If selection Is Nothing Then Exit Sub
+    Set rngSelection = GetActiveShapeRange()
+    If rngSelection Is Nothing Then Exit Sub
 
     On Error Resume Next
-    selection.Visible = msoFalse
+    rngSelection.Visible = msoFalse
     If Err.Number = 0 Then
         On Error GoTo 0
         Exit Sub
@@ -639,7 +639,7 @@ Public Sub HideShapes()
     Err.Clear
     On Error GoTo 0
 
-    For Each shp In selection
+    For Each shp In rngSelection
         shp.Visible = msoFalse
     Next
 End Sub
@@ -647,10 +647,10 @@ End Sub
 
 Public Sub ShowShapes()
     Dim shp As Shape
-    Dim allShapes As shapes
+    Dim allShapes As Shapes
     
-    Set allShapes = ActiveWindow.View.Slide.shapes
-    ActiveWindow.selection.Unselect
+    Set allShapes = ActiveWindow.View.Slide.Shapes
+    ActiveWindow.Selection.Unselect
     For Each shp In allShapes
         If shp.Visible = msoFalse Then
             shp.Visible = msoTrue
@@ -670,23 +670,23 @@ End Sub
 
 Public Sub PasteOnSlides()
     Dim sld As Slide
-    Dim selection As SlideRange
+    Dim rngSelection As SlideRange
     
-    Set selection = GetActiveSlideRange()
-    If selection Is Nothing Then Exit Sub
-    For Each sld In selection
-        sld.shapes.Paste
+    Set rngSelection = GetActiveSlideRange()
+    If rngSelection Is Nothing Then Exit Sub
+    For Each sld In rngSelection
+        sld.Shapes.Paste
     Next
 End Sub
 
 Public Sub PasteAndReplace()
     Dim shp As Shape
-    Dim selection As ShapeRange
-    Set selection = GetActiveShapeRange()
-    If selection Is Nothing Then Exit Sub
+    Dim rngSelection As ShapeRange
+    Set rngSelection = GetActiveShapeRange()
+    If rngSelection Is Nothing Then Exit Sub
     
     'On Error Resume Next
-    For Each shp In selection
+    For Each shp In rngSelection
         PasteAndReplaceShape shp
     Next
 End Sub
@@ -699,7 +699,7 @@ Private Sub PasteAndReplaceShape(shp As Shape)
     
     Set sld = ActiveWindow.View.Slide
     targetZ = shp.ZOrderPosition
-    Set pastedShapes = sld.shapes.Paste
+    Set pastedShapes = sld.Shapes.Paste
     
     If pastedShapes.Count > 1 Then
         Set pastedShape = pastedShapes.Group
@@ -723,7 +723,7 @@ Private Sub PasteAndReplaceShape(shp As Shape)
 End Sub
 
 Public Sub ReplaceKeepSize()
-    Dim selection As ShapeRange
+    Dim rngSelection As ShapeRange
     Dim masterShape As Shape
     Dim refShape As Shape
     Dim newShape As Shape
@@ -732,14 +732,14 @@ Public Sub ReplaceKeepSize()
     Dim i As Long
     Dim targetZ As Long
     
-    Set selection = GetActiveShapeRange()
-    If selection Is Nothing Then Exit Sub
-    If selection.Count < 2 Then Exit Sub
+    Set rngSelection = GetActiveShapeRange()
+    If rngSelection Is Nothing Then Exit Sub
+    If rngSelection.Count < 2 Then Exit Sub
     
-    Set masterShape = selection(1)
+    Set masterShape = rngSelection(1)
 
-    For i = 2 To selection.Count
-        refs.Add selection(i)
+    For i = 2 To rngSelection.Count
+        refs.Add rngSelection(i)
     Next i
     
     For i = 1 To refs.Count
@@ -861,7 +861,7 @@ Public Sub CleanSlideMasters()
         Next i
     End With
     
-    MsgBox "Es wurden " & deletedLayouts & " ungenutzte Folienlayouts und " & deletedDesigns & " nicht mehr verwendete Designs gelï¿½scht!", vbInformation
+    MsgBox "Es wurden " & deletedLayouts & " ungenutzte Folienlayouts und " & deletedDesigns & " nicht mehr verwendete Designs gel?scht!", vbInformation
 End Sub
 
 Public Sub CleanUnusedDesigns()
@@ -874,7 +874,7 @@ Public Sub CleanUnusedDesigns()
     deletedDesigns = 0
 
     If oPres.Designs.Count = 0 Then
-        MsgBox "Es wurden 0 nicht verwendete Designs gelÃ¶scht!", vbInformation
+        MsgBox "Es wurden 0 nicht verwendete Designs gelšscht!", vbInformation
         Exit Sub
     End If
 
@@ -882,7 +882,7 @@ Public Sub CleanUnusedDesigns()
 
     On Error Resume Next
     For i = 1 To oPres.Slides.Count
-        usedDesigns(oPres.Slides(i).Design.Index) = True
+        usedDesigns(oPres.Slides(i).Design.index) = True
     Next i
 
     For i = oPres.Designs.Count To 1 Step -1
@@ -896,7 +896,7 @@ Public Sub CleanUnusedDesigns()
     Next i
     On Error GoTo 0
 
-    MsgBox "Es wurden " & deletedDesigns & " nicht verwendete Designs gelÃ¶scht!", vbInformation
+    MsgBox "Es wurden " & deletedDesigns & " nicht verwendete Designs gelšscht!", vbInformation
 End Sub
 
 Sub SendEmailFromSlideSelection()
@@ -928,19 +928,19 @@ Sub SendEmailFromSlideSelection()
     ' Dateiendung
     fileName = fileName & ".pptx"
     fileName = InputBox("Dateiname eingeben", "Markierte Folien per Mail versenden", fileName)
-    ' Bei Abbruch ist Rï¿½ckgabewert leer
+    ' Bei Abbruch ist R?ckgabewert leer
     If fileName = "" Then Exit Sub
     
-    ' Kopie speichern und ï¿½ffnen
+    ' Kopie speichern und ?ffnen
     tempFullName = Environ("temp") & "\" & fileName
     ActiveWindow.Presentation.SaveCopyAs tempFullName
     Set newPres = Application.Presentations.Open(tempFullName, msoFalse, msoFalse, msoFalse)
     
-    ' Folien entfernen, die nicht ausgewï¿½hlt waren
+    ' Folien entfernen, die nicht ausgew?hlt waren
     On Error GoTo ErrorClosePres
     DeleteUnselectedSlides newPres, sldRange
     
-    ' Speichern und schlieï¿½en
+    ' Speichern und schlie?en
     tempFullName = newPres.FullName
     newPres.Save
     newPres.Saved = msoTrue
@@ -980,7 +980,7 @@ Sub CreatePresentationFromSlideSelection()
     Dim fileName As String
     
     If ActiveWindow.Presentation.Path = "" Then
-        MsgBox "Bitte PrÃ¤sentation erst speichern", vbExclamation
+        MsgBox "Bitte PrŠsentation erst speichern", vbExclamation
         Exit Sub
     End If
     
@@ -988,10 +988,10 @@ Sub CreatePresentationFromSlideSelection()
     If sldRange Is Nothing Then Exit Sub
     fileName = ActiveWindow.Presentation.FullName
     
-    ' Kopie ï¿½ffnen
+    ' Kopie ?ffnen
     Set newPres = Application.Presentations.Open(fileName, msoFalse, msoTrue, msoTrue)
     
-    ' Folien entfernen, die nicht ausgewï¿½hlt waren
+    ' Folien entfernen, die nicht ausgew?hlt waren
     DeleteUnselectedSlides newPres, sldRange
 End Sub
 
@@ -1000,7 +1000,7 @@ Sub ApplyThemeFromFile()
         'not supported by mac
     #Else
     With Application.FileDialog(msoFileDialogOpen)
-        '.Title "PowerPoint-Datei auswÃ¤hlen"
+        '.Title "PowerPoint-Datei auswŠhlen"
         .Show
         If .SelectedItems.Count = 0 Then
             Exit Sub
@@ -1013,8 +1013,8 @@ End Sub
 
 
 ' Blendet Foliennummerierungen ein bzw. aus
-' Auf jeder Folie wird eine Textbox mit der Foliennr. eingefï¿½gt, welche sich
-' bei Umsortierungen der Folien nicht ï¿½ndert und dadurch Diskussionen in Teams vereinfacht
+' Auf jeder Folie wird eine Textbox mit der Foliennr. eingef?gt, welche sich
+' bei Umsortierungen der Folien nicht ?ndert und dadurch Diskussionen in Teams vereinfacht
 Public Sub ToggleSlideNumbering()
     Dim sld As Slide
     Dim shp As Shape
@@ -1024,7 +1024,7 @@ Public Sub ToggleSlideNumbering()
     
     ' Alle Shapes in allen Slides durchlaufen
     For Each sld In activePresentation.Slides
-        For Each shp In sld.shapes
+        For Each shp In sld.Shapes
             ' Shape mit SlideNumberTag gefunden
             If shp.Tags.Item(SLIDENUMBERING) = SLIDENUMBERING Then
                 hasNumbering = True
@@ -1041,14 +1041,14 @@ Public Sub ToggleSlideNumbering()
     End If
 End Sub
 
-' Auf jeder Folie wird eine Textbox mit der Foliennr. eingefï¿½gt
+' Auf jeder Folie wird eine Textbox mit der Foliennr. eingef?gt
 Private Sub AddSlideNumbers()
     Dim sld As Slide
     Dim shp As Shape
     
     ' Alle Slides durchlaufen
     For Each sld In activePresentation.Slides
-        Set shp = sld.shapes.AddTextbox(msoTextOrientationHorizontal, 0, 0, 100, 100)
+        Set shp = sld.Shapes.AddTextbox(msoTextOrientationHorizontal, 0, 0, 100, 100)
         shp.TextFrame.TextRange.Font.Size = 32
         shp.TextFrame.TextRange.Font.Bold = msoTrue
         shp.TextFrame.TextRange.Font.Color = 192 + 0 * 256 + 0 * 256 * CDbl(256)
@@ -1071,7 +1071,7 @@ Private Sub RemoveSlideNumbers()
     
     ' Alle Shapes in allen Slides durchlaufen
     For Each sld In activePresentation.Slides
-        For Each shp In sld.shapes
+        For Each shp In sld.Shapes
             ' Shape mit SlideNumberTag loeschen
             If shp.Tags.Item(SLIDENUMBERING) = SLIDENUMBERING Then
                 shp.Delete
@@ -1081,7 +1081,7 @@ Private Sub RemoveSlideNumbers()
     Next
 End Sub
 
-' Sprache fï¿½r gesamte Prï¿½sentation setzen
+' Sprache f?r gesamte Pr?sentation setzen
 Public Sub setLanguage(ByVal langCode As Integer)
     On Error Resume Next
     Dim sld As Slide
@@ -1096,7 +1096,7 @@ Public Sub setLanguage(ByVal langCode As Integer)
     
     ' Alle Shapes in allen Slides durchlaufen
     For Each sld In activePresentation.Slides
-        For Each shp In sld.shapes
+        For Each shp In sld.Shapes
             setLanguageForShape shp, langCode
 '            If shp.HasTextFrame Then
 '                shp.TextFrame2.TextRange.LanguageID = langCode
@@ -1285,13 +1285,13 @@ Public Sub StretchByLast(Position As Integer)
     Next
 End Sub
 
-Private Sub GetVisualBounds(ByVal shp As Shape, ByRef left As Single, ByRef top As Single, ByRef width As Single, ByRef height As Single)
+Private Sub GetVisualBounds(ByVal shp As Shape, ByRef Left As Single, ByRef Top As Single, ByRef Width As Single, ByRef Height As Single)
     Dim angleRad As Double
     Dim cosA As Double, sinA As Double
     Dim bbWidth As Double, bbHeight As Double
     Dim cx As Double, cy As Double
     
-    angleRad = shp.Rotation * (3.14159265358979# / 180#)
+    angleRad = shp.Rotation * (3.14159265358979 / 180#)
     cosA = Abs(Cos(angleRad))
     sinA = Abs(Sin(angleRad))
     
@@ -1301,10 +1301,10 @@ Private Sub GetVisualBounds(ByVal shp As Shape, ByRef left As Single, ByRef top 
     cx = shp.Left + shp.Width / 2
     cy = shp.Top + shp.Height / 2
     
-    left = cx - bbWidth / 2
-    top = cy - bbHeight / 2
-    width = bbWidth
-    height = bbHeight
+    Left = cx - bbWidth / 2
+    Top = cy - bbHeight / 2
+    Width = bbWidth
+    Height = bbHeight
 End Sub
 
 Private Sub StretchShapeToVisualWidth(ByVal shp As Shape, ByVal targetVisualWidth As Single, ByVal keepRight As Boolean)
@@ -1319,7 +1319,7 @@ Private Sub StretchShapeToVisualWidth(ByVal shp As Shape, ByVal targetVisualWidt
     If targetVisualWidth < 1 Then targetVisualWidth = 1
     
     GetVisualBounds shp, originalLeft, originalTop, originalWidth, originalHeight
-    angleRad = shp.Rotation * (3.14159265358979# / 180#)
+    angleRad = shp.Rotation * (3.14159265358979 / 180#)
     cosA = Abs(Cos(angleRad))
     sinA = Abs(Sin(angleRad))
     
@@ -1353,7 +1353,7 @@ Private Sub StretchShapeToVisualHeight(ByVal shp As Shape, ByVal targetVisualHei
     If targetVisualHeight < 1 Then targetVisualHeight = 1
     
     GetVisualBounds shp, originalLeft, originalTop, originalWidth, originalHeight
-    angleRad = shp.Rotation * (3.14159265358979# / 180#)
+    angleRad = shp.Rotation * (3.14159265358979 / 180#)
     cosA = Abs(Cos(angleRad))
     sinA = Abs(Sin(angleRad))
     
@@ -1374,3 +1374,5 @@ Private Sub StretchShapeToVisualHeight(ByVal shp As Shape, ByVal targetVisualHei
         shp.Top = shp.Top + (originalTop - newTop)
     End If
 End Sub
+
+

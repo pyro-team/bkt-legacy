@@ -30,7 +30,7 @@ Public Sub CreateAgendaTextBoxOnSlide(ByVal sld As Slide)
     
     'sld.shapes(1).TextFrame.TextRange.text = "Agenda"
     ' Shape rechts oben auf slide erstellen
-    Set shp = sld.shapes.AddShape(msoShapeRectangle, 160, 240, 400, 100)
+    Set shp = sld.Shapes.AddShape(msoShapeRectangle, 160, 240, 400, 100)
     ' Shape-Typ ist links-rechts-Pfeil, weil es die passenden Connector-Ecken hat
     shp.AutoShapeType = msoShapeLeftRightArrow
     ' Shape-Anpassung, so dass es wie ein Rechteck aussieht
@@ -61,19 +61,19 @@ Public Sub CreateAgendaTextBoxOnSlide(ByVal sld As Slide)
     shp.TextFrame.MarginLeft = 6
     shp.TextFrame.MarginRight = 6
     shp.TextFrame.TextRange.ParagraphFormat.Bullet.Type = ppBulletUnnumbered
-    shp.TextFrame.TextRange.ParagraphFormat.Bullet.Character = 167
+    shp.TextFrame.TextRange.ParagraphFormat.Bullet.character = 167
     shp.TextFrame.TextRange.ParagraphFormat.Bullet.Font.Name = "Wingdings"
     shp.TextFrame.TextRange.ParagraphFormat.SpaceAfter = 18
     
     ' Connectoren erstellen und mit Connector-Ecken des Shapes verbinden
-    With sld.shapes.AddConnector(Type:=msoConnectorStraight, BeginX:=0, _
+    With sld.Shapes.AddConnector(Type:=msoConnectorStraight, BeginX:=0, _
             BeginY:=0, EndX:=100, EndY:=100)
         .ConnectorFormat.BeginConnect ConnectedShape:=shp, ConnectionSite:=1
         .ConnectorFormat.EndConnect ConnectedShape:=shp, ConnectionSite:=3
         .Line.ForeColor.RGB = 0
         .Line.Weight = 0.75
     End With
-    With sld.shapes.AddConnector(Type:=msoConnectorStraight, BeginX:=0, _
+    With sld.Shapes.AddConnector(Type:=msoConnectorStraight, BeginX:=0, _
             BeginY:=0, EndX:=100, EndY:=100)
         .ConnectorFormat.BeginConnect ConnectedShape:=shp, ConnectionSite:=5
         .ConnectorFormat.EndConnect ConnectedShape:=shp, ConnectionSite:=7
@@ -118,10 +118,10 @@ Public Sub CreateFromCurrentSlide()
     Set sld = ActiveWindow.View.Slide
     
     ' Markiertes Shape oder erstes Shape mit Bullet-Point-Liste auswaehlen
-    If ActiveWindow.selection.Type = ppSelectionShapes Or ActiveWindow.selection.Type = ppSelectionText Then
-        Set shp = ActiveWindow.selection.ShapeRange(1)
+    If ActiveWindow.Selection.Type = ppSelectionShapes Or ActiveWindow.Selection.Type = ppSelectionText Then
+        Set shp = ActiveWindow.Selection.ShapeRange(1)
     Else
-        For Each shp In sld.shapes
+        For Each shp In sld.Shapes
             If shp.TextFrame.HasText Then
                 If shp.TextFrame.TextRange.ParagraphFormat.Bullet.Type = ppBulletUnnumbered Then
                     Exit For
@@ -130,7 +130,7 @@ Public Sub CreateFromCurrentSlide()
         Next
         
         If shp Is Nothing Then
-            MsgBox "Textbox mit Agenda-Einträgen auswählen oder als Bullet-Liste formatieren."
+            MsgBox "Textbox mit Agenda-EintrŠgen auswŠhlen oder als Bullet-Liste formatieren."
             Exit Sub
         End If
     End If
@@ -138,10 +138,10 @@ Public Sub CreateFromCurrentSlide()
     
     If Not shp Is Nothing Then
         If sld.Tags.Item(TOOLBOX_AGENDA) <> "" Then
-            ' Vorhandene Meta-Informationen einer anderen Agenda werden gelöscht.
-            answer = MsgBox("Es gibt bereits andere Agenda-Slides in der Präsentation." & vbNewLine & _
-                            "Die vorhandenen Meta-Informationen werden gelöscht bevor die neue Agenda erstellt wird." & vbNewLine & vbNewLine & _
-                            "Meta-Informationen löschen und fortfahren?", vbYesNo, "Meta-Informationen der bisherigen Agenda werden gelöscht")
+            ' Vorhandene Meta-Informationen einer anderen Agenda werden gelšscht.
+            answer = MsgBox("Es gibt bereits andere Agenda-Slides in der PrŠsentation." & vbNewLine & _
+                            "Die vorhandenen Meta-Informationen werden gelšscht bevor die neue Agenda erstellt wird." & vbNewLine & vbNewLine & _
+                            "Meta-Informationen lšschen und fortfahren?", vbYesNo, "Meta-Informationen der bisherigen Agenda werden gelšscht")
             If answer = vbNo Then
                 Exit Sub
             End If
@@ -169,7 +169,7 @@ Private Sub CreateAgenda(ByVal sld As Slide, ByVal textbox As Shape)
 End Sub
 
 Public Function CanUpdateAgenda() As Boolean
-    ' Aktualisieren oder Löschen nur möglich, wenn es Slides mit Agenda-Meta-Informationen gibt
+    ' Aktualisieren oder Lšschen nur mšglich, wenn es Slides mit Agenda-Meta-Informationen gibt
     CanUpdateAgenda = (GetAgendaSlides().Count > 0)
 End Function
 
@@ -184,7 +184,7 @@ Public Sub UpdateAgenda()
 '    Dim answer As Integer
 '
 '    answer = MsgBox("Neue Kopien vom ersten Agenda-Slide erstennen?" & vbNewLine & vbNewLine & _
-'                    "In diesem Fall gehen alle Änderungen an den anderen Agenda-Slides verloren." & vbNewLine & _
+'                    "In diesem Fall gehen alle €nderungen an den anderen Agenda-Slides verloren." & vbNewLine & _
 '                    "Ansonsten werden nur Agenda-Texte, Agenda-Position und Markierungsposition aktualisiert.", _
 '                    vbYesNoCancel, "Neue Kopien vom ersten Agenda-Slide erstennen?")
 '
@@ -239,11 +239,11 @@ Private Sub UpdateAgendaB(ByVal recreateFromMaster As Boolean)
     Set sldMaster = Slides(1)
     Set textbox = GetAgendaTextBoxOnSlide(sldMaster)
     If textbox Is Nothing Then
-        MsgBox "Update nicht möglich! Agenda-Textbox fehlt auf erstem Agenda-Slide."
+        MsgBox "Update nicht mšglich! Agenda-Textbox fehlt auf erstem Agenda-Slide."
         Exit Sub
     End If
     
-    ' Pro Absatz das zugehörige Slide aktualisieren (bzw. neu erstellen)
+    ' Pro Absatz das zugehšrige Slide aktualisieren (bzw. neu erstellen)
     For idx = 1 To textbox.TextFrame.TextRange.Paragraphs.Count
         Set sld = Nothing
         On Error Resume Next
@@ -304,13 +304,13 @@ Private Sub UpdateAgendaOnSlide(ByVal sld As Slide, ByVal textbox As Shape, ByVa
     
     ' Tag auf Slide setzen
     SetTagsForSlide sld, parIdx
-    ' Rand ober- und unterhalb / um wieviel ist Markierung größer als Absatz?
+    ' Rand ober- und unterhalb / um wieviel ist Markierung grš§er als Absatz?
     selectorMargin = textbox.TextFrame.TextRange.Font.Size * 0.15
-    ' Position der Markierung für ersten Eintrag der Agenda
+    ' Position der Markierung fŸr ersten Eintrag der Agenda
     selectorTop = textbox.Top + textbox.TextFrame.MarginTop - selectorMargin
     
     ' Position der Markierung bestimmen
-    ' Absatz-Höhe und -Abstände pro Absatz addieren
+    ' Absatz-Hšhe und -AbstŠnde pro Absatz addieren
     For idx = 1 To parIdx - 1
         ' Absaetzhoehe addieren
         selectorTop = selectorTop + ParagraphHeight(textbox.TextFrame.TextRange.Paragraphs(idx), False)
@@ -379,7 +379,7 @@ Private Function GetOrCreateSelectorOnSlide(ByVal sld As Slide) As Shape
     End If
     
     ' Neues Selector-Shape erstellen
-    Set shp = sld.shapes.AddShape(msoShapeRectangle, 0, 0, 100, 20)
+    Set shp = sld.Shapes.AddShape(msoShapeRectangle, 0, 0, 100, 20)
     SetTagsForSelector shp
     shp.ZOrder msoSendToBack
     ' Grauer Hintergrund/Rand
@@ -400,7 +400,7 @@ End Function
 
 Public Sub RemoveAgenda()
     If Not CanUpdateAgenda Then Exit Sub
-    ' Agenda Meta-Informationen inkl. Slides löschen
+    ' Agenda Meta-Informationen inkl. Slides lšschen
     RemoveAgendaB True
 End Sub
 
@@ -451,18 +451,18 @@ Err_Handler:
 End Sub
 
 
-' Meta-Informationen für Slide einstellen
+' Meta-Informationen fŸr Slide einstellen
 Private Sub SetTagsForSlide(ByVal sld As Slide, ByVal slideNo As Long)
     sld.Tags.Add TOOLBOX_AGENDA, "1"
     sld.Tags.Add TOOLBOX_AGENDA_SlideNo, CStr(slideNo)
 End Sub
 
-' Meta-Informationen für Textbox einstellen
+' Meta-Informationen fŸr Textbox einstellen
 Private Sub SetTagsForTextbox(ByVal textbox As Shape)
     textbox.Tags.Add TOOLBOX_AGENDA_TextBox, "1"
 End Sub
 
-' Meta-Informationen für Selector-Shape einstellen
+' Meta-Informationen fŸr Selector-Shape einstellen
 Private Sub SetTagsForSelector(ByVal selector As Shape)
     selector.Tags.Add TOOLBOX_AGENDA_Selector, "1"
 End Sub
@@ -471,7 +471,7 @@ End Sub
 Private Function GetShapeWithTagItem(ByVal sld As Slide, ByVal tagKey As String) As Shape
     Dim shp As Shape
     
-    For Each shp In sld.shapes
+    For Each shp In sld.Shapes
         If shp.Tags.Item(tagKey) <> "" Then
             Set GetShapeWithTagItem = shp
             Exit Function

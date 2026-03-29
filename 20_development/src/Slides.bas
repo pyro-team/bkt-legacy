@@ -33,7 +33,7 @@ Public Sub ShowTemplateDialog()
 '        Exit Sub
 '    End If
 
-    ' Template-Foliensatz öffnen
+    ' Template-Foliensatz šffnen
     Dim templatePresentation As Presentation
     On Error GoTo ErrOpen
     #If Mac Then
@@ -52,7 +52,7 @@ Public Sub ShowTemplateDialog()
     ' Array Templates erstellen
     Dim Templates() As String
     
-    ' Array befüllen
+    ' Array befŸllen
     Dim curTemplateName As String
     
     Dim slideCounter As Integer
@@ -61,8 +61,8 @@ Public Sub ShowTemplateDialog()
     For slideCounter = 1 To numOfTemplates
         ReDim Preserve Templates(slideCounter) As String
     
-        If templatePresentation.Slides(slideCounter).shapes.HasTitle Then
-            curTemplateName = templatePresentation.Slides(slideCounter).shapes.Title.TextFrame.TextRange.text
+        If templatePresentation.Slides(slideCounter).Shapes.HasTitle Then
+            curTemplateName = templatePresentation.Slides(slideCounter).Shapes.Title.TextFrame.TextRange.text
         Else
             curTemplateName = "Slide " & slideCounter
         End If
@@ -101,7 +101,7 @@ Err1:
     End If
     
     
-    ' Template-Foliensatz schließen
+    ' Template-Foliensatz schlie§en
     With templatePresentation
         .Saved = True
         .Close
@@ -109,7 +109,7 @@ Err1:
 Exit Sub
 
 ErrOpen:
-    MsgBox "Fehler beim Öffnen der Datei Templates.pptx im Addin-Ordner. Eventuell ist die Datei nicht vorhanden?" & vbCrLf & templateFilePath, vbCritical
+    MsgBox "Fehler beim …ffnen der Datei Templates.pptx im Addin-Ordner. Eventuell ist die Datei nicht vorhanden?" & vbCrLf & templateFilePath, vbCritical
     Exit Sub
 End Sub
 

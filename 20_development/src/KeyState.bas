@@ -142,8 +142,8 @@ Public Function IsMacScriptFileAccessible() As Boolean
 #End If
 End Function
 
-Public Sub SetKeysEnabled(Optional Enabled As Boolean = True)
-    if Enabled = False Then
+Public Sub SetKeysEnabled(Optional enabled As Boolean = True)
+    If enabled = False Then
         KeysEnabled = False
         Exit Sub
     End If
@@ -292,3 +292,4 @@ Public Function IsAltKeyDown(Optional LeftOrRightKey As Long = LeftKeyOrRightKey
     #End If
 
 End Function
+
