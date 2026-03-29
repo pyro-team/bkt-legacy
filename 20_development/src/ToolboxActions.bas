@@ -928,19 +928,19 @@ Sub SendEmailFromSlideSelection()
     ' Dateiendung
     fileName = fileName & ".pptx"
     fileName = InputBox("Dateiname eingeben", "Markierte Folien per Mail versenden", fileName)
-    ' Bei Abbruch ist R?ckgabewert leer
+    ' Bei Abbruch ist Rueckgabewert leer
     If fileName = "" Then Exit Sub
     
-    ' Kopie speichern und ?ffnen
+    ' Kopie speichern und oeffnen
     tempFullName = Environ("temp") & "\" & fileName
     ActiveWindow.Presentation.SaveCopyAs tempFullName
     Set newPres = Application.Presentations.Open(tempFullName, msoFalse, msoFalse, msoFalse)
     
-    ' Folien entfernen, die nicht ausgew?hlt waren
+    ' Folien entfernen, die nicht ausgewaehlt waren
     On Error GoTo ErrorClosePres
     DeleteUnselectedSlides newPres, sldRange
     
-    ' Speichern und schlie?en
+    ' Speichern und schliessen
     tempFullName = newPres.FullName
     newPres.Save
     newPres.Saved = msoTrue
@@ -978,22 +978,57 @@ Sub CreatePresentationFromSlideSelection()
     Dim sldRange As SlideRange
     Dim newPres As Presentation
     Dim fileName As String
+    Dim tempFullName As String
     
     If ActiveWindow.Presentation.Path = "" Then
-        MsgBox "Bitte Präsentation erst speichern", vbExclamation
+        MsgBox "Bitte Praesentation erst speichern", vbExclamation
         Exit Sub
     End If
     
     Set sldRange = GetActiveSlideRange()
     If sldRange Is Nothing Then Exit Sub
-    fileName = ActiveWindow.Presentation.FullName
+    fileName = BuildSlideSelectionFileName(sldRange)
+    tempFullName = BuildPresentationSelectionCopyPath(ActiveWindow.Presentation, fileName)
     
-    ' Kopie ?ffnen
-    Set newPres = Application.Presentations.Open(fileName, msoFalse, msoTrue, msoTrue)
+    ActiveWindow.Presentation.SaveCopyAs tempFullName
+    Set newPres = Application.Presentations.Open(tempFullName, msoFalse, msoFalse, msoTrue)
     
-    ' Folien entfernen, die nicht ausgew?hlt waren
+    ' Folien entfernen, die nicht ausgewaehlt waren
     DeleteUnselectedSlides newPres, sldRange
+    newPres.Save
+    newPres.Saved = msoFalse
 End Sub
+
+Private Function BuildSlideSelectionFileName(ByRef sldRange As SlideRange) As String
+    Dim fileName As String
+    
+    If InStrRev(ActiveWindow.Presentation.Name, ".") = 0 Then
+        fileName = ActiveWindow.Presentation.Name
+    Else
+        fileName = Left(ActiveWindow.Presentation.Name, InStrRev(ActiveWindow.Presentation.Name, ".") - 1)
+    End If
+    
+    If sldRange.Count = 1 Then
+        fileName = fileName & " Folie " & sldRange(1).SlideIndex
+    Else
+        fileName = fileName & " Folien " & SlideRangeIdentifier(sldRange)
+    End If
+    
+    fileName = fileName & " " & Format(Now, "YYYYMMDDThhnn") & ".pptx"
+    BuildSlideSelectionFileName = fileName
+End Function
+
+Private Function BuildPresentationSelectionCopyPath(ByRef sourcePresentation As Presentation, ByVal fileName As String) As String
+    Dim pathSeparator As String
+    
+    #If Mac Then
+        pathSeparator = "/"
+    #Else
+        pathSeparator = "\"
+    #End If
+    
+    BuildPresentationSelectionCopyPath = sourcePresentation.Path & pathSeparator & fileName
+End Function
 
 Sub ApplyThemeFromFile()
     #If Mac Then
