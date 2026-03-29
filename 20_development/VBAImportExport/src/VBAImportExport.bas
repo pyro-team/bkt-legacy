@@ -31,74 +31,44 @@ End Sub
 Private Sub ExportModules()
     Dim bExport As Boolean
     Dim source As PowerPoint.Presentation
-    Dim szSourceWorkbook As String
     Dim szExportPath As String
     Dim szFileName As String
     Dim cmpComponent As Object ' VBIDE.VBComponent
-    Dim FSO As Object
 
-    ''' The code modules will be exported in a folder named.
-    ''' VBAProjectFiles in the Documents folder.
-    ''' The code below create this folder if it not exist
-    ''' or delete all files in the folder if it exist.
-
-    Set FSO = CreateObject("scripting.filesystemobject")
-
-    If FSO.fileExists(ActivePresentation.FullName) = False Then
+    If Len(ActivePresentation.Path) = 0 Then
         MsgBox "Please save first"
         Exit Sub
     End If
 
-    If FolderWithVBAProjectFiles = "Error" Then
-        MsgBox "Export Folder not exist"
-        Exit Sub
-    End If
-
-    On Error Resume Next
-    Kill FolderWithVBAProjectFiles & "\*.frm"
-    Kill FolderWithVBAProjectFiles & "\*.bas"
-    Kill FolderWithVBAProjectFiles & "\*.cls"
-    On Error GoTo 0
-
-    ''' NOTE: This workbook must be open in Excel.
     Set source = ActivePresentation
 
     If source.VBProject.Protection = 1 Then
-    MsgBox "The VBA in this workbook is protected," & _
-        "not possible to export the code"
-    Exit Sub
+        MsgBox "The VBA in this workbook is protected," & _
+            "not possible to export the code"
+        Exit Sub
     End If
 
-    szExportPath = FolderWithVBAProjectFiles & "\"
+    szExportPath = FolderWithVBAProjectFiles()
+    DeleteExistingSourceFiles szExportPath
 
     For Each cmpComponent In source.VBProject.VBComponents
-
         bExport = True
         szFileName = cmpComponent.Name
 
-        ''' Concatenate the correct filename for export.
         Select Case cmpComponent.Type
             Case 2 ' Class
                 szFileName = szFileName & ".cls"
-            Case 3 ' From
+            Case 3 ' Form
                 szFileName = szFileName & ".frm"
             Case 1 ' Module
                 szFileName = szFileName & ".bas"
             Case Else
-                ''' This is a worksheet or workbook object.
-                ''' Don't try to export.
                 bExport = False
         End Select
 
         If bExport Then
-            ''' Export the component to a text file.
-            cmpComponent.Export szExportPath & szFileName
-
-        ''' remove it from the project if you want
-        '''wkbSource.VBProject.VBComponents.Remove cmpComponent
-
+            cmpComponent.Export BuildPath(szExportPath, szFileName)
         End If
-
     Next cmpComponent
 
     MsgBox "Export is ready"
@@ -107,109 +77,169 @@ End Sub
 
 Private Sub ImportModules()
     Dim target As PowerPoint.Presentation
-    Dim objFSO As Object ' Scripting.FileSystemObject
-    Dim objFile As Object ' Scripting.File
-    Dim szTargetWorkbook As String
     Dim szImportPath As String
-    Dim szFileName As String
     Dim cmpComponents As Variant 'VBIDE.VBComponents
 
-
-
-'    If ActivePresentation = ThisWorkbook.Name Then
-'        MsgBox "Select another destination workbook" & _
-'        "Not possible to import in this workbook "
-'        Exit Sub
-'    End If
-
-    'Get the path to the folder with modules
-    If FolderWithVBAProjectFiles = "Error" Then
-        MsgBox "Import Folder not exist"
-        Exit Sub
-    End If
-
-    ''' NOTE: This workbook must be open in Excel.
     Set target = ActivePresentation
 
     If target.VBProject.Protection = 1 Then
-    MsgBox "The VBA in this workbook is protected," & _
-        "not possible to Import the code"
-    Exit Sub
+        MsgBox "The VBA in this workbook is protected," & _
+            "not possible to Import the code"
+        Exit Sub
     End If
 
-    ''' NOTE: Path where the code modules are located.
-    szImportPath = FolderWithVBAProjectFiles & "\"
+    szImportPath = FolderWithVBAProjectFiles()
 
-    Set objFSO = CreateObject("scripting.filesystemobject")
-    If objFSO.GetFolder(szImportPath).Files.Count = 0 Then
-       MsgBox "There are no files to import"
-       Exit Sub
+    If Not HasImportFiles(szImportPath) Then
+        MsgBox "There are no files to import"
+        Exit Sub
     End If
 
-    'Delete all modules/Userforms from the ActiveWorkbook
     Call DeleteVBAModulesAndUserForms
 
     Set cmpComponents = target.VBProject.VBComponents
 
-    ''' Import all the code modules in the specified path
-    ''' to the ActiveWorkbook.
-    For Each objFile In objFSO.GetFolder(szImportPath).Files
-
-        If (objFSO.GetExtensionName(objFile.Name) = "cls") Or _
-            (objFSO.GetExtensionName(objFile.Name) = "frm") Or _
-            (objFSO.GetExtensionName(objFile.Name) = "bas") Then
-            cmpComponents.Import objFile.path
-        End If
-
-    Next objFile
+    ImportFilesWithExtension cmpComponents, szImportPath, "bas"
+    ImportFilesWithExtension cmpComponents, szImportPath, "cls"
+    ImportFilesWithExtension cmpComponents, szImportPath, "frm"
 
     MsgBox "Import is ready"
 End Sub
 
 Private Function FolderWithVBAProjectFiles() As String
-    Dim WshShell As Object
-    Dim FSO As Scripting.FileSystemObject
-    Dim SpecialPath As String
     Dim folder As String
+    Dim srcFolder As String
 
-    Set WshShell = CreateObject("WScript.Shell")
-    Set FSO = CreateObject("scripting.filesystemobject")
-    
-    folder = FSO.GetParentFolderName(ActivePresentation.FullName)
-    If FSO.FolderExists(folder & "\src") Then
-        folder = folder & "\src"
+    If Len(ActivePresentation.Path) = 0 Then
+        Err.Raise 0, , "Please save the presentation first"
+    End If
+
+    folder = ActivePresentation.Path
+    srcFolder = BuildPath(folder, "src")
+
+    If FolderExists(srcFolder) Then
+        folder = srcFolder
     Else
-        folder = folder & FSO.GetBaseName(ActivePresentation.FullName) & "-src"
-    End If
-    
-    If FSO.FolderExists(folder) = False Then
-        On Error Resume Next
-        MkDir folder
-        On Error GoTo 0
+        folder = BuildPath(folder, GetPresentationBaseName() & "-src")
     End If
 
-    If FSO.FolderExists(folder) = True Then
+    If Not FolderExists(folder) Then
+        MkDir folder
+    End If
+
+    If FolderExists(folder) Then
         FolderWithVBAProjectFiles = folder
     Else
         Err.Raise 0, , "Folder for VBA ProjectFiles could not be created"
     End If
 End Function
 
+Private Sub DeleteExistingSourceFiles(ByVal folderPath As String)
+    DeleteFilesWithExtension folderPath, "frm"
+    DeleteFilesWithExtension folderPath, "bas"
+    DeleteFilesWithExtension folderPath, "cls"
+End Sub
+
+Private Sub DeleteFilesWithExtension(ByVal folderPath As String, ByVal extension As String)
+    Dim fileName As String
+    Dim fullPath As String
+
+    fileName = Dir(BuildPath(folderPath, "*." & extension))
+    Do While Len(fileName) > 0
+        fullPath = BuildPath(folderPath, fileName)
+        Kill fullPath
+        fileName = Dir()
+    Loop
+End Sub
+
+Private Function HasImportFiles(ByVal folderPath As String) As Boolean
+    HasImportFiles = HasFilesWithExtension(folderPath, "bas") Or _
+        HasFilesWithExtension(folderPath, "cls") Or _
+        HasFilesWithExtension(folderPath, "frm")
+End Function
+
+Private Function HasFilesWithExtension(ByVal folderPath As String, ByVal extension As String) As Boolean
+    HasFilesWithExtension = Len(Dir(BuildPath(folderPath, "*." & extension))) > 0
+End Function
+
+Private Sub ImportFilesWithExtension(ByVal cmpComponents As Variant, ByVal folderPath As String, ByVal extension As String)
+    Dim fileName As String
+
+    fileName = Dir(BuildPath(folderPath, "*." & extension))
+    Do While Len(fileName) > 0
+        cmpComponents.Import BuildPath(folderPath, fileName)
+        fileName = Dir()
+    Loop
+End Sub
+
+Private Function FolderExists(ByVal folderPath As String) As Boolean
+    On Error Resume Next
+    FolderExists = (GetAttr(folderPath) And vbDirectory) = vbDirectory
+    If Err.Number <> 0 Then
+        FolderExists = False
+        Err.Clear
+    End If
+    On Error GoTo 0
+End Function
+
+Private Function BuildPath(ByVal folderPath As String, ByVal fileName As String) As String
+    If Right$(folderPath, 1) = GetPathSeparator() Then
+        BuildPath = folderPath & fileName
+    Else
+        BuildPath = folderPath & GetPathSeparator() & fileName
+    End If
+End Function
+
+Private Function GetPathSeparator() As String
+    Dim presentationPath As String
+    Dim fullName As String
+    Dim nameLength As Long
+
+    presentationPath = ActivePresentation.Path
+    fullName = ActivePresentation.fullName
+    nameLength = Len(ActivePresentation.Name)
+
+    If Len(presentationPath) > 0 And Len(fullName) > Len(presentationPath) + nameLength Then
+        GetPathSeparator = Mid$(fullName, Len(presentationPath) + 1, Len(fullName) - Len(presentationPath) - nameLength)
+    ElseIf InStr(fullName, "/") > 0 Then
+        GetPathSeparator = "/"
+    Else
+        GetPathSeparator = "\"
+    End If
+End Function
+
+Private Function GetPresentationBaseName() As String
+    Dim fileName As String
+    Dim dotPosition As Long
+
+    fileName = ActivePresentation.Name
+    dotPosition = InStrRev(fileName, ".")
+
+    If dotPosition > 0 Then
+        GetPresentationBaseName = Left$(fileName, dotPosition - 1)
+    Else
+        GetPresentationBaseName = fileName
+    End If
+End Function
+
 
 Private Function DeleteVBAModulesAndUserForms()
-        Dim VBProj As Object ' VBIDE.VBProject
-        Dim VBComp As Object ' VBIDE.VBComponent
+    Dim VBProj As Object ' VBIDE.VBProject
+    Dim VBComp As Object ' VBIDE.VBComponent
+    Dim index As Long
 
-        Set VBProj = ActivePresentation.VBProject
+    Set VBProj = ActivePresentation.VBProject
 
-        For Each VBComp In VBProj.VBComponents
-            Select Case VBComp.Type
+    For index = VBProj.VBComponents.Count To 1 Step -1
+        Set VBComp = VBProj.VBComponents(index)
+        Select Case VBComp.Type
             Case 1, 2, 3
                 ' 1-Module, 2-Class, 3-Form
                 VBProj.VBComponents.Remove VBComp
             Case Else
                 ' Do Nothing
-            End Select
-        Next VBComp
+        End Select
+    Next index
 End Function
+
 
