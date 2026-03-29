@@ -42,9 +42,14 @@ Public Function GetActiveSlideRange() As SlideRange
 
     Set sel = ActiveWindow.Selection
     If sel Is Nothing Then Exit Function
-    If sel.Type <> ppSelectionSlides Then Exit Function
+    If sel.Type = ppSelectionSlides Then
+        Set GetActiveSlideRange = sel.SlideRange
+        Exit Function
+    End If
 
-    Set GetActiveSlideRange = sel.SlideRange
+    If Not ActiveWindow.View Is Nothing Then
+        Set GetActiveSlideRange = ActiveWindow.View.Slide.Range
+    End If
     Exit Function
 
 ErrHandler:

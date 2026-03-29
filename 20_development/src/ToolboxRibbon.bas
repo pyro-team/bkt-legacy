@@ -108,6 +108,7 @@ Sub isEnabled(control As IRibbonControl, ByRef enabled)
     Dim shpRange As ShapeRange
     Dim firstShp As Shape
     Dim shapeCount As Long
+    Dim sldRange As SlideRange
     
     On Error GoTo Err_Handler
     
@@ -123,6 +124,9 @@ Sub isEnabled(control As IRibbonControl, ByRef enabled)
         'Set oAgenda = New ToolboxAgenda
         'enabled = oAgenda.CanUpdateAgenda
         enabled = True
+    Case "btnSendSelectionAsAttachment", "btnSelectedSlidesSaveAs"
+        Set sldRange = GetActiveSlideRange()
+        enabled = Not sldRange Is Nothing
         
     Case Else
         ' Enabled-Status von Selection abhängig
