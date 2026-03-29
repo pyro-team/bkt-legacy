@@ -28,6 +28,10 @@ Public KeysEnabled As Boolean
     Private Const MAC_MOD_SHIFT As Long = 131072
     Private Const MAC_MOD_OPTION As Long = 524288
     Private Const MAC_MOD_COMMAND As Long = 1048576
+
+    Private mMacModifierSnapshotActive As Boolean
+    Private mMacModifierSnapshotValid As Boolean
+    Private mMacModifierSnapshotFlags As Long
 #Else
     Private Declare PtrSafe Function GetKeyState Lib "user32" (ByVal vKey As Long) As Integer
 
@@ -84,15 +88,49 @@ ErrHandler:
     TryGetMacModifierFlags = False
 End Function
 
+Private Function RefreshMacModifierSnapshot() As Boolean
+    mMacModifierSnapshotValid = TryGetMacModifierFlags(mMacModifierSnapshotFlags)
+    If Not mMacModifierSnapshotValid Then
+        mMacModifierSnapshotFlags = 0
+    End If
+    RefreshMacModifierSnapshot = mMacModifierSnapshotValid
+End Function
+
+Public Sub BeginModifierKeySnapshot()
+    If mMacModifierSnapshotActive Then Exit Sub
+
+    mMacModifierSnapshotActive = True
+    Call RefreshMacModifierSnapshot
+End Sub
+
+Public Sub EndModifierKeySnapshot()
+    mMacModifierSnapshotActive = False
+    mMacModifierSnapshotValid = False
+    mMacModifierSnapshotFlags = 0
+End Sub
+
 Private Function IsMacModifierDown(ByVal ModifierMask As Long) As Boolean
     Dim flags As Long
 
-    If TryGetMacModifierFlags(flags) Then
+    If mMacModifierSnapshotActive Then
+        If mMacModifierSnapshotValid Then
+            flags = mMacModifierSnapshotFlags
+            IsMacModifierDown = ((flags And ModifierMask) <> 0)
+        Else
+            IsMacModifierDown = False
+        End If
+    ElseIf TryGetMacModifierFlags(flags) Then
         IsMacModifierDown = ((flags And ModifierMask) <> 0)
     Else
         IsMacModifierDown = False
     End If
 End Function
+#Else
+Public Sub BeginModifierKeySnapshot()
+End Sub
+
+Public Sub EndModifierKeySnapshot()
+End Sub
 #End If
 
 Public Function IsMacScriptFileAccessible() As Boolean

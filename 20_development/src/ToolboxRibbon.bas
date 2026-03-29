@@ -560,6 +560,7 @@ Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
     Dim propertyCtlId As String
     
     On Error GoTo Err_Handler
+    BeginModifierKeySnapshot
     
     ptValue = value
     cmValue = value * 0.1
@@ -579,15 +580,15 @@ Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
         Case "incSplitRows", "decSplitRows"
             SplitRowsCols = Max(2, SplitRowsCols + value)
             myRibbon.Invalidate
-            Exit Sub
+            GoTo Cleanup
         Case "incSplitSep", "decSplitSep"
             SplitSep = Max(0, CentimetersToPoints(Round(PointsToCentimeters(SplitSep), 1) + cmValue))
             myRibbon.Invalidate
-            Exit Sub
+            GoTo Cleanup
     End Select
     
     Set shpRange = GetActiveShapeRange()
-    If shpRange Is Nothing Then Exit Sub
+    If shpRange Is Nothing Then GoTo Cleanup
     propertyCtlId = NormalizeShapePropertyControlId(control.Id)
     
     Select Case control.Id
@@ -635,7 +636,7 @@ Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
     If Not altDown Then
         If TrySetShapeRangePropertyValue(shpRange, propertyCtlId, newValue) Then
             myRibbon.Invalidate
-            Exit Sub
+            GoTo Cleanup
         End If
     End If
     
@@ -665,8 +666,11 @@ Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
     
     myRibbon.Invalidate
 
-Exit Sub
+Cleanup:
+    EndModifierKeySnapshot
+    Exit Sub
 Err_Handler:
+    EndModifierKeySnapshot
 End Sub
 
 
@@ -1008,6 +1012,7 @@ Sub btnAction(control As IRibbonControl)
     Dim oAgenda As ToolboxAgenda
     
     On Error GoTo Err_Handler
+    BeginModifierKeySnapshot
     Select Case control.Id
     ' Objekte auswaehlen
     Case "actSelectByShape"
@@ -1181,8 +1186,11 @@ Sub btnAction(control As IRibbonControl)
     
     myRibbon.Invalidate
 
-Exit Sub
+Cleanup:
+    EndModifierKeySnapshot
+    Exit Sub
 Err_Handler:
+    EndModifierKeySnapshot
 End Sub
 
 Sub galAction(control As IRibbonControl, selectedID As String, selectedIndex As Integer)
