@@ -130,7 +130,8 @@ Sub isEnabled(control As IRibbonControl, ByRef enabled)
             enabled = False
         Else
             Select Case ctlId
-            Case "ebVSep", "ebHSep", "actJoinShapesWithText", "actSplitSameWidth", "actSplitSameHeight", "actSplitSwap"
+            Case "ebVSep", "ebHSep", "actJoinShapesWithText", "actSplitSameWidth", "actSplitSameHeight", "actSplitSwap", _
+                 "actStretchLeft", "actStretchRight", "actStretchTop", "actStretchBottom"
                 ' Enabled bei Selection-Count > 1
                 enabled = (shapeCount > 1)
                 
@@ -1179,6 +1180,14 @@ Sub btnAction(control As IRibbonControl)
         ArrangeByLast 5
     Case "actArrangeMiddle"
         ArrangeByLast 6
+    Case "actStretchLeft"
+        StretchByLast 1
+    Case "actStretchRight"
+        StretchByLast 2
+    Case "actStretchTop"
+        StretchByLast 3
+    Case "actStretchBottom"
+        StretchByLast 4
     
     ' Info
     Case "lblxInfo", "lblxWebsite"

@@ -62,6 +62,13 @@
 					</dialogBoxLauncher>
 				</group>
 
+				<group id="stretchGroup" label="Strecken" image="arrange_stretch_left">
+					<button id="actStretchLeft" onAction="btnAction" getEnabled="isEnabled" label="Nach links strecken" showLabel="false" size="normal" screentip="Nach links bis zum zuletzt markierten Shape strecken" image="arrange_stretch_left" />
+					<button id="actStretchRight" onAction="btnAction" getEnabled="isEnabled" label="Nach rechts strecken" showLabel="false" size="normal" screentip="Nach rechts bis zum zuletzt markierten Shape strecken" image="arrange_stretch_right" />
+					<button id="actStretchTop" onAction="btnAction" getEnabled="isEnabled" label="Nach oben strecken" showLabel="false" size="normal" screentip="Nach oben bis zum zuletzt markierten Shape strecken" image="arrange_stretch_top" />
+					<button id="actStretchBottom" onAction="btnAction" getEnabled="isEnabled" label="Nach unten strecken" showLabel="false" size="normal" screentip="Nach unten bis zum zuletzt markierten Shape strecken" image="arrange_stretch_bottom" />
+				</group>
+
 				<group id="parIndents" label="Absatzeinzug" imageMso="ViewRulerPowerPoint">
 					<box id="parFirstBox" boxStyle="horizontal">
 						<editBox id="ebParIndentFirst" label="Sondereinzug" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" image="first_line_indent" />

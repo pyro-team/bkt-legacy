@@ -1249,6 +1249,42 @@ Public Sub ArrangeByLast(Position As Integer)
     Next
 End Sub
 
+Public Sub StretchByLast(Position As Integer)
+    Dim selectedShapes As ShapeRange
+    Dim shp As Shape, masterShp As Shape
+    Dim masterTop As Single, masterHeight As Single
+    Dim masterLeft As Single, masterWidth As Single
+    Dim masterBottom As Single, masterRight As Single
+    Dim shpTop As Single, shpHeight As Single
+    Dim shpLeft As Single, shpWidth As Single
+    
+    Set selectedShapes = GetActiveShapeRange()
+    If selectedShapes Is Nothing Then Exit Sub
+    If selectedShapes.Count < 2 Then Exit Sub
+    
+    Set masterShp = selectedShapes(selectedShapes.Count)
+    GetVisualBounds masterShp, masterLeft, masterTop, masterWidth, masterHeight
+    masterBottom = masterTop + masterHeight
+    masterRight = masterLeft + masterWidth
+    
+    For Each shp In selectedShapes
+        If shp.Id <> masterShp.Id Then
+            GetVisualBounds shp, shpLeft, shpTop, shpWidth, shpHeight
+            
+            Select Case Position
+                Case 1
+                    StretchShapeToVisualWidth shp, shpLeft + shpWidth - masterLeft, True
+                Case 2
+                    StretchShapeToVisualWidth shp, masterRight - shpLeft, False
+                Case 3
+                    StretchShapeToVisualHeight shp, shpTop + shpHeight - masterTop, True
+                Case 4
+                    StretchShapeToVisualHeight shp, masterBottom - shpTop, False
+            End Select
+        End If
+    Next
+End Sub
+
 Private Sub GetVisualBounds(ByVal shp As Shape, ByRef left As Single, ByRef top As Single, ByRef width As Single, ByRef height As Single)
     Dim angleRad As Double
     Dim cosA As Double, sinA As Double
@@ -1269,4 +1305,72 @@ Private Sub GetVisualBounds(ByVal shp As Shape, ByRef left As Single, ByRef top 
     top = cy - bbHeight / 2
     width = bbWidth
     height = bbHeight
+End Sub
+
+Private Sub StretchShapeToVisualWidth(ByVal shp As Shape, ByVal targetVisualWidth As Single, ByVal keepRight As Boolean)
+    Dim originalLeft As Single, originalTop As Single
+    Dim originalWidth As Single, originalHeight As Single
+    Dim angleRad As Double
+    Dim cosA As Double, sinA As Double
+    Dim targetSize As Double
+    Dim newLeft As Single, newTop As Single
+    Dim newWidth As Single, newHeight As Single
+    
+    If targetVisualWidth < 1 Then targetVisualWidth = 1
+    
+    GetVisualBounds shp, originalLeft, originalTop, originalWidth, originalHeight
+    angleRad = shp.Rotation * (3.14159265358979# / 180#)
+    cosA = Abs(Cos(angleRad))
+    sinA = Abs(Sin(angleRad))
+    
+    If cosA >= sinA And cosA > 0.0001 Then
+        targetSize = (targetVisualWidth - sinA * shp.Height) / cosA
+        shp.Width = Max(1, targetSize)
+    ElseIf sinA > 0.0001 Then
+        targetSize = (targetVisualWidth - cosA * shp.Width) / sinA
+        shp.Height = Max(1, targetSize)
+    Else
+        Exit Sub
+    End If
+    
+    GetVisualBounds shp, newLeft, newTop, newWidth, newHeight
+    If keepRight Then
+        shp.Left = shp.Left + (originalLeft + originalWidth) - (newLeft + newWidth)
+    Else
+        shp.Left = shp.Left + (originalLeft - newLeft)
+    End If
+End Sub
+
+Private Sub StretchShapeToVisualHeight(ByVal shp As Shape, ByVal targetVisualHeight As Single, ByVal keepBottom As Boolean)
+    Dim originalLeft As Single, originalTop As Single
+    Dim originalWidth As Single, originalHeight As Single
+    Dim angleRad As Double
+    Dim cosA As Double, sinA As Double
+    Dim targetSize As Double
+    Dim newLeft As Single, newTop As Single
+    Dim newWidth As Single, newHeight As Single
+    
+    If targetVisualHeight < 1 Then targetVisualHeight = 1
+    
+    GetVisualBounds shp, originalLeft, originalTop, originalWidth, originalHeight
+    angleRad = shp.Rotation * (3.14159265358979# / 180#)
+    cosA = Abs(Cos(angleRad))
+    sinA = Abs(Sin(angleRad))
+    
+    If cosA >= sinA And cosA > 0.0001 Then
+        targetSize = (targetVisualHeight - sinA * shp.Width) / cosA
+        shp.Height = Max(1, targetSize)
+    ElseIf sinA > 0.0001 Then
+        targetSize = (targetVisualHeight - cosA * shp.Height) / sinA
+        shp.Width = Max(1, targetSize)
+    Else
+        Exit Sub
+    End If
+    
+    GetVisualBounds shp, newLeft, newTop, newWidth, newHeight
+    If keepBottom Then
+        shp.Top = shp.Top + (originalTop + originalHeight) - (newTop + newHeight)
+    Else
+        shp.Top = shp.Top + (originalTop - newTop)
+    End If
 End Sub
