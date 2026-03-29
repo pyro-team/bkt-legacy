@@ -697,7 +697,7 @@
 						<button id="lblxMacShift" label="⇧=Große Schritte (bei Spinner)" getVisible="isVisibleMac" />
 						<button id="lblxMacOption" label="⌥=Werte nicht angleichen (Delta pro Shape)" getVisible="isVisibleMac" />
 						<menuSeparator id="info-menu-seperator-2" />
-						<button id="lblxInfo" label="BKT Legacy Toolbox v1.6.2" onAction="btnAction" />
+						<button id="lblxInfo" label="BKT Legacy Toolbox v1.7.0" onAction="btnAction" />
 						<button id="lblxWebsite" label="www.bkt-toolbox.de/legacy" onAction="btnAction" />
 					</menu>
 					<toggleButton id="toggleMacKeys" label="⇧⌘⌥" getPressed="cbValue_init" screentip="Mac-Tasten de-/aktivieren" onAction="cbValue_onChange" getVisible="isVisibleMac" />
