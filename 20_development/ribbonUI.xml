@@ -270,7 +270,8 @@
 						<button id="btnSendSelectionAsAttachment" label="Ausgewählte Folien senden" supertip="Die markierten Folien werden einer neuen E-Mail in Outlook angehängt." onAction="btnAction" imageMso="FileSendAsAttachment" getEnabled="isEnabled" getVisible="isVisibleWin"/> <!-- Win only -->
 						<menu id="slides-more-clean-menu" imageMso="SlideShowFromCurrent" label="Slidedeck aufräumen">
 							<button id="actCleanAuthor" onAction="btnAction" label="Autor aus Dokumenteneigenschaften entfernen" imageMso="ContactPictureMenu" />
-							<button id="actCleanSlideMasters" onAction="btnAction" label="Nicht genutzte Folienlayouts und Designs entfernen" supertip="Entfernt alle ungenutzten Folienlayouts sowie Designs, die kein Folienlayout mehr haben." imageMso="SlideDelete" />
+							<button id="actCleanSlideMasters" onAction="btnAction" label="Nicht genutzte Folienlayouts entfernen" supertip="Lösche alle nicht verwendeten Folienmaster-Layouts sowie leere Folienmaster (Designs)." imageMso="SlideDelete" />
+							<button id="actCleanUnusedDesigns" onAction="btnAction" label="Nicht genutzte Folienmaster entfernen" supertip="Lösche alle nicht verwendeten Folienmaster (Designs)." imageMso="SlideDelete" />
 							<control idMso="ReviewDeleteAllMarkupInPresentation" />
 						</menu>
 						<menu id="slides-more-lang-menu" imageMso="GroupLanguage" label="Sprache">

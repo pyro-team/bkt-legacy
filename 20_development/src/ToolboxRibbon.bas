@@ -1091,6 +1091,8 @@ Sub btnAction(control As IRibbonControl)
     ' Aufräumen
     Case "actCleanAuthor"
         CleanAuthor
+    Case "actCleanUnusedDesigns"
+        CleanUnusedDesigns
     Case "actCleanSlideMasters"
         CleanSlideMasters
     

@@ -864,6 +864,41 @@ Public Sub CleanSlideMasters()
     MsgBox "Es wurden " & deletedLayouts & " ungenutzte Folienlayouts und " & deletedDesigns & " nicht mehr verwendete Designs gel�scht!", vbInformation
 End Sub
 
+Public Sub CleanUnusedDesigns()
+    Dim i As Long
+    Dim deletedDesigns As Integer
+    Dim oPres As Presentation
+    Dim usedDesigns() As Boolean
+
+    Set oPres = activePresentation
+    deletedDesigns = 0
+
+    If oPres.Designs.Count = 0 Then
+        MsgBox "Es wurden 0 nicht verwendete Designs gelöscht!", vbInformation
+        Exit Sub
+    End If
+
+    ReDim usedDesigns(1 To oPres.Designs.Count)
+
+    On Error Resume Next
+    For i = 1 To oPres.Slides.Count
+        usedDesigns(oPres.Slides(i).Design.Index) = True
+    Next i
+
+    For i = oPres.Designs.Count To 1 Step -1
+        If Not usedDesigns(i) Then
+            Err.Clear
+            oPres.Designs(i).Delete
+            If Err.Number = 0 Then
+                deletedDesigns = deletedDesigns + 1
+            End If
+        End If
+    Next i
+    On Error GoTo 0
+
+    MsgBox "Es wurden " & deletedDesigns & " nicht verwendete Designs gelöscht!", vbInformation
+End Sub
+
 Sub SendEmailFromSlideSelection()
     Dim sldRange As SlideRange
     Dim newPres As Presentation
@@ -945,7 +980,7 @@ Sub CreatePresentationFromSlideSelection()
     Dim fileName As String
     
     If ActiveWindow.Presentation.Path = "" Then
-        MsgBox "Bitte Pr�sentation erst speichern", vbExclamation
+        MsgBox "Bitte Präsentation erst speichern", vbExclamation
         Exit Sub
     End If
     
