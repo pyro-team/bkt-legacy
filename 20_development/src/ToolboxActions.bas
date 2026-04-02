@@ -1119,24 +1119,53 @@ End Sub
 ' Sprache f?r gesamte Pr?sentation setzen
 Public Sub setLanguage(ByVal langCode As Integer)
     On Error Resume Next
+    Dim shpRange As ShapeRange
+    Dim sldRange As SlideRange
     Dim sld As Slide
     Dim shp As Shape
+    Dim viewType As PpViewType
+    Dim msgResult As VbMsgBoxResult
 
-
-    #If Mac Then
-        'not supported by mac
-    #Else
-        activePresentation.DefaultLanguageID = langCode
-    #End If
-    
-    ' Alle Shapes in allen Slides durchlaufen
-    For Each sld In activePresentation.Slides
-        For Each shp In sld.Shapes
+    Set shpRange = GetActiveShapeRange()
+    If Not shpRange Is Nothing Then
+        For Each shp In shpRange
             setLanguageForShape shp, langCode
-'            If shp.HasTextFrame Then
-'                shp.TextFrame2.TextRange.LanguageID = langCode
-'            End If
         Next
+        Exit Sub
+    End If
+
+    viewType = ActiveWindow.ViewType
+    If (viewType = ppViewSlideSorter Or viewType = ppViewThumbnails) And ActiveWindow.Selection.Type = ppSelectionSlides Then
+        Set sldRange = ActiveWindow.Selection.SlideRange
+        If Not sldRange Is Nothing Then
+            For Each sld In sldRange
+                setLanguageForSlide sld, langCode
+            Next
+            Exit Sub
+        End If
+    End If
+
+    msgResult = MsgBox("Sprache auf der ganzen Präsentation ändern (Ja)? " & vbNewLine & "Bei Nein wird die Sprache nur auf der aktuellen Folie geändert.", vbYesNo + vbQuestion, "Sprache setzen")
+    If msgResult = vbYes Then
+        #If Mac Then
+            'not supported by mac
+        #Else
+            activePresentation.DefaultLanguageID = langCode
+        #End If
+
+        For Each sld In activePresentation.Slides
+            setLanguageForSlide sld, langCode
+        Next
+    Else
+        setLanguageForSlide ActiveWindow.View.Slide, langCode
+    End If
+End Sub
+
+Private Sub setLanguageForSlide(sld As Slide, langCode As Integer)
+    Dim shp As Shape
+
+    For Each shp In sld.Shapes
+        setLanguageForShape shp, langCode
     Next
 End Sub
 
@@ -1145,6 +1174,8 @@ Private Sub setLanguageForShape(shp As Shape, langCode As Integer)
     Dim i As Long, row As Long, col As Long
     
     On Error GoTo Err_Handler
+
+    If shp Is Nothing Then Exit Sub
 
     If shp.HasTextFrame Then
         shp.TextFrame2.TextRange.LanguageID = langCode
@@ -1175,6 +1206,7 @@ Private Sub setLanguageForShape(shp As Shape, langCode As Integer)
 
 Exit Sub
 Err_Handler:
+    Err.Clear
 End Sub
 
 
