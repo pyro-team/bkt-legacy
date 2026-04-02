@@ -5,12 +5,10 @@ Public ScaleFrom As MsoScaleFrom
 
 
 Public Function PointsToCentimeters(ByVal pt As Double) As Double
-    On Error Resume Next
     PointsToCentimeters = pt * 2.54 / 72
 End Function
  
 Public Function CentimetersToPoints(ByVal cm As Double) As Double
-    On Error Resume Next
     CentimetersToPoints = cm * 72 / 2.54
 End Function
 
@@ -180,4 +178,3 @@ Exit Sub
 ErrFallback:
     shp.Height = hght
 End Sub
-

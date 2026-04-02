@@ -1,58 +1,6 @@
 Attribute VB_Name = "ToolboxSelections"
 Option Explicit
 
-' Liefert ein Array mit Shape-Objekten, sortiert nach Top-Wert (Abstand vom oberen Rand)
-Public Function ActiveWindowSelectionSortedByTop() As Shape()
-    Dim Shapes() As Variant
-    Dim result() As Shape
-    Dim i As Integer
-    Dim Count As Integer
-    
-    ' zwei-dimensionales Array aus Top-Werten und Shape-Objekten befüllen
-    ReDim Shapes(1 To ActiveWindow.Selection.ShapeRange.Count, 1 To 2)
-    Count = ActiveWindow.Selection.ShapeRange.Count
-    For i = 1 To Count
-        Shapes(i, 1) = ActiveWindow.Selection.ShapeRange(i).Top
-        Set Shapes(i, 2) = ActiveWindow.Selection.ShapeRange(i)
-    Next
-    QuickSortM Shapes, 1, ActiveWindow.Selection.ShapeRange.Count
-    
-    ReDim result(1 To ActiveWindow.Selection.ShapeRange.Count)
-    For i = 1 To ActiveWindow.Selection.ShapeRange.Count
-        Set result(i) = Shapes(i, 2)
-    Next
-    
-    ActiveWindowSelectionSortedByTop = result
-End Function
-
-' Liefert ein Array mit Shape-Objekten, sortiert nach Left-Wert (Abstand vom linken Rand)
-Public Function ActiveWindowSelectionSortedByLeft() As Shape()
-    Dim Shapes() As Variant
-    Dim result() As Shape
-    Dim i As Integer
-    Dim Count As Integer
-    
-    ' zwei-dimensionales Array aus Left-Werten und Shape-Objekten befüllen
-    ReDim Shapes(1 To ActiveWindow.Selection.ShapeRange.Count, 1 To 2)
-    Count = ActiveWindow.Selection.ShapeRange.Count
-    For i = 1 To Count
-        ' Array umgekehrt befüllen, damit Reihenfolge von Shapes mit geichen Werten erhalten bleibt
-        Shapes(i, 1) = ActiveWindow.Selection.ShapeRange(i).Left
-        Set Shapes(i, 2) = ActiveWindow.Selection.ShapeRange(i)
-    Next
-    QuickSortM Shapes, 1, ActiveWindow.Selection.ShapeRange.Count
-    
-    ReDim result(1 To ActiveWindow.Selection.ShapeRange.Count)
-    For i = 1 To ActiveWindow.Selection.ShapeRange.Count
-        Set result(i) = Shapes(i, 2)
-    Next
-    
-    ActiveWindowSelectionSortedByLeft = result
-End Function
-
-
-
-
 
 ' Alle Shapes auswählen, bei denen Shape-Typ mit aktuellen Shpape-Typ übereinstimmt
 Public Sub SelectShapesByShapeType()
@@ -151,10 +99,16 @@ Private Function RangeIdentifier(vArray As Variant)
     Dim curIndex As Long
     Dim rangeFrom As Long
     Dim inRange As Boolean
+    Dim lowerBound As Long
+    Dim upperBound As Long
     
-    On Error Resume Next
+    If Not IsArray(vArray) Then Exit Function
+    On Error GoTo ErrHandler
+    lowerBound = LBound(vArray)
+    upperBound = UBound(vArray)
+    On Error GoTo 0
     
-    For idx = LBound(vArray) To UBound(vArray)
+    For idx = lowerBound To upperBound
         curIndex = vArray(idx)
         If sldRangeId = "" Then
             sldRangeId = curIndex
@@ -190,9 +144,11 @@ Private Function RangeIdentifier(vArray As Variant)
             sldRangeId = sldRangeId & "-" & lastIndex
         End If
     End If
-    
-    
+
     RangeIdentifier = sldRangeId
+    Exit Function
+
+ErrHandler:
 End Function
 
 

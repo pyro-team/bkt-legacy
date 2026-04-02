@@ -218,16 +218,6 @@
 					<control size="normal" showLabel="false" idMso="BorderDiagonalDown" />
 					<control size="normal" showLabel="false" idMso="BorderDiagonalUp" />
 				</group>
-				<!--<group id="absatzEinzug" label="Absatzeinzug">
-					<box id="parPositionBox1" boxStyle="horizontal">
-						<editBox id="ebParIndent" label="Absatzeinzug" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" imageMso="WordIndent"/>
-						<button id="decParIndent" label="‹" showLabel="true" screentip="Absatzeinzug verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" size="normal"/>
-						<button id="incParIndent" label="›" showLabel="true" screentip="Absatzeinzug vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" size="normal"/>
-					</box>
-					<dialogBoxLauncher>
-						<button idMso="PowerPointParagraphDialog" />
-					</dialogBoxLauncher>
-				</group> -->
 			</tab>
 
 
@@ -627,14 +617,7 @@
 					</dialogBoxLauncher>
 				</group>
 				<group id="absatzAbstand" label="Absatz" imageMso="ParagraphDialog" insertBeforeQ="nsBktLegacy:ThinkCell">
-				<!-- Einstellen von Absatzeinzug
-						<box id="parPositionBox1" boxStyle="horizontal">
-							<editBox id="ebParIndent" label="Absatzeinzug" showLabel="false" sizeString="#####" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" imageMso="WordIndent"/>
-							<button id="decParIndent" label="&#171;" showLabel="true" screentip="Absatzeinzug verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" size="normal"/>
-							<button id="incParIndent" label="&#187;" showLabel="true" screentip="Absatzeinzug vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" size="normal"/>
-						</box>
-				//-->
-					<!-- AutomaticResize,   GroupContainerSize, GroupSizeAndPosition, SmartAtLargerShape -->
+						<!-- AutomaticResize,   GroupContainerSize, GroupSizeAndPosition, SmartAtLargerShape -->
 					<menu id="menu-text-box-toggle" label="Einst." imageMso="FormattingMarkDropDown">
 						<toggleButton id="cbWordWrap" label="WordWrap an/aus" screentip="Wortumbruch an/aus" getPressed="cbValue_init" onAction="cbValue_onChange" getEnabled="isEnabled" imageMso="FormattingMarkDropDown" />
 						<toggleButton id="cbAutoSize" label="AutoSize an/aus" screentip="Automatische Größenanpassung an/aus" getPressed="cbValue_init" onAction="cbValue_onChange" getEnabled="isEnabled" imageMso="SmartArtLargerShape" />
@@ -680,12 +663,7 @@
 							<button id="incRectCorner" label="›" showLabel="true" screentip="Rundung vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
 					</box>
-					<!-- <box id="rectCorner2" boxStyle="horizontal">
-						<editBox id="ebRectCorner2" label="Rundung 2" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" imageMso="ShapeCurve" />
-						<button id="decRectCorner2" label="‹" showLabel="true" screentip="Rundung verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" size="normal" />
-						<button id="incRectCorner2" label="›" showLabel="true" screentip="Rundung vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" size="normal" />
-					</box> -->
-				</group>
+					</group>
 				<group idQ="nsBktLegacy:info" label="BKT" imageMso="Info">
 					<menu id="info-menu" label="Info" imageMso="Info" showLabel="false">
 						<button id="reloadValues" label="Werte aktualisieren" onAction="ReloadValues" imageMso="Refresh" />

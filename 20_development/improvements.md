@@ -25,7 +25,7 @@ Below are the highest-value findings, ordered by correctness and operational ris
 | 1 | Ribbon/property logic is duplicated across large `Select Case` blocks in `ToolboxRibbon.bas` (`GetEditBoxValue`, `GetShapeSettingSingle`, `SetShapeSettingSingle`, `isEnabled`, increment/reset paths). | High | High | Medium |
 | 2 | `ActiveWindow.selection` and nested `ShapeRange` access are repeated heavily across callbacks and actions, increasing COM overhead and making logic inconsistent. | High | High | Medium |
 | 3 | Broad `On Error Resume Next` and empty handlers hide real failures in ribbon invalidation, shape operations, and helper functions. | High | Medium | Low |
-| 4 | `MinMax copy.bas` duplicates `MinMax.bas` and is currently untracked, creating ambiguity about the intended implementation. | High | Medium | Low |
+| 4 | The previous `MinMax copy.bas` duplicate issue is resolved; keep `MinMax.bas` as the only implementation and avoid reintroducing parallel copies. | Resolved | Medium | Low |
 | 5 | `ToolboxActions.bas` combines unrelated domains and should be split into smaller modules to reduce regression risk and improve testability. | Medium | High | Medium |
 | 6 | Ribbon invalidation is eager and global (`myRibbon.Invalidate` in many callbacks plus invalidation on multiple application events), which can make the UI feel slower than necessary. | Medium | Medium | Medium |
 | 7 | Selection sorting helpers rebuild arrays from live COM objects every time and are called repeatedly for the same selection. | Medium | Medium | Low |
@@ -39,9 +39,28 @@ Below are the highest-value findings, ordered by correctness and operational ris
 
 These are low-risk changes that should be implemented first because they reduce noise and improve safety without changing public behavior.
 
+## Current Status
+
+### Already completed or largely in place
+
+- `SelectionContext.bas` now exists and centralizes common selection access (`GetActiveShapeRange`, `GetActiveSlideRange`, `SelectionContainsTextFrame`, sorted shape helpers).
+- `ToolboxRibbon.bas` already uses the shared selection helpers in key callback paths.
+- `ToolboxActions.bas` already uses `GetActiveShapeRange` in many actions.
+- `MinMax copy.bas` is no longer present, so the duplicate-file cleanup is effectively complete.
+- Legacy selection-sorting wrappers have been removed from `ToolboxSelections.bas`; active callers now use the `SelectionContext`-based sort helpers.
+- The broad `On Error Resume Next` usages targeted in `Helpers.bas`, `TriggerInvalidate.cls`, `ToolboxActions.bas`, and `ToolboxSelections.bas` have been replaced with guards or narrower helper-based handling.
+- A small shared helper layer now exists in `ToolboxActions.bas` for repeated shape-range write/fallback operations.
+
+### Still open and worth doing next
+
+- remove or quarantine any remaining obsolete debug/test code in `ToolboxRibbon.bas`,
+- keep trimming interface drift and stale comments where they no longer describe supported behavior,
+- continue with small shared-helper extraction only when it reduces duplication without changing public callback contracts,
+- defer larger module splits until new pain points appear during maintenance.
+
 ### 1. Remove dead and duplicate code
 
-- Remove `20_development/src/MinMax copy.bas` after deciding whether its array-handling improvements should be merged into `MinMax.bas`.
+- Keep `MinMax.bas` as the single implementation. `MinMax copy.bas` no longer exists.
 - Remove or quarantine unused test/debug procedures such as `test()` in `ToolboxRibbon.bas`.
 - Remove stale commented-out branches that are no longer part of the supported feature set, especially:
   - old `ebParIndent` code paths,
@@ -51,7 +70,7 @@ These are low-risk changes that should be implemented first because they reduce 
 
 ### 2. Replace broad silent error swallowing with narrow guards
 
-- Replace `On Error Resume Next` in utility conversions (`Helpers.bas`) with normal arithmetic and explicit caller-side validation.
+- `On Error Resume Next` was removed from the utility conversions in `Helpers.bas`.
 - In ribbon callbacks, prefer precondition checks such as:
   - `If myRibbon Is Nothing Then Exit Sub`
   - `If ActiveWindow Is Nothing Then Exit Sub`
@@ -78,7 +97,9 @@ These changes bring most of the maintainability and performance gains while pres
 
 ### 1. Introduce a `SelectionContext` abstraction
 
-Create a small helper module or class that gathers selection state once and exposes:
+This is already implemented enough to serve as the shared selection access layer for the current codebase. Continue using it as the single place for shared selection access and extend it only when a concrete new caller benefits.
+
+Target capabilities:
 
 - current `Selection`
 - selection type
@@ -94,6 +115,7 @@ Recommended behavior:
 - Build the context lazily so sorted arrays are only created if needed.
 - Return `Nothing` or explicit flags when the current selection is not a shape selection.
 - Use the helper in both `ToolboxRibbon.bas` and `ToolboxActions.bas`.
+- Keep `ToolboxSelections.bas` focused on non-overlapping selection utilities.
 
 Benefits:
 
@@ -449,4 +471,4 @@ Manual validation is critical because this is Office/VBA code with strong UI cou
 - Scope: `20_development/src`, with `20_development/ribbonUI.xml` referenced only where callback compatibility and control drift matter.
 - This document intentionally does not change code; it is a decision-ready implementation roadmap.
 - Existing callback names referenced by ribbon XML are treated as public API until explicitly retired.
-- The current worktree already contains local changes in `ribbonUI.xml`, `Helpers.bas`, and an untracked `MinMax copy.bas`; implementation should avoid overwriting those without review.
+- The worktree may already contain unrelated local changes; implementation should avoid overwriting those without review.

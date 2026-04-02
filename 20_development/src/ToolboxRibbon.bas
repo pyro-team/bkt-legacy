@@ -11,36 +11,8 @@ Private SplitRowsCols As Integer
 Private SplitSep As Single
 
 
-'Public Sub Test()
-'    Dim sld As Slide
-'    Dim idx As Integer
-'    Dim shp As Shape
-'
-'    Set sld = ActiveWindow.View.Slide
-'
-'
-'    IntToRGB sld.ColorScheme.Colors(ppBackground) ' Hintergrund 1
-'    IntToRGB sld.ColorScheme.Colors(ppForeground) ' Text 1
-'    IntToRGB sld.ColorScheme.Colors(ppShadow) ' Hintergrund 2
-'    IntToRGB sld.ColorScheme.Colors(ppTitle) ' Text 2
-'    IntToRGB sld.ColorScheme.Colors(ppFill) ' Akzent 1
-'    IntToRGB sld.ColorScheme.Colors(ppAccent1) ' Akzent 2
-'    IntToRGB sld.ColorScheme.Colors(ppAccent2) ' Hyperlink-Farbe
-'    IntToRGB sld.ColorScheme.Colors(ppAccent3) ' Besuchte-Hyperlink-Farbe
-'
-'    'sld.ColorScheme.Colors(9).RGB = RGB(255, 0, 0)
-'End Sub
-'
-'Public Sub IntToRGB(ByVal color As Long)
-'    'Debug.Print Int(color / 256 ^ 2) Mod 256 & " / " & Int(color / 256) Mod 256 & " / " & color Mod 256
-'    Debug.Print color Mod 256 & " / " & Int(color / 256) Mod 256 & " / " & Int(color / 256 ^ 2) Mod 256
-'End Sub
-
-
-
 ' Initialisierung nach dem Laden des Ribbons
 Sub ribbonLoaded(Ribbon As IRibbonUI)
-    'On Error Resume Next
     Set myRibbon = Ribbon
     
     On Error GoTo Err_Handler
@@ -65,7 +37,7 @@ End Sub
 
 ' Funktion zum Neu-Laden der Ribbon-Werte
 Sub ReloadValues(control As IRibbonControl)
-    On Error Resume Next
+    If myRibbon Is Nothing Then Exit Sub
     myRibbon.Invalidate
 End Sub
 
@@ -490,11 +462,9 @@ End Sub
 
 ' Funktionen zur Anpassung der Werte durch die Buttons
 Sub IncreasePixelValue(control As IRibbonControl)
-    On Error Resume Next
     ChangeValueBy control, 1
 End Sub
 Sub DecreasePixelValue(control As IRibbonControl)
-    On Error Resume Next
     ChangeValueBy control, -1
 End Sub
 
@@ -626,7 +596,7 @@ Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
         newValue = Min(oldValue + (intValue / 100), 1)
     Case "incHSep", "decHSep", "incVSep", "decVSep"
         newValue = CentimetersToPoints(Round(PointsToCentimeters(oldValue), 1) + cmValue)
-    Case "decRectCorner", "incRectCorner" ', "decRectCorner2", "incRectCorner2"
+    Case "decRectCorner", "incRectCorner"
         newValue = Round(oldValue, 1) + cmValue
     Case "incLineWeight", "decLineWeight"
         newValue = oldValue + (cmValue * 2.5)

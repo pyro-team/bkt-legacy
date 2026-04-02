@@ -14,24 +14,16 @@ Public Ribbon As IRibbonUI
 
 
 Private Sub PPTEvent_SlideSelectionChanged(ByVal sldRange As SlideRange)
-    On Error Resume Next
+    If Ribbon Is Nothing Then Exit Sub
     Ribbon.Invalidate
 End Sub
 
 Private Sub PPTEvent_WindowActivate(ByVal pres As Presentation, ByVal Wn As DocumentWindow)
-    On Error Resume Next
+    If Ribbon Is Nothing Then Exit Sub
     Ribbon.Invalidate
 End Sub
 
 Private Sub PPTEvent_WindowSelectionChange(ByVal sel As Selection)
-    On Error Resume Next
+    If Ribbon Is Nothing Then Exit Sub
     Ribbon.Invalidate
-'    ' Immer zum Toolbox Tab wechseln
-'    If Not IsAltKeyDown Then
-'        SwitchTab "Toolbox"
-'        'SendKeys "%Y1%"
-'    Else
-'        SwitchTab "Toolbox p.2"
-'        'SendKeys "%Y2%"
-'    End If
 End Sub

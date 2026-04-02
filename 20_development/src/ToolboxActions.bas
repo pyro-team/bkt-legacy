@@ -2,6 +2,12 @@ Attribute VB_Name = "ToolboxActions"
 Option Explicit
 
 Private Const SLIDENUMBERING = "Toolbox-SlideNumbering"
+Private Const ShapeRangeUpdateReplaceText As Long = 1
+Private Const ShapeRangeUpdateRemoveText As Long = 2
+Private Const ShapeRangeUpdateClearMargins As Long = 3
+Private Const ShapeRangeUpdateHide As Long = 4
+Private Const ShapeRangeUpdateFillTransparency As Long = 5
+Private Const ShapeRangeUpdateLineTransparency As Long = 6
 
 
 Public Sub AddSticker()
@@ -127,7 +133,7 @@ Public Sub AddConnectorShapeLeftRight()
     
     On Error GoTo Err_Handler
     
-    Shapes = ActiveWindowSelectionSortedByLeft()
+    Shapes = ShapeRangeSortedByLeft(GetActiveShapeRange())
     
     Set shpLeft = Shapes(1)
     Set shpRight = Shapes(2)
@@ -152,7 +158,7 @@ Public Sub AddConnectorShapeTopBottom()
     
     On Error GoTo Err_Handler
     
-    Shapes = ActiveWindowSelectionSortedByTop()
+    Shapes = ShapeRangeSortedByTop(GetActiveShapeRange())
     
     Set shpTop = Shapes(1)
     Set shpBottom = Shapes(2)
@@ -519,7 +525,7 @@ Public Sub JoinShapesWithText()
     Dim parCount As Long
     
     ' Shapes nach top sortieren
-    Shapes = ActiveWindowSelectionSortedByTop
+    Shapes = ShapeRangeSortedByTop(GetActiveShapeRange())
     ' Anapssung Gr??e des ersten Shapes (Master-Shape)
     Set shp = Shapes(1)
     shp.Height = Max(shp.Height, Shapes(UBound(Shapes)).Top + Shapes(UBound(Shapes)).Height - shp.Top)
@@ -544,10 +550,72 @@ Public Sub JoinShapesWithText()
     Next
 End Sub
 
+Private Sub ApplyShapeRangeUpdate(ByVal shpRange As ShapeRange, ByVal actionId As Long, Optional ByVal textValue As String = "", Optional ByVal numericValue As Single = 0)
+    Dim shp As Shape
+
+    If shpRange Is Nothing Then Exit Sub
+
+    If TryApplyShapeRangeUpdate(shpRange, actionId, textValue, numericValue) Then Exit Sub
+
+    For Each shp In shpRange
+        ApplyShapeUpdate shp, actionId, textValue, numericValue
+    Next
+End Sub
+
+Private Function TryApplyShapeRangeUpdate(ByVal shpRange As ShapeRange, ByVal actionId As Long, ByVal textValue As String, ByVal numericValue As Single) As Boolean
+    On Error GoTo ErrHandler
+
+    Select Case actionId
+    Case ShapeRangeUpdateReplaceText
+        shpRange.TextFrame.TextRange.text = textValue
+    Case ShapeRangeUpdateRemoveText
+        shpRange.TextFrame.TextRange.Delete
+    Case ShapeRangeUpdateClearMargins
+        shpRange.TextFrame2.MarginLeft = 0
+        shpRange.TextFrame2.MarginRight = 0
+        shpRange.TextFrame2.MarginTop = 0
+        shpRange.TextFrame2.MarginBottom = 0
+    Case ShapeRangeUpdateHide
+        shpRange.Visible = msoFalse
+    Case ShapeRangeUpdateFillTransparency
+        shpRange.Fill.Transparency = numericValue
+    Case ShapeRangeUpdateLineTransparency
+        shpRange.Line.Transparency = numericValue
+    Case Else
+        Exit Function
+    End Select
+
+    TryApplyShapeRangeUpdate = True
+    Exit Function
+
+ErrHandler:
+End Function
+
+Private Sub ApplyShapeUpdate(ByVal shp As Shape, ByVal actionId As Long, ByVal textValue As String, ByVal numericValue As Single)
+    Select Case actionId
+    Case ShapeRangeUpdateReplaceText
+        If shp.HasTextFrame Then shp.TextFrame.TextRange.text = textValue
+    Case ShapeRangeUpdateRemoveText
+        If shp.HasTextFrame Then shp.TextFrame.TextRange.Delete
+    Case ShapeRangeUpdateClearMargins
+        If shp.HasTextFrame Then
+            shp.TextFrame2.MarginLeft = 0
+            shp.TextFrame2.MarginRight = 0
+            shp.TextFrame2.MarginTop = 0
+            shp.TextFrame2.MarginBottom = 0
+        End If
+    Case ShapeRangeUpdateHide
+        shp.Visible = msoFalse
+    Case ShapeRangeUpdateFillTransparency
+        shp.Fill.Transparency = numericValue
+    Case ShapeRangeUpdateLineTransparency
+        shp.Line.Transparency = numericValue
+    End Select
+End Sub
+
 
 Public Sub ReplaceAllText()
     Dim newText As String
-    Dim shp As Shape
     Dim rngSelection As ShapeRange
     Set rngSelection = GetActiveShapeRange()
     If rngSelection Is Nothing Then Exit Sub
@@ -556,92 +624,33 @@ Public Sub ReplaceAllText()
     ' Bei Abbruch ist R?ckgabewert leer
     If newText = "" Then Exit Sub
 
-    On Error Resume Next
-    rngSelection.TextFrame.TextRange.text = newText
-    If Err.Number = 0 Then
-        On Error GoTo 0
-        Exit Sub
-    End If
-    Err.Clear
-    On Error GoTo 0
-
-    For Each shp In rngSelection
-        If shp.HasTextFrame Then
-            shp.TextFrame.TextRange.text = newText
-        End If
-    Next
+    ApplyShapeRangeUpdate rngSelection, ShapeRangeUpdateReplaceText, newText
 End Sub
 
 Public Sub RemoveAllText()
-    Dim shp As Shape
     Dim rngSelection As ShapeRange
     Set rngSelection = GetActiveShapeRange()
     If rngSelection Is Nothing Then Exit Sub
 
-    On Error Resume Next
-    rngSelection.TextFrame.TextRange.Delete
-    If Err.Number = 0 Then
-        On Error GoTo 0
-        Exit Sub
-    End If
-    Err.Clear
-    On Error GoTo 0
-
-    For Each shp In rngSelection
-        If shp.HasTextFrame Then
-            shp.TextFrame.TextRange.Delete
-        End If
-    Next
+    ApplyShapeRangeUpdate rngSelection, ShapeRangeUpdateRemoveText
 End Sub
 
 Public Sub TextMarginZero()
-    Dim shp As Shape
     Dim rngSelection As ShapeRange
     Set rngSelection = GetActiveShapeRange()
     If rngSelection Is Nothing Then Exit Sub
 
-    On Error Resume Next
-    rngSelection.TextFrame2.MarginLeft = 0
-    rngSelection.TextFrame2.MarginRight = 0
-    rngSelection.TextFrame2.MarginTop = 0
-    rngSelection.TextFrame2.MarginBottom = 0
-    If Err.Number = 0 Then
-        On Error GoTo 0
-        Exit Sub
-    End If
-    Err.Clear
-    On Error GoTo 0
-
-    For Each shp In rngSelection
-        If shp.HasTextFrame Then
-            shp.TextFrame2.MarginLeft = 0
-            shp.TextFrame2.MarginRight = 0
-            shp.TextFrame2.MarginTop = 0
-            shp.TextFrame2.MarginBottom = 0
-        End If
-    Next
+    ApplyShapeRangeUpdate rngSelection, ShapeRangeUpdateClearMargins
 End Sub
 
 
 Public Sub HideShapes()
-    Dim shp As Shape
     Dim rngSelection As ShapeRange
     
     Set rngSelection = GetActiveShapeRange()
     If rngSelection Is Nothing Then Exit Sub
 
-    On Error Resume Next
-    rngSelection.Visible = msoFalse
-    If Err.Number = 0 Then
-        On Error GoTo 0
-        Exit Sub
-    End If
-    Err.Clear
-    On Error GoTo 0
-
-    For Each shp In rngSelection
-        shp.Visible = msoFalse
-    Next
+    ApplyShapeRangeUpdate rngSelection, ShapeRangeUpdateHide
 End Sub
 
 
@@ -685,7 +694,6 @@ Public Sub PasteAndReplace()
     Set rngSelection = GetActiveShapeRange()
     If rngSelection Is Nothing Then Exit Sub
     
-    'On Error Resume Next
     For Each shp In rngSelection
         PasteAndReplaceShape shp
     Next
@@ -771,61 +779,83 @@ End Sub
 Private Sub SetShapeZOrder(ByVal shp As Shape, ByVal targetPosition As Long)
     Dim prevPosition As Long
     
-    On Error Resume Next
-    
     Do While shp.ZOrderPosition > targetPosition
         prevPosition = shp.ZOrderPosition
-        shp.ZOrder msoSendBackward
+        If Not TryChangeShapeZOrder(shp, msoSendBackward) Then Exit Do
         If shp.ZOrderPosition = prevPosition Then Exit Do
     Loop
     
     Do While shp.ZOrderPosition < targetPosition
         prevPosition = shp.ZOrderPosition
-        shp.ZOrder msoBringForward
+        If Not TryChangeShapeZOrder(shp, msoBringForward) Then Exit Do
         If shp.ZOrderPosition = prevPosition Then Exit Do
     Loop
 End Sub
 
+
+Private Function TryChangeShapeZOrder(ByVal shp As Shape, ByVal zOrderCmd As MsoZOrderCmd) As Boolean
+    On Error GoTo ErrHandler
+
+    shp.ZOrder zOrderCmd
+    TryChangeShapeZOrder = True
+    Exit Function
+
+ErrHandler:
+End Function
+
+Private Function TryDeleteCustomLayout(ByVal layout As CustomLayout) As Boolean
+    On Error GoTo ErrHandler
+
+    layout.Delete
+    TryDeleteCustomLayout = True
+    Exit Function
+
+ErrHandler:
+End Function
+
+Private Function TryDeleteDesign(ByVal design As Design) As Boolean
+    On Error GoTo ErrHandler
+
+    design.Delete
+    TryDeleteDesign = True
+    Exit Function
+
+ErrHandler:
+End Function
+
+Private Function TryGetMasterPlaceholderBounds(ByVal masterShape As Shape, ByRef Left As Single, ByRef Top As Single, ByRef Width As Single, ByRef Height As Single) As Boolean
+    On Error GoTo ErrHandler
+
+    If masterShape.Type <> msoPlaceholder Then Exit Function
+    If masterShape.PlaceholderFormat.Type <> ppPlaceholderBody Then Exit Function
+
+    Left = masterShape.Left
+    Top = masterShape.Top
+    Width = masterShape.Width
+    Height = masterShape.Height
+    TryGetMasterPlaceholderBounds = True
+    Exit Function
+
+ErrHandler:
+End Function
+
 Public Sub SetFillTransparency(transp As Single)
-    Dim shp As Shape
+
     Dim shpRange As ShapeRange
 
     Set shpRange = GetActiveShapeRange()
     If shpRange Is Nothing Then Exit Sub
 
-    On Error Resume Next
-    shpRange.Fill.Transparency = transp
-    If Err.Number = 0 Then
-        On Error GoTo 0
-        Exit Sub
-    End If
-    Err.Clear
-    On Error GoTo 0
-
-    For Each shp In shpRange
-        shp.Fill.Transparency = transp
-    Next
+    ApplyShapeRangeUpdate shpRange, ShapeRangeUpdateFillTransparency, numericValue:=transp
 End Sub
 
 Public Sub SetLineTransparency(transp As Single)
-    Dim shp As Shape
     Dim shpRange As ShapeRange
 
     Set shpRange = GetActiveShapeRange()
     If shpRange Is Nothing Then Exit Sub
 
-    On Error Resume Next
-    shpRange.Line.Transparency = transp
-    If Err.Number = 0 Then
-        On Error GoTo 0
-        Exit Sub
-    End If
-    Err.Clear
-    On Error GoTo 0
-
-    For Each shp In shpRange
-        shp.Line.Transparency = transp
-    Next
+    ApplyShapeRangeUpdate shpRange, ShapeRangeUpdateLineTransparency, numericValue:=transp
 End Sub
 
 Public Sub CleanAuthor()
@@ -843,20 +873,16 @@ Public Sub CleanSlideMasters()
     deletedLayouts = 0
     deletedDesigns = 0
     With oPres
-        On Error Resume Next
         For i = .Designs.Count To 1 Step -1
-            'remove layouts, throws error if in use
             For j = .Designs(i).SlideMaster.CustomLayouts.Count To 1 Step -1
-                Err.Clear
-                .Designs(i).SlideMaster.CustomLayouts(j).Delete
-                If Err.Number = 0 Then
+                If TryDeleteCustomLayout(.Designs(i).SlideMaster.CustomLayouts(j)) Then
                     deletedLayouts = deletedLayouts + 1
                 End If
             Next j
-            'remove empty design
             If .Designs(i).SlideMaster.CustomLayouts.Count = 0 Then
-                .Designs(i).Delete
-                deletedDesigns = deletedDesigns + 1
+                If TryDeleteDesign(.Designs(i)) Then
+                    deletedDesigns = deletedDesigns + 1
+                End If
             End If
         Next i
     End With
@@ -864,40 +890,43 @@ Public Sub CleanSlideMasters()
     MsgBox "Es wurden " & deletedLayouts & " ungenutzte Folienlayouts und " & deletedDesigns & " nicht mehr verwendete Designs gel?scht!", vbInformation
 End Sub
 
+
 Public Sub CleanUnusedDesigns()
     Dim i As Long
     Dim deletedDesigns As Integer
     Dim oPres As Presentation
     Dim usedDesigns() As Boolean
+    Dim designIndex As Long
 
     Set oPres = activePresentation
     deletedDesigns = 0
 
     If oPres.Designs.Count = 0 Then
-        MsgBox "Es wurden 0 nicht verwendete Designs gelšscht!", vbInformation
+        MsgBox "Es wurden 0 nicht verwendete Designs gel?scht!", vbInformation
         Exit Sub
     End If
 
     ReDim usedDesigns(1 To oPres.Designs.Count)
 
-    On Error Resume Next
     For i = 1 To oPres.Slides.Count
-        usedDesigns(oPres.Slides(i).Design.index) = True
+        designIndex = oPres.Slides(i).Design.index
+        If designIndex >= LBound(usedDesigns) And designIndex <= UBound(usedDesigns) Then
+            usedDesigns(designIndex) = True
+        End If
     Next i
 
     For i = oPres.Designs.Count To 1 Step -1
         If Not usedDesigns(i) Then
-            Err.Clear
-            oPres.Designs(i).Delete
-            If Err.Number = 0 Then
+            If TryDeleteDesign(oPres.Designs(i)) Then
                 deletedDesigns = deletedDesigns + 1
             End If
         End If
     Next i
-    On Error GoTo 0
 
-    MsgBox "Es wurden " & deletedDesigns & " nicht verwendete Designs gelšscht!", vbInformation
+    MsgBox "Es wurden " & deletedDesigns & " nicht verwendete Designs gel?scht!", vbInformation
 End Sub
+
+
 
 Sub SendEmailFromSlideSelection()
     Dim sldRange As SlideRange
@@ -1118,12 +1147,10 @@ End Sub
 
 ' Sprache f?r gesamte Pr?sentation setzen
 Public Sub setLanguage(ByVal langCode As Integer)
-    On Error Resume Next
     Dim shpRange As ShapeRange
     Dim sldRange As SlideRange
     Dim sld As Slide
     Dim shp As Shape
-    Dim viewType As PpViewType
     Dim msgResult As VbMsgBoxResult
 
     Set shpRange = GetActiveShapeRange()
@@ -1134,10 +1161,9 @@ Public Sub setLanguage(ByVal langCode As Integer)
         Exit Sub
     End If
 
-    viewType = ActiveWindow.ViewType
-    If (viewType = ppViewSlideSorter Or viewType = ppViewThumbnails) And ActiveWindow.Selection.Type = ppSelectionSlides Then
-        Set sldRange = ActiveWindow.Selection.SlideRange
-        If Not sldRange Is Nothing Then
+    Set sldRange = GetActiveSlideRange()
+    If Not sldRange Is Nothing Then
+        If ActiveWindow.Selection.Type = ppSelectionSlides Then
             For Each sld In sldRange
                 setLanguageForSlide sld, langCode
             Next
@@ -1145,7 +1171,7 @@ Public Sub setLanguage(ByVal langCode As Integer)
         End If
     End If
 
-    msgResult = MsgBox("Sprache auf der ganzen Präsentation ändern (Ja)? " & vbNewLine & "Bei Nein wird die Sprache nur auf der aktuellen Folie geändert.", vbYesNo + vbQuestion, "Sprache setzen")
+    msgResult = MsgBox("Sprache auf der ganzen Pr?sentation ?ndern (Ja)? " & vbNewLine & "Bei Nein wird die Sprache nur auf der aktuellen Folie ge?ndert.", vbYesNo + vbQuestion, "Sprache setzen")
     If msgResult = vbYes Then
         #If Mac Then
             'not supported by mac
@@ -1160,6 +1186,7 @@ Public Sub setLanguage(ByVal langCode As Integer)
         setLanguageForSlide ActiveWindow.View.Slide, langCode
     End If
 End Sub
+
 
 Private Sub setLanguageForSlide(sld As Slide, langCode As Integer)
     Dim shp As Shape
@@ -1375,20 +1402,13 @@ Private Sub GetLayoutContentBounds(ByVal sld As Slide, ByRef Left As Single, ByR
     Width = activePresentation.PageSetup.SlideWidth
     Height = activePresentation.PageSetup.SlideHeight
 
-    On Error Resume Next
     For Each masterShape In sld.Master.Shapes
-        If masterShape.Type = msoPlaceholder Then
-            If masterShape.PlaceholderFormat.Type = ppPlaceholderBody Then
-                Left = masterShape.Left
-                Top = masterShape.Top
-                Width = masterShape.Width
-                Height = masterShape.Height
-                Exit For
-            End If
+        If TryGetMasterPlaceholderBounds(masterShape, Left, Top, Width, Height) Then
+            Exit For
         End If
     Next
-    On Error GoTo 0
 End Sub
+
 
 Private Sub GetVisualBounds(ByVal shp As Shape, ByRef Left As Single, ByRef Top As Single, ByRef Width As Single, ByRef Height As Single)
     Dim angleRad As Double
