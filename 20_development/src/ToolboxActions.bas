@@ -1251,9 +1251,13 @@ Public Sub ArrangeByLast(Position As Integer)
     
     Set selectedShapes = GetActiveShapeRange()
     If selectedShapes Is Nothing Then Exit Sub
-    Set masterShp = selectedShapes(selectedShapes.Count)
-    
-    GetVisualBounds masterShp, masterLeft, masterTop, masterWidth, masterHeight
+
+    If selectedShapes.Count > 1 Then
+        Set masterShp = selectedShapes(selectedShapes.Count)
+        GetVisualBounds masterShp, masterLeft, masterTop, masterWidth, masterHeight
+    Else
+        GetLayoutContentBounds ActiveWindow.View.Slide, masterLeft, masterTop, masterWidth, masterHeight
+    End If
     masterBottom = masterTop + masterHeight
     masterRight = masterLeft + masterWidth
     masterCenterX = masterLeft + (masterWidth / 2)
@@ -1295,15 +1299,18 @@ Public Sub StretchByLast(Position As Integer)
     
     Set selectedShapes = GetActiveShapeRange()
     If selectedShapes Is Nothing Then Exit Sub
-    If selectedShapes.Count < 2 Then Exit Sub
-    
-    Set masterShp = selectedShapes(selectedShapes.Count)
-    GetVisualBounds masterShp, masterLeft, masterTop, masterWidth, masterHeight
+
+    If selectedShapes.Count > 1 Then
+        Set masterShp = selectedShapes(selectedShapes.Count)
+        GetVisualBounds masterShp, masterLeft, masterTop, masterWidth, masterHeight
+    Else
+        GetLayoutContentBounds ActiveWindow.View.Slide, masterLeft, masterTop, masterWidth, masterHeight
+    End If
     masterBottom = masterTop + masterHeight
     masterRight = masterLeft + masterWidth
     
     For Each shp In selectedShapes
-        If shp.Id <> masterShp.Id Then
+        If masterShp Is Nothing Or shp.Id <> masterShp.Id Then
             GetVisualBounds shp, shpLeft, shpTop, shpWidth, shpHeight
             
             Select Case Position
@@ -1318,6 +1325,29 @@ Public Sub StretchByLast(Position As Integer)
             End Select
         End If
     Next
+End Sub
+
+Private Sub GetLayoutContentBounds(ByVal sld As Slide, ByRef Left As Single, ByRef Top As Single, ByRef Width As Single, ByRef Height As Single)
+    Dim masterShape As Shape
+
+    Left = 0
+    Top = 0
+    Width = activePresentation.PageSetup.SlideWidth
+    Height = activePresentation.PageSetup.SlideHeight
+
+    On Error Resume Next
+    For Each masterShape In sld.Master.Shapes
+        If masterShape.Type = msoPlaceholder Then
+            If masterShape.PlaceholderFormat.Type = ppPlaceholderBody Then
+                Left = masterShape.Left
+                Top = masterShape.Top
+                Width = masterShape.Width
+                Height = masterShape.Height
+                Exit For
+            End If
+        End If
+    Next
+    On Error GoTo 0
 End Sub
 
 Private Sub GetVisualBounds(ByVal shp As Shape, ByRef Left As Single, ByRef Top As Single, ByRef Width As Single, ByRef Height As Single)

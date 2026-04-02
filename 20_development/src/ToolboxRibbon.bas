@@ -135,8 +135,7 @@ Sub isEnabled(control As IRibbonControl, ByRef enabled)
             enabled = False
         Else
             Select Case ctlId
-            Case "ebVSep", "ebHSep", "actJoinShapesWithText", "actSplitSameWidth", "actSplitSameHeight", "actSplitSwap", _
-                 "actStretchLeft", "actStretchRight", "actStretchTop", "actStretchBottom"
+            Case "ebVSep", "ebHSep", "actJoinShapesWithText", "actSplitSameWidth", "actSplitSameHeight", "actSplitSwap"
                 ' Enabled bei Selection-Count > 1
                 enabled = (shapeCount > 1)
                 
