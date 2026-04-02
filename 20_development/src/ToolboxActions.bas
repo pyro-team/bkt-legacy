@@ -1323,6 +1323,7 @@ End Sub
 Public Sub StretchByLast(Position As Integer)
     Dim selectedShapes As ShapeRange
     Dim shp As Shape, masterShp As Shape
+    Dim useShape As Boolean
     Dim masterTop As Single, masterHeight As Single
     Dim masterLeft As Single, masterWidth As Single
     Dim masterBottom As Single, masterRight As Single
@@ -1342,7 +1343,14 @@ Public Sub StretchByLast(Position As Integer)
     masterRight = masterLeft + masterWidth
     
     For Each shp In selectedShapes
-        If masterShp Is Nothing Or shp.Id <> masterShp.Id Then
+        useShape = False
+        If masterShp Is Nothing Then
+            useShape = True
+        ElseIf shp.Id <> masterShp.Id Then
+            useShape = True
+        End If
+
+        If useShape Then
             GetVisualBounds shp, shpLeft, shpTop, shpWidth, shpHeight
             
             Select Case Position
