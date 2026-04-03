@@ -13,6 +13,7 @@ Private Const CUSTOM_UI_NAMESPACE As String = "http://schemas.microsoft.com/offi
 Private Const LIBRARY_FOLDER_NAME As String = "Library"
 Private Const LIBRARY_CONTROL_PREFIX As String = "toolbox-library-open-"
 Private Const LIBRARY_MENU_PREFIX As String = "toolbox-library-menu-"
+Private Const LIBRARY_SEPARATOR_PREFIX As String = "toolbox-library-separator-"
 
 
 Public Sub GetMenuContent(control As IRibbonControl, ByRef xmlStr)
@@ -109,7 +110,6 @@ Private Function BuildFolderContentXml(ByVal folderPath As String) As String
     Dim xmlParts As String
 
     CollectFolderEntries folderPath, folderNames, folderCount, fileNames, fileCount
-    RequestAccessForFolderLevel folderPath, folderNames, folderCount, fileNames, fileCount
 
     For i = 1 To folderCount
         subFolderPath = BuildPath(folderPath, folderNames(i))
@@ -118,6 +118,10 @@ Private Function BuildFolderContentXml(ByVal folderPath As String) As String
             xmlParts = xmlParts & BuildSubMenuXml(subFolderPath, folderNames(i), subFolderContent)
         End If
     Next i
+
+    If folderCount > 0 And fileCount > 0 Then
+        xmlParts = xmlParts & BuildSeparatorXml(folderPath)
+    End If
 
     For i = 1 To fileCount
         xmlParts = xmlParts & BuildFileButtonXml(BuildPath(folderPath, fileNames(i)), fileNames(i))
@@ -128,20 +132,29 @@ End Function
 
 Private Sub CollectFolderEntries(ByVal folderPath As String, ByRef folderNames() As String, ByRef folderCount As Long, ByRef fileNames() As String, ByRef fileCount As Long)
     Dim entryName As String
+    Dim entryNames() As String
+    Dim entryCount As Long
+    Dim i As Long
     Dim entryPath As String
 
     entryName = Dir(BuildPath(folderPath, "*"), vbDirectory)
     Do While Len(entryName) > 0
         If entryName <> "." And entryName <> ".." Then
-            entryPath = BuildPath(folderPath, entryName)
-            If FolderExists(entryPath) Then
-                AppendString folderNames, folderCount, entryName
-            ElseIf IsPptxFile(entryName) Then
-                AppendString fileNames, fileCount, entryName
-            End If
+            AppendString entryNames, entryCount, entryName
         End If
         entryName = Dir()
     Loop
+
+    RequestAccessForFolderLevel folderPath, entryNames, entryCount
+
+    For i = 1 To entryCount
+        entryPath = BuildPath(folderPath, entryNames(i))
+        If FolderExists(entryPath) Then
+            AppendString folderNames, folderCount, entryNames(i)
+        ElseIf IsPptxFile(entryNames(i)) Then
+            AppendString fileNames, fileCount, entryNames(i)
+        End If
+    Next i
 
     SortStringArray folderNames, folderCount
     SortStringArray fileNames, fileCount
@@ -156,6 +169,10 @@ Private Function BuildFileButtonXml(ByVal filePath As String, ByVal fileName As 
 
     labelText = StripPptxExtension(fileName)
     BuildFileButtonXml = "<button id=""" & LIBRARY_CONTROL_PREFIX & EncodePath(filePath) & """ label=""" & EscapeXml(labelText) & """ screentip=""" & EscapeXml(fileName) & """ supertip=""" & EscapeXml(filePath) & """ onAction=""OpenLibraryPresentation"" />"
+End Function
+
+Private Function BuildSeparatorXml(ByVal folderPath As String) As String
+    BuildSeparatorXml = "<menuSeparator id=""" & LIBRARY_SEPARATOR_PREFIX & EncodePath(folderPath) & """ />"
 End Function
 
 Private Function BuildDisabledButtonXml(ByVal buttonId As String, ByVal labelText As String) As String
@@ -295,7 +312,7 @@ Private Function DecodePathFromControlId(ByVal controlId As String) As String
     DecodePathFromControlId = decodedValue
 End Function
 
-Private Sub RequestAccessForFolderLevel(ByVal folderPath As String, ByRef folderNames() As String, ByVal folderCount As Long, ByRef fileNames() As String, ByVal fileCount As Long)
+Private Sub RequestAccessForFolderLevel(ByVal folderPath As String, ByRef entryNames() As String, ByVal entryCount As Long)
 #If Mac Then
     Dim permissionCandidates() As Variant
     Dim candidateCount As Long
@@ -304,12 +321,8 @@ Private Sub RequestAccessForFolderLevel(ByVal folderPath As String, ByRef folder
 
     AppendPermissionCandidate permissionCandidates, candidateCount, folderPath
 
-    For i = 1 To folderCount
-        AppendPermissionCandidate permissionCandidates, candidateCount, BuildPath(folderPath, folderNames(i))
-    Next i
-
-    For i = 1 To fileCount
-        AppendPermissionCandidate permissionCandidates, candidateCount, BuildPath(folderPath, fileNames(i))
+    For i = 1 To entryCount
+        AppendPermissionCandidate permissionCandidates, candidateCount, BuildPath(folderPath, entryNames(i))
     Next i
 
     If candidateCount > 0 Then
