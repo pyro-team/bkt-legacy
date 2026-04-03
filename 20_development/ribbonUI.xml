@@ -371,6 +371,7 @@
 						<control idMso="ClipArtInsertDialog" />
 						<control idMso="SmartArtInsert" />
 						<control idMso="ChartInsert" />
+						<dynamicMenu id="shapes-library-menu" label="Library" imageMso="FileOpen" getContent="GetLibraryMenuContent" />
 						<menuSeparator id="shapes-more-seperator-2" title="Text und Beschriftungen" />
 						<control idMso="HeaderFooterInsert" />
 						<control idMso="DateAndTimeInsert" />
