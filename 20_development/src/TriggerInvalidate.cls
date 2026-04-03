@@ -7,6 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+Option Explicit
 Public WithEvents PPTEvent As Application
 Attribute PPTEvent.VB_VarHelpID = -1
 

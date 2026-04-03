@@ -7,6 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+Option Explicit
 Private Const TOOLBOX_AGENDA = "Toolbox-Agenda"
 Private Const TOOLBOX_AGENDA_SlideNo = "Toolbox-Agenda-SlideNo"
 Private Const TOOLBOX_AGENDA_Selector = "Toolbox-Agenda-Selector"
@@ -205,6 +206,7 @@ End Sub
 Private Sub DetermineSelectorSettings()
     Dim Slides As Collection
     Dim sld As Slide
+    Dim shp As Shape
     
     Set Slides = GetAgendaSlides
     For Each sld In Slides
