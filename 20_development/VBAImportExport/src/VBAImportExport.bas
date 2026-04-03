@@ -144,6 +144,8 @@ Private Sub DeleteFilesWithExtension(ByVal folderPath As String, ByVal extension
     Dim fileName As String
     Dim fullPath As String
 
+    RequestAccessForFolderFiles folderPath, extension
+
     fileName = Dir(BuildPath(folderPath, "*." & extension))
     Do While Len(fileName) > 0
         fullPath = BuildPath(folderPath, fileName)
@@ -159,11 +161,14 @@ Private Function HasImportFiles(ByVal folderPath As String) As Boolean
 End Function
 
 Private Function HasFilesWithExtension(ByVal folderPath As String, ByVal extension As String) As Boolean
+    RequestAccessForFolderFiles folderPath, extension
     HasFilesWithExtension = Len(Dir(BuildPath(folderPath, "*." & extension))) > 0
 End Function
 
 Private Sub ImportFilesWithExtension(ByVal cmpComponents As Variant, ByVal folderPath As String, ByVal extension As String)
     Dim fileName As String
+
+    RequestAccessForFolderFiles folderPath, extension
 
     fileName = Dir(BuildPath(folderPath, "*." & extension))
     Do While Len(fileName) > 0
@@ -242,4 +247,32 @@ Private Function DeleteVBAModulesAndUserForms()
     Next index
 End Function
 
+Private Sub RequestAccessForFolderFiles(ByVal folderPath As String, ByVal extension As String)
+#If Mac Then
+    Dim fileName As String
+    Dim permissionCandidates() As Variant
+    Dim candidateCount As Long
+    Dim accessGranted As Boolean
+
+    AppendPermissionCandidate permissionCandidates, candidateCount, folderPath
+
+    fileName = Dir(BuildPath(folderPath, "*." & extension))
+    Do While Len(fileName) > 0
+        AppendPermissionCandidate permissionCandidates, candidateCount, BuildPath(folderPath, fileName)
+        fileName = Dir()
+    Loop
+
+    If candidateCount > 0 Then
+        On Error Resume Next
+        accessGranted = GrantAccessToMultipleFiles(permissionCandidates)
+        On Error GoTo 0
+    End If
+#End If
+End Sub
+
+Private Sub AppendPermissionCandidate(ByRef permissionCandidates() As Variant, ByRef candidateCount As Long, ByVal candidatePath As String)
+    candidateCount = candidateCount + 1
+    ReDim Preserve permissionCandidates(0 To candidateCount - 1)
+    permissionCandidates(candidateCount - 1) = candidatePath
+End Sub
 
