@@ -61,12 +61,37 @@ Public Sub OpenPresentation(control As IRibbonControl)
         Exit Sub
     End If
 
-    Set openedPresentation = Presentations.Open(filePath, msoFalse, msoFalse, msoTrue)
+    Set openedPresentation = OpenPresentationFile(filePath)
     Exit Sub
 
 ErrHandler:
     MsgBox "The library presentation could not be opened:" & vbCrLf & filePath, vbExclamation
 End Sub
+
+Public Function GetAddinRootFolderPath() As String
+    GetAddinRootFolderPath = GetAddinRootPath()
+End Function
+
+Public Function BuildAddinFilePath(ByVal fileName As String) As String
+    Dim addinRoot As String
+
+    addinRoot = GetAddinRootPath()
+    If Len(addinRoot) = 0 Then Exit Function
+
+    BuildAddinFilePath = BuildPath(addinRoot, fileName)
+End Function
+
+Public Function DoesFileExist(ByVal filePath As String) As Boolean
+    DoesFileExist = FileExists(filePath)
+End Function
+
+Public Function OpenPresentationFile(ByVal filePath As String, Optional ByVal readOnly As MsoTriState = msoFalse, Optional ByVal untitled As MsoTriState = msoFalse, Optional ByVal allowWindowless As Boolean = False) As Presentation
+#If Mac Then
+    Set OpenPresentationFile = Presentations.Open(filePath, readOnly, untitled, msoTrue)
+#Else
+    Set OpenPresentationFile = Presentations.Open(filePath, readOnly, untitled, IIf(allowWindowless, msoFalse, msoTrue))
+#End If
+End Function
 
 
 Private Function BuildRootMenuXml(ByVal innerXml As String) As String

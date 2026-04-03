@@ -6,111 +6,76 @@ Private Const TEMPLATE_FILE = "Templates.pptx"
 
 Public Sub ShowTemplateDialog()
     Dim activePresentation As Presentation
-    Set activePresentation = Application.Presentations(1)
-    
-    
-    ' Get path and filename of template file
+    Dim library As ToolboxLibrary
+    Dim templatePresentation As Presentation
     Dim templateFilePath As String
-    Dim addin As addin
-    For Each addin In Application.AddIns
-        'If addin.Name = "BKT-Legacy" Then
-        If addin.Loaded And InStr(1, addin.Name, "BKT-Legacy") = 1 Then
-            #If Mac Then
-                templateFilePath = addin.Path & "/" & TEMPLATE_FILE
-            #Else
-                templateFilePath = addin.Path & "\" & TEMPLATE_FILE
-            #End If
-        End If
-    Next
-    
+    Dim selectedTemplate As Integer
+
+    Set activePresentation = Application.Presentations(1)
+    Set library = New ToolboxLibrary
+
+    templateFilePath = library.BuildAddinFilePath(TEMPLATE_FILE)
     If templateFilePath = "" Then
         MsgBox "Addin-Ordner konnte nicht identifiziert werden. Eventuell wurde die Addin-Datei umbenannt.", vbCritical
         Exit Sub
     End If
-' Doenst work on Mac:
-'    If Dir(templateFilePath) = "" Then
-'        MsgBox "Keine Datei Templates.pptx im Addin-Ordner gefunden." & vbCrLf & templateFilePath, vbInformation
-'        Exit Sub
-'    End If
 
-    ' Template-Foliensatz šffnen
-    Dim templatePresentation As Presentation
-    On Error GoTo ErrOpen
-    #If Mac Then
-        'mac does not support windowless mode
-        ' GrantAccessToMultipleFiles Array(templateFilePath)
-        Set templatePresentation = Presentations.Open(templateFilePath, msoTrue, msoFalse, msoTrue)
-    #Else
-        Set templatePresentation = Presentations.Open(templateFilePath, msoTrue, msoFalse, msoFalse)
-    #End If
-    On Error GoTo 0
-    
-    ' Anzahl Templates ermitteln
-    Dim numOfTemplates As Integer
-    numOfTemplates = templatePresentation.Slides.Count
-        
-    ' Array Templates erstellen
-    Dim Templates() As String
-    
-    ' Array befŸllen
-    Dim curTemplateName As String
-    
-    Dim slideCounter As Integer
-    
-    
-    For slideCounter = 1 To numOfTemplates
-        ReDim Preserve Templates(slideCounter) As String
-    
-        If templatePresentation.Slides(slideCounter).Shapes.HasTitle Then
-            curTemplateName = templatePresentation.Slides(slideCounter).Shapes.Title.TextFrame.TextRange.text
-        Else
-            curTemplateName = "Slide " & slideCounter
-        End If
-                                        
-        Templates(slideCounter - 1) = curTemplateName
-    Next
-    
-    
-    ' Build template form
-    With VorlagenForm
-        With .list_Vorlagen
-            .Clear
-            .List = Templates
-        End With
-        
-        .Show
-    End With
-    
-    
-    ' Get selectes template
-    Dim selectedTemplate As Integer
-    selectedTemplate = VorlagenForm.selectedTemplate
-    
-    If selectedTemplate >= 0 Then
-        ' Copy selected template
-        templatePresentation.Slides.Item(selectedTemplate + 1).Copy
-        
-        
-        Dim slidePosition As Integer
-        slidePosition = 0
-        
-        On Error GoTo Err1
-        slidePosition = ActiveWindow.View.Slide.SlideIndex
-Err1:
-        activePresentation.Slides.Paste (slidePosition + 1)
+    If Not library.DoesFileExist(templateFilePath) Then
+        MsgBox "Keine Datei Templates.pptx im Addin-Ordner gefunden." & vbCrLf & templateFilePath, vbInformation
+        Exit Sub
     End If
-    
-    
-    ' Template-Foliensatz schlie§en
+
+    On Error GoTo ErrOpen
+    Set templatePresentation = library.OpenPresentationFile(templateFilePath, msoTrue, msoFalse, True)
+    On Error GoTo 0
+
+    PopulateTemplateList templatePresentation
+    VorlagenForm.Show
+
+    selectedTemplate = VorlagenForm.selectedTemplate
+    If selectedTemplate >= 0 Then
+        templatePresentation.Slides.Item(selectedTemplate + 1).Copy
+        activePresentation.Slides.Paste (GetInsertSlidePosition() + 1)
+    End If
+
     With templatePresentation
         .Saved = True
         .Close
     End With
-Exit Sub
+    Exit Sub
 
 ErrOpen:
-    MsgBox "Fehler beim …ffnen der Datei Templates.pptx im Addin-Ordner. Eventuell ist die Datei nicht vorhanden?" & vbCrLf & templateFilePath, vbCritical
-    Exit Sub
+    MsgBox "Fehler beim Oeffnen der Datei Templates.pptx im Addin-Ordner. Eventuell ist die Datei nicht vorhanden?" & vbCrLf & templateFilePath, vbCritical
 End Sub
 
+Private Sub PopulateTemplateList(ByVal templatePresentation As Presentation)
+    Dim templateNames() As String
+    Dim slideCounter As Integer
 
+    For slideCounter = 1 To templatePresentation.Slides.Count
+        ReDim Preserve templateNames(slideCounter) As String
+        templateNames(slideCounter - 1) = GetTemplateName(templatePresentation.Slides(slideCounter), slideCounter)
+    Next slideCounter
+
+    With VorlagenForm.list_Vorlagen
+        .Clear
+        .List = templateNames
+    End With
+End Sub
+
+Private Function GetTemplateName(ByVal templateSlide As Slide, ByVal slideNumber As Integer) As String
+    If templateSlide.Shapes.HasTitle Then
+        GetTemplateName = templateSlide.Shapes.Title.TextFrame.TextRange.Text
+    Else
+        GetTemplateName = "Slide " & slideNumber
+    End If
+End Function
+
+Private Function GetInsertSlidePosition() As Integer
+    On Error GoTo ErrHandler
+    GetInsertSlidePosition = ActiveWindow.View.Slide.SlideIndex
+    Exit Function
+
+ErrHandler:
+    GetInsertSlidePosition = 0
+End Function
