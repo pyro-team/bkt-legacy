@@ -115,6 +115,12 @@ Sub isEnabled(control As IRibbonControl, ByRef enabled)
                 ' Enabled bei Selection-Count = 2
                 enabled = (shapeCount = 2)
                 
+            Case "actPickupShapeBounds"
+                enabled = (shapeCount > 0)
+
+            Case "actApplyShapePosition", "actApplyShapeSize"
+                enabled = (shapeCount > 0 And HasPickedShapeBounds())
+
             Case "ebRectCorner"
                 enabled = (Not firstShp Is Nothing And firstShp.Adjustments.Count >= AdjustmentValue)
 
@@ -1164,6 +1170,12 @@ Sub btnAction(control As IRibbonControl)
         StretchByLast 3
     Case "actStretchBottom"
         StretchByLast 4
+    Case "actPickupShapeBounds"
+        PickUpShapeBounds
+    Case "actApplyShapePosition"
+        ApplyPickedShapePosition
+    Case "actApplyShapeSize"
+        ApplyPickedShapeSize
     
     ' Info
     Case "lblxInfo", "lblxWebsite"

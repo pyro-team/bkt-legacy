@@ -394,6 +394,56 @@ Public Sub SwapPositionSize()
     shpRange(1).Height = lastHeight
 End Sub
 
+Public Function HasPickedShapeBounds() As Boolean
+    HasPickedShapeBounds = PickedBoundsAvailable
+End Function
+
+Public Sub PickUpShapeBounds()
+    Dim shpRange As ShapeRange
+    
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then Exit Sub
+    If shpRange.Count = 0 Then Exit Sub
+
+    GetShapeRangeVisualBounds shpRange, PickedBoundsLeft, PickedBoundsTop, PickedBoundsWidth, PickedBoundsHeight
+    PickedBoundsAvailable = True
+End Sub
+
+Public Sub ApplyPickedShapePosition()
+    Dim shpRange As ShapeRange
+    Dim shp As Shape
+    Dim currentLeft As Single
+    Dim currentTop As Single
+    Dim currentWidth As Single
+    Dim currentHeight As Single
+    
+    If Not PickedBoundsAvailable Then Exit Sub
+
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then Exit Sub
+    
+    For Each shp In shpRange
+        GetVisualBounds shp, currentLeft, currentTop, currentWidth, currentHeight
+        shp.Left = shp.Left + (PickedBoundsLeft - currentLeft)
+        shp.Top = shp.Top + (PickedBoundsTop - currentTop)
+    Next shp
+End Sub
+
+Public Sub ApplyPickedShapeSize()
+    Dim shpRange As ShapeRange
+    Dim shp As Shape
+    
+    If Not PickedBoundsAvailable Then Exit Sub
+
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then Exit Sub
+    
+    For Each shp In shpRange
+        StretchShapeToVisualWidth shp, PickedBoundsWidth, False
+        StretchShapeToVisualHeight shp, PickedBoundsHeight, False
+    Next shp
+End Sub
+
 
 ' Bei allen markierten Shapes werden die Texte in separate Textboxen kopiert
 Public Sub MoveTextOutOfShapes()
@@ -1425,6 +1475,37 @@ Private Sub GetLayoutContentBounds(ByVal sld As Slide, ByRef Left As Single, ByR
     Next
 End Sub
 
+
+Private Sub GetShapeRangeVisualBounds(ByVal shpRange As ShapeRange, ByRef Left As Single, ByRef Top As Single, ByRef Width As Single, ByRef Height As Single)
+    Dim shp As Shape
+    Dim shpLeft As Single
+    Dim shpTop As Single
+    Dim shpWidth As Single
+    Dim shpHeight As Single
+    Dim maxRight As Single
+    Dim maxBottom As Single
+    Dim isFirstShape As Boolean
+    
+    isFirstShape = True
+    For Each shp In shpRange
+        GetVisualBounds shp, shpLeft, shpTop, shpWidth, shpHeight
+        If isFirstShape Then
+            Left = shpLeft
+            Top = shpTop
+            maxRight = shpLeft + shpWidth
+            maxBottom = shpTop + shpHeight
+            isFirstShape = False
+        Else
+            Left = Min(Left, shpLeft)
+            Top = Min(Top, shpTop)
+            maxRight = Max(maxRight, shpLeft + shpWidth)
+            maxBottom = Max(maxBottom, shpTop + shpHeight)
+        End If
+    Next shp
+    
+    Width = maxRight - Left
+    Height = maxBottom - Top
+End Sub
 
 Private Sub GetVisualBounds(ByVal shp As Shape, ByRef Left As Single, ByRef Top As Single, ByRef Width As Single, ByRef Height As Single)
     Dim angleRad As Double

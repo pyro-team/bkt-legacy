@@ -74,6 +74,12 @@
 					</box>
 				</group>
 
+				<group id="pickupBoundsGroup" label="Referenz" imageMso="PickUpStyle">
+					<button id="actPickupShapeBounds" onAction="btnAction" getEnabled="isEnabled" label="Referenz" showLabel="true" size="normal" screentip="Position und Größe aufnehmen" supertip="Speichert Position und Größe des aktuell ausgewählten Shapes oder der äußeren Begrenzung aller ausgewählten Shapes." imageMso="PositionAbsoluteMarks" />
+					<button id="actApplyShapePosition" onAction="btnAction" getEnabled="isEnabled" label="Position" showLabel="true" size="normal" screentip="Gespeicherte Position anwenden" supertip="Wendet die zuletzt aufgenommene Position auf alle ausgewählten Shapes an." imageMso="ControlAlignToGrid" />
+					<button id="actApplyShapeSize" onAction="btnAction" getEnabled="isEnabled" label="Größe" showLabel="true" size="normal" screentip="Gespeicherte Größe anwenden" supertip="Wendet die zuletzt aufgenommene Größe auf alle ausgewählten Shapes an." imageMso="SizeToControlHeightAndWidth" />
+				</group>
+
 				<group id="parIndents" label="Absatzeinzug" imageMso="ViewRulerPowerPoint">
 					<box id="parFirstBox" boxStyle="horizontal">
 						<editBox id="ebParIndentFirst" label="Sondereinzug" showLabel="false" sizeString="####" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" image="first_line_indent" />
