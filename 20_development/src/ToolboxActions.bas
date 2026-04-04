@@ -8,9 +8,17 @@ Private Const ShapeRangeUpdateClearMargins As Long = 3
 Private Const ShapeRangeUpdateHide As Long = 4
 Private Const ShapeRangeUpdateFillTransparency As Long = 5
 Private Const ShapeRangeUpdateLineTransparency As Long = 6
+Private Const STICKER_POSITION_RIGHT As String = "right"
+Private Const STICKER_POSITION_TOP_CENTER As String = "top-center"
+
+Private PickedBoundsAvailable As Boolean
+Private PickedBoundsLeft As Single
+Private PickedBoundsTop As Single
+Private PickedBoundsWidth As Single
+Private PickedBoundsHeight As Single
 
 
-Public Sub AddSticker()
+Public Sub AddSticker(Optional ByVal position As String = STICKER_POSITION_RIGHT)
     Dim shp As Shape
     Dim sld As Slide
     Dim fontcol As ColorFormat
@@ -32,7 +40,6 @@ Public Sub AddSticker()
     ' Text-Stil
     'shp.TextFrame.TextRange.Font.Color.RGB = 0
     shp.TextFrame.TextRange.Font.Size = 14
-    shp.TextFrame.TextRange.ParagraphFormat.Alignment = ppAlignRight
     shp.TextFrame.TextRange.ParagraphFormat.Bullet.Visible = False
     ' Autosize / Text nicht umbrechen
     shp.TextFrame.WordWrap = msoFalse
@@ -44,7 +51,16 @@ Public Sub AddSticker()
     shp.TextFrame.MarginRight = 0
     ' Text
     shp.TextFrame.TextRange.text = "tbd"
-    shp.Left = activePresentation.PageSetup.SlideWidth - shp.Width - 15
+    
+    Select Case LCase$(position)
+    Case STICKER_POSITION_TOP_CENTER
+        shp.TextFrame.TextRange.ParagraphFormat.Alignment = ppAlignCenter
+        shp.Left = (ActivePresentation.PageSetup.SlideWidth - shp.Width) / 2
+        shp.Top = 15
+    Case Else
+        shp.TextFrame.TextRange.ParagraphFormat.Alignment = ppAlignRight
+        shp.Left = ActivePresentation.PageSetup.SlideWidth - shp.Width - 15
+    End Select
     
     Set fontcol = shp.TextFrame.TextRange.Font.Color
     

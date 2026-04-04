@@ -1086,6 +1086,8 @@ Sub btnAction(control As IRibbonControl)
     'Sticker
     Case "actSticker"
         AddSticker
+    Case "actStickerTopCenter"
+        AddSticker "top-center"
         
     'Process
     Case "actProcessAdd"

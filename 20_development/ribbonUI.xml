@@ -231,6 +231,7 @@
 						<menu id="slides-paste-menu" label="Einfügen-Menü">
 							<button idMso="PasteSpecialDialog" />
 							<button idMso="PasteAsPicture" />
+							<button idMso="PasteTextOnly" />
 							<menuSeparator id="slides-paste-seperator-1" />
 							<button id="actPasteToSlides" label="Auf ausgewählte Folien einfügen" onAction="btnAction" imageMso="PasteDuplicate" />
 							<button id="actPasteAndReplace" label="Mit Zwischenablage ersetzen" onAction="btnAction" imageMso="PasteSingleCellExcelTableDestinationFormatting" getEnabled="isEnabled" />
@@ -271,7 +272,7 @@
 						<button id="btnSelectedSlidesSaveAs" label="Ausgewählte Folien speichern" supertip="Die markierten Folien werden in einer neuen ungespeicherten Präsentation geöffnet." onAction="btnAction" imageMso="SaveSelectionToTextBoxGallery" getEnabled="isEnabled"/>
 						<button id="btnSendSelectionAsAttachment" label="Ausgewählte Folien senden" supertip="Die markierten Folien werden einer neuen E-Mail in Outlook angehängt." onAction="btnAction" imageMso="FileSendAsAttachment" getEnabled="isEnabled" getVisible="isVisibleWin"/> <!-- Win only -->
 						<menu id="slides-more-clean-menu" imageMso="SlideShowFromCurrent" label="Slidedeck aufräumen">
-							<button id="actCleanAuthor" onAction="btnAction" label="Autor aus Dokumenteneigenschaften entfernen" imageMso="ContactPictureMenu" />
+							<button id="actCleanAuthor" onAction="btnAction" label="Autor aus Dokumenteneigenschaften entfernen" />
 							<button id="actCleanSlideMasters" onAction="btnAction" label="Nicht genutzte Folienlayouts entfernen" supertip="Lösche alle nicht verwendeten Folienmaster-Layouts sowie leere Folienmaster (Designs)." imageMso="SlideDelete" />
 							<button id="actCleanUnusedDesigns" onAction="btnAction" label="Nicht genutzte Folienmaster entfernen" supertip="Lösche alle nicht verwendeten Folienmaster (Designs)." imageMso="SlideDelete" />
 							<control idMso="ReviewDeleteAllMarkupInPresentation" />
@@ -382,7 +383,8 @@
 					<control showLabel="false" size="normal" idMso="EquationSymbolsInsertGallery" getVisible="isVisibleMac" /> <!-- Mac only, as symbol insert is not available -->
 					<menu id="shapes-more" label="Mehr..." showLabel="false" imageMso="TableDesign" >
 						<menuSeparator id="shapes-more-seperator-3" title="Textfunktionen" />
-						<button id="actSticker" label="Sticker einfügen" showLabel="true" screentip="Sticker oben rechts auf Folie einfügen" onAction="btnAction" image="sticker"/>
+						<button id="actSticker" label="Sticker rechts einfügen" showLabel="true" screentip="Sticker oben rechts auf Folie einfügen" onAction="btnAction" image="sticker"/>
+						<button id="actStickerTopCenter" label="Sticker mittig oben einfügen" showLabel="true" screentip="Sticker mittig oben auf Folie einfügen" onAction="btnAction" image="sticker"/>
 						<button id="actAddProtectedHyphen" label="Geschützter Trennstrich" showLabel="true" screentip="Geschützten Trennstrich einfügen" supertip="Fügt an der aktuellen Textcursor-Position einen geschützten Trennstrich ein. Der Trennstrich erscheint nur am Zeilenende und bleibt sonst unsichtbar." onAction="btnAction" getEnabled="isEnabled"/>
 						<button id="actAddProtectedSpace" label="Geschütztes Leerzeichen" showLabel="true" screentip="Geschütztes Leerzeichen einfügen" supertip="Fügt an der aktuellen Textcursor-Position ein geschütztes Leerzeichen ohne Zeilenumbruch ein." onAction="btnAction" getEnabled="isEnabled"/>
 						<button id="actAddProtectedNarrowSpace" label="Schmales geschütztes Leerzeichen" showLabel="true" screentip="Schmales geschütztes Leerzeichen einfügen" supertip="Fügt an der aktuellen Textcursor-Position ein schmales geschütztes Leerzeichen ohne Zeilenumbruch ein, z. B. für Abkürzungen." onAction="btnAction" getEnabled="isEnabled"/>
