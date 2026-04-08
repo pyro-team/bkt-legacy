@@ -610,6 +610,8 @@
 							<button id="decMarginBottom" label="‹" showLabel="true" screentip="Innenabstand unten verkleinern" onAction="DecreasePixelValue" getEnabled="isEnabled" />
 							<button id="incMarginBottom" label="›" showLabel="true" screentip="Innenabstand unten vergrößern" onAction="IncreasePixelValue" getEnabled="isEnabled" />
 						</buttonGroup>
+						<labelControl id="lbShapeMarginBottom2" label="    ​" />
+						<toggleButton id="toggleTextMarginsEqual" label="==" showLabel="true" screentip="Alle Innenabstände koppeln" supertip="Wenn aktiv, setzt jede Änderung eines Innenabstands denselben Wert für oben, unten, links und rechts." getPressed="cbValue_init" onAction="cbValue_onChange" getEnabled="isEnabled" size="normal" />
 					</box>
 
 					<!-- <labelControl id="lbShapeMarginWrapper" label=" " /> -->

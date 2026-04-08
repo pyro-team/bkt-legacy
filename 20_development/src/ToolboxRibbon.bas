@@ -9,6 +9,7 @@ Private oTrigger As TriggerInvalidate
 Private AdjustmentValue As Integer
 Private SplitRowsCols As Integer
 Private SplitSep As Single
+Private LinkTextMargins As Boolean
 
 
 ' Initialisierung nach dem Laden des Ribbons
@@ -26,6 +27,7 @@ Sub ribbonLoaded(Ribbon As IRibbonUI)
     AdjustmentValue = 1
     SplitRowsCols = 2
     SplitSep = CentimetersToPoints(0.2)
+    LinkTextMargins = False
     
     Set oTrigger = New TriggerInvalidate
     Set oTrigger.Ribbon = myRibbon
@@ -127,7 +129,8 @@ Sub isEnabled(control As IRibbonControl, ByRef enabled)
             Case "ebMarginLeft", "ebMarginRight", "ebMarginTop", "ebMarginBottom", _
                  "ebParIndentFirst", "ebParIndentLeft", "ebParIndentRight", _
                  "ebParPreSep", "ebParPostSep", "ebParWithin", _
-                 "cbWordWrap", "cbWordWrap2", "cbAutoSize", "cbAutoSize2"
+                 "cbWordWrap", "cbWordWrap2", "cbAutoSize", "cbAutoSize2", "actCopyShapeTexts", _
+                 "toggleTextMarginsEqual"
                 enabled = SelectionContainsTextFrame(shpRange)
     
             Case Else
@@ -200,6 +203,9 @@ Function cbValue_init(control As IRibbonControl, ByRef returnedVal) As Boolean
     Case "toggleMacKeys"
         returnedVal = KeysEnabled
         Exit Function
+    Case "toggleTextMarginsEqual"
+        returnedVal = LinkTextMargins
+        Exit Function
     End Select
     
     Set shpRange = GetActiveShapeRange()
@@ -262,6 +268,8 @@ Sub cbValue_onChange(control As IRibbonControl, pressed As Boolean)
     
     Case "toggleMacKeys"
         SetKeysEnabled (pressed)
+    Case "toggleTextMarginsEqual"
+        LinkTextMargins = pressed
     
     Case Else:
         ' Alle Controls die selektierte Shapes benštigen
@@ -897,6 +905,15 @@ Private Function TrySetShapePropertyValue(ByVal shp As Shape, ByVal controlID As
 
     controlID = NormalizeShapePropertyControlId(controlID)
 
+    If ShouldLinkTextMargins(controlID) Then
+        shp.TextFrame2.MarginLeft = newValue
+        shp.TextFrame2.MarginRight = newValue
+        shp.TextFrame2.MarginTop = newValue
+        shp.TextFrame2.MarginBottom = newValue
+        TrySetShapePropertyValue = True
+        Exit Function
+    End If
+
     Select Case controlID
     Case "ebMarginLeft"
         shp.TextFrame2.MarginLeft = newValue
@@ -939,6 +956,15 @@ Private Function TrySetShapeRangePropertyValue(ByVal shpRange As ShapeRange, ByV
     On Error GoTo ErrHandler
 
     controlID = NormalizeShapePropertyControlId(controlID)
+
+    If ShouldLinkTextMargins(controlID) Then
+        shpRange.TextFrame2.MarginLeft = newValue
+        shpRange.TextFrame2.MarginRight = newValue
+        shpRange.TextFrame2.MarginTop = newValue
+        shpRange.TextFrame2.MarginBottom = newValue
+        TrySetShapeRangePropertyValue = True
+        Exit Function
+    End If
 
     Select Case controlID
     Case "ebMarginLeft"
@@ -986,6 +1012,19 @@ Sub SetShapeSettingSingle(ByVal shp As Shape, controlID As String, ByVal newValu
         Debug.Print controlID
     End If
 End Sub
+
+Private Function IsTextMarginControl(ByVal controlID As String) As Boolean
+    controlID = NormalizeShapePropertyControlId(controlID)
+
+    Select Case controlID
+    Case "ebMarginLeft", "ebMarginRight", "ebMarginTop", "ebMarginBottom"
+        IsTextMarginControl = True
+    End Select
+End Function
+
+Private Function ShouldLinkTextMargins(ByVal controlID As String) As Boolean
+    ShouldLinkTextMargins = LinkTextMargins And IsTextMarginControl(controlID)
+End Function
 
 
 ' Funktionen fuer Buttons
