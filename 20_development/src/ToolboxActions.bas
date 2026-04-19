@@ -1237,7 +1237,7 @@ Public Sub setLanguage(ByVal langCode As Integer)
         End If
     End If
 
-    msgResult = MsgBox("Sprache auf der ganzen Pr?sentation ?ndern (Ja)? " & vbNewLine & "Bei Nein wird die Sprache nur auf der aktuellen Folie ge?ndert.", vbYesNo + vbQuestion, "Sprache setzen")
+    msgResult = MsgBox("Sprache auf der ganzen Präsentation ändern (Ja), oder nur auf der aktuellen Folie (Nein)? " & vbNewLine & vbNewLine & "Ja: Präsentation" & vbNewLine & "Nein: Aktuellen Folie", vbYesNo + vbQuestion, "Sprache setzen")
     If msgResult = vbYes Then
         #If Mac Then
             'not supported by mac

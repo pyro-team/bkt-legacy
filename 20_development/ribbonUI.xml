@@ -279,8 +279,8 @@
 						<button id="btnSendSelectionAsAttachment" label="Ausgewählte Folien senden" supertip="Die markierten Folien werden einer neuen E-Mail in Outlook angehängt." onAction="btnAction" imageMso="FileSendAsAttachment" getEnabled="isEnabled" getVisible="isVisibleWin"/> <!-- Win only -->
 						<menu id="slides-more-clean-menu" imageMso="SlideShowFromCurrent" label="Slidedeck aufräumen">
 							<button id="actCleanAuthor" onAction="btnAction" label="Autor aus Dokumenteneigenschaften entfernen" />
-							<button id="actCleanSlideMasters" onAction="btnAction" label="Nicht genutzte Folienlayouts entfernen" supertip="Lösche alle nicht verwendeten Folienmaster-Layouts sowie leere Folienmaster (Designs)." imageMso="SlideDelete" />
-							<button id="actCleanUnusedDesigns" onAction="btnAction" label="Nicht genutzte Folienmaster entfernen" supertip="Lösche alle nicht verwendeten Folienmaster (Designs)." imageMso="SlideDelete" />
+							<button id="actCleanSlideMasters" onAction="btnAction" label="Nicht genutzte Folienlayouts entfernen" screentip="Lösche alle nicht verwendeten Folienmaster-Layouts sowie leere Folienmaster (Designs)." imageMso="SlideDelete" />
+							<button id="actCleanUnusedDesigns" onAction="btnAction" label="Nicht genutzte Folienmaster entfernen" screentip="Lösche alle nicht verwendeten Folienmaster (Designs)." imageMso="SlideDelete" />
 							<control idMso="ReviewDeleteAllMarkupInPresentation" />
 						</menu>
 						<menu id="slides-more-lang-menu" imageMso="GroupLanguage" label="Sprache">
@@ -372,13 +372,14 @@
 					<control showLabel="false" size="normal" idMso="TableInsertGallery" />
 					<!-- <control showLabel="false" size="normal" idMso="PictureInsertFromFilePowerPoint" /> -->
 					<menu id="shapes-insert-more" label="Bilder und Objekte" showLabel="false" imageMso="PictureInsertFromFilePowerPoint" >
+						<dynamicMenu id="shapes-library-menu" label="Library" imageMso="FileOpen" getContent="GetLibraryMenuContent" />
 						<menuSeparator id="shapes-more-seperator-1" title="Bilder und Objekte" />
 						<control idMso="PictureInsertFromFilePowerPoint" />
 						<control idMso="OleObjectctInsert" />
 						<control idMso="ClipArtInsertDialog" />
 						<control idMso="SmartArtInsert" />
 						<control idMso="ChartInsert" />
-						<dynamicMenu id="shapes-library-menu" label="Library" imageMso="FileOpen" getContent="GetLibraryMenuContent" />
+						<control idMso="ObjectFormatDialog" />
 						<menuSeparator id="shapes-more-seperator-2" title="Text und Beschriftungen" />
 						<control idMso="HeaderFooterInsert" />
 						<control idMso="DateAndTimeInsert" />
@@ -391,6 +392,7 @@
 						<menuSeparator id="shapes-more-seperator-3" title="Textfunktionen" />
 						<button id="actSticker" label="Sticker rechts einfügen" showLabel="true" screentip="Sticker oben rechts auf Folie einfügen" onAction="btnAction" image="sticker"/>
 						<button id="actStickerTopCenter" label="Sticker mittig oben einfügen" showLabel="true" screentip="Sticker mittig oben auf Folie einfügen" onAction="btnAction" image="sticker"/>
+						<menuSeparator id="shapes-more-seperator-10" />
 						<button id="actAddProtectedHyphen" label="Geschützter Trennstrich" showLabel="true" screentip="Geschützten Trennstrich einfügen" supertip="Fügt an der aktuellen Textcursor-Position einen geschützten Trennstrich ein. Der Trennstrich erscheint nur am Zeilenende und bleibt sonst unsichtbar." onAction="btnAction" getEnabled="isEnabled"/>
 						<button id="actAddProtectedSpace" label="Geschütztes Leerzeichen" showLabel="true" screentip="Geschütztes Leerzeichen einfügen" supertip="Fügt an der aktuellen Textcursor-Position ein geschütztes Leerzeichen ohne Zeilenumbruch ein." onAction="btnAction" getEnabled="isEnabled"/>
 						<button id="actAddProtectedNarrowSpace" label="Schmales geschütztes Leerzeichen" showLabel="true" screentip="Schmales geschütztes Leerzeichen einfügen" supertip="Fügt an der aktuellen Textcursor-Position ein schmales geschütztes Leerzeichen ohne Zeilenumbruch ein, z. B. für Abkürzungen." onAction="btnAction" getEnabled="isEnabled"/>
@@ -686,10 +688,11 @@
 						<button id="lblxMacShift" label="⇧=Große Schritte (bei Spinner)" getVisible="isVisibleMac" />
 						<button id="lblxMacOption" label="⌥=Werte nicht angleichen (Delta pro Shape)" getVisible="isVisibleMac" />
 						<menuSeparator id="info-menu-seperator-2" />
-						<button id="lblxInfo" label="BKT Legacy Toolbox v1.7.0" onAction="btnAction" />
+						<button id="lblxInfo" getLabel="GetLabelValue" onAction="btnAction" />
 						<button id="lblxWebsite" label="www.bkt-toolbox.de/legacy" onAction="btnAction" />
 					</menu>
 					<toggleButton id="toggleMacKeys" label="⇧⌘⌥" getPressed="cbValue_init" screentip="Mac-Tasten de-/aktivieren" onAction="cbValue_onChange" getVisible="isVisibleMac" />
+					<button id="lblxInfo2" label="BKT" screentip="BKT Legacy Toolbox" onAction="btnAction" />
 				</group>
 			</tab>
 		</tabs>

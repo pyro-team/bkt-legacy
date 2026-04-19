@@ -2,6 +2,21 @@ Attribute VB_Name = "Helpers"
 Option Explicit
 
 Public ScaleFrom As MsoScaleFrom
+Public Const BKT_LEGACY_VERSION As String = "1.7.0"
+
+Public Sub OpenUrl(ByVal url As String)
+    Dim normalizedUrl As String
+
+    normalizedUrl = Trim$(url)
+    If Len(normalizedUrl) = 0 Then Exit Sub
+
+    On Error GoTo ErrHandler
+    ActivePresentation.FollowHyperlink Address:=normalizedUrl, NewWindow:=True
+    Exit Sub
+
+ErrHandler:
+    MsgBox "Could not open webpage:" & vbCrLf & normalizedUrl, vbExclamation
+End Sub
 
 
 Public Function PointsToCentimeters(ByVal pt As Double) As Double

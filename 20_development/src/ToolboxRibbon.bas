@@ -70,6 +70,8 @@ Sub GetLabelValue(control As IRibbonControl, ByRef label)
     Select Case ctlId
     Case "menu-RectCorner"
         label = "Wert " & AdjustmentValue & "/8"
+    Case "lblxInfo"
+        label = "BKT Legacy Toolbox v" & BKT_LEGACY_VERSION
     End Select
 
 Exit Sub
@@ -1217,8 +1219,12 @@ Sub btnAction(control As IRibbonControl)
         ApplyPickedShapeSize
     
     ' Info
-    Case "lblxInfo", "lblxWebsite"
-        MsgBox "More information on www.bkt-toolbox.de/legacy"
+    Case "lblxInfo", "lblxInfo2"
+        If MsgBox("BKT Legacy Toolbox v" & BKT_LEGACY_VERSION & vbCrLf & vbCrLf & "Website jetzt öffnen?", vbYesNo + vbQuestion, "BKT Legacy Toolbox") = vbYes Then
+            OpenUrl "https://www.bkt-toolbox.de/legacy"
+        End If
+    Case "lblxWebsite"
+        OpenUrl "https://www.bkt-toolbox.de/legacy"
     
     End Select
     
