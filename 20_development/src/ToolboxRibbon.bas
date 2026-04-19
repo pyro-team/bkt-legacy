@@ -624,7 +624,7 @@ Private Sub ChangeValueBy(control As IRibbonControl, ByVal value As Integer)
     Dim altDown As Boolean
     altDown = IsAltKeyDown
 
-    If Not altDown Then
+    If Not altDown And propertyCtlId <> "ebPosLeft" And propertyCtlId <> "ebPosTop" And propertyCtlId <> "ebPosRight" And propertyCtlId <> "ebPosBottom" Then
         If TrySetShapeRangePropertyValue(shpRange, propertyCtlId, newValue) Then
             myRibbon.Invalidate
             GoTo Cleanup
