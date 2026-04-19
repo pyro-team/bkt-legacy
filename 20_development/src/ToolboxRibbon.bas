@@ -491,11 +491,13 @@ Sub ResetPixelValue(control As IRibbonControl)
     Dim lastShp As Shape
     Dim shpRange As ShapeRange
     Dim propertyCtlId As String
+    Dim newSep As Single
     
     On Error GoTo Err_Handler
+    BeginModifierKeySnapshot
     
     Set shpRange = GetActiveShapeRange()
-    If shpRange Is Nothing Then Exit Sub
+    If shpRange Is Nothing Then GoTo Cleanup
     propertyCtlId = NormalizeShapePropertyControlId(control.Id)
     
     Select Case control.Id
@@ -507,6 +509,16 @@ Sub ResetPixelValue(control As IRibbonControl)
         Set shps = shpRange
     End Select
     
+    newSep = 0
+    If shpRange.Count >= 2 And IsControlKeyDown Then
+        Select Case control.Id
+        Case "resVSep"
+            newSep = shps(2).Top - shps(1).Top - shps(1).Height
+        Case "resHSep"
+            newSep = shps(2).Left - shps(1).Left - shps(1).Width
+        End Select
+    End If
+    
     For shpIdx = 1 To shpRange.Count
         'For Each shp In ActiveWindow.Selection.ShapeRange
         Set shp = shps(shpIdx)
@@ -514,11 +526,11 @@ Sub ResetPixelValue(control As IRibbonControl)
         ' Objektabstand
         Case "resVSep"
             If Not lastShp Is Nothing Then
-                shp.Top = lastShp.Top + lastShp.Height
+                shp.Top = lastShp.Top + lastShp.Height + newSep
             End If
         Case "resHSep"
             If Not lastShp Is Nothing Then
-                shp.Left = lastShp.Left + lastShp.Width
+                shp.Left = lastShp.Left + lastShp.Width + newSep
             End If
         
         Case Else
@@ -529,8 +541,11 @@ Sub ResetPixelValue(control As IRibbonControl)
     
     myRibbon.Invalidate
 
-Exit Sub
+Cleanup:
+    EndModifierKeySnapshot
+    Exit Sub
 Err_Handler:
+    EndModifierKeySnapshot
 End Sub
 
 ' Zu control.id gehšrige Eigenschaft wird um value erhšht/verringert

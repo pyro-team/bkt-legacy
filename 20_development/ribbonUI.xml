@@ -548,7 +548,7 @@
 				</group>
 				<group id="objectsep" label="Abstand/Rotation" imageMso="VerticalSpacingIncrease" insertBeforeQ="nsBktLegacy:ThinkCell">
 					<box id="vSep" boxStyle="horizontal">
-						<button id="resVSep" label="Objekte vertikal stapeln" showLabel="false" getEnabled="isEnabled" size="normal" imageMso="VerticalSpacingIncrease" onAction="ResetPixelValue" />
+						<button id="resVSep" label="Objekte vertikal stapeln" screentip="Objektabstand auf 0 setzen. Mit Strg/Cmd gleichmäßiger Abstand." showLabel="false" getEnabled="isEnabled" size="normal" imageMso="VerticalSpacingIncrease" onAction="ResetPixelValue" />
 						<box id="vSepInner" boxStyle="horizontal">
 							<editBox id="ebVSep" label="Objektabstand vertikal" showLabel="false" sizeString="-###" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" showImage="false" />
 							<buttonGroup id="vSep-buttons">
@@ -558,7 +558,7 @@
 						</box>
 					</box>
 					<box id="hSep" boxStyle="horizontal">
-						<button id="resHSep" label="Objekte horizontal stapeln" showLabel="false" getEnabled="isEnabled" size="normal" imageMso="HorizontalSpacingIncrease" onAction="ResetPixelValue" />
+						<button id="resHSep" label="Objekte horizontal stapeln" screentip="Objektabstand auf 0 setzen. Mit Strg/Cmd gleichmäßiger Abstand." showLabel="false" getEnabled="isEnabled" size="normal" imageMso="HorizontalSpacingIncrease" onAction="ResetPixelValue" />
 						<box id="hSepInner" boxStyle="horizontal">
 							<editBox id="ebHSep" label="Objektabstand horizontal" showLabel="false" sizeString="-###" getText="ebPixelValue_init" onChange="ebPixelValue_onChange" getEnabled="isEnabled" showImage="false" />
 							<buttonGroup id="hSep-buttons">
