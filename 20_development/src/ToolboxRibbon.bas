@@ -1043,13 +1043,22 @@ Private Function ShouldLinkTextMargins(ByVal controlID As String) As Boolean
     ShouldLinkTextMargins = LinkTextMargins And IsTextMarginControl(controlID)
 End Function
 
+Private Function ButtonActionUsesModifierKeys(ByVal controlID As String) As Boolean
+    Select Case controlID
+    Case "actSameHeight", "actSameHeight2", "actSameWidth", "actSameWidth2"
+        ButtonActionUsesModifierKeys = True
+    End Select
+End Function
+
 
 ' Funktionen fuer Buttons
 Sub btnAction(control As IRibbonControl)
     Dim oAgenda As ToolboxAgenda
+    Dim hasModifierSnapshot As Boolean
     
     On Error GoTo Err_Handler
-    BeginModifierKeySnapshot
+    hasModifierSnapshot = ButtonActionUsesModifierKeys(control.Id)
+    If hasModifierSnapshot Then BeginModifierKeySnapshot
     Select Case control.Id
     ' Objekte auswaehlen
     Case "actSelectByShape"
@@ -1246,10 +1255,10 @@ Sub btnAction(control As IRibbonControl)
     myRibbon.Invalidate
 
 Cleanup:
-    EndModifierKeySnapshot
+    If hasModifierSnapshot Then EndModifierKeySnapshot
     Exit Sub
 Err_Handler:
-    EndModifierKeySnapshot
+    If hasModifierSnapshot Then EndModifierKeySnapshot
 End Sub
 
 Sub galAction(control As IRibbonControl, selectedID As String, selectedIndex As Integer)
