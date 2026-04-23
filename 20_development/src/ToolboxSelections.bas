@@ -2,71 +2,91 @@ Attribute VB_Name = "ToolboxSelections"
 Option Explicit
 
 
-' Alle Shapes auswählen, bei denen Shape-Typ mit aktuellen Shpape-Typ übereinstimmt
+' Alle Shapes auswaehlen, bei denen Shape-Typ mit aktuellen Shpape-Typ uebereinstimmt
 Public Sub SelectShapesByShapeType()
-    Dim shp As Shape
-    Dim shpMaster As Shape
-    
-    On Error GoTo Err_Handler
-    If ActiveWindow.Selection.Type <> ppSelectionShapes Then Exit Sub
-    
-    Set shpMaster = ActiveWindow.Selection.ShapeRange(1)
-    ActiveWindow.Selection.Unselect
-    
-    For Each shp In ActiveWindow.View.Slide.Shapes
-        If shp.Visible And shp.Type = shpMaster.Type And shp.AutoShapeType = shpMaster.AutoShapeType Then
-            shp.Select Replace:=False
-        End If
-    Next
-    
-    Exit Sub
-Err_Handler:
-    MsgBox "Fehler " & Err.Number & ":" & vbNewLine & Err.Description
+    SelectShapesByProperty "shape"
 End Sub
 
-' Alle Shapes auswählen, bei denen Shape-Typ mit aktuellen Shpape-Hintergrund übereinstimmt
+' Alle Shapes auswaehlen, bei denen Shape-Typ mit aktuellen Shpape-Hintergrund uebereinstimmt
 Public Sub SelectShapesByFillType()
+    SelectShapesByProperty "fill"
+End Sub
+
+' Alle Shapes auswaehlen, bei denen Shape-Typ mit aktuellen Shpape-Rahmen uebereinstimmt
+Public Sub SelectShapesByLineType()
+    SelectShapesByProperty "line"
+End Sub
+
+Private Sub SelectShapesByProperty(ByVal compareMode As String)
     Dim shp As Shape
-    Dim shpMaster As Shape
-    
+    Dim masters As Collection
+    Dim shpRange As ShapeRange
+
     On Error GoTo Err_Handler
-    If ActiveWindow.Selection.Type <> ppSelectionShapes Then Exit Sub
-    
-    Set shpMaster = ActiveWindow.Selection.ShapeRange(1)
+    Set shpRange = GetActiveShapeRange()
+    If shpRange Is Nothing Then Exit Sub
+
+    Set masters = CreateShapeCollection(shpRange)
     ActiveWindow.Selection.Unselect
-    
+
     For Each shp In ActiveWindow.View.Slide.Shapes
-        If shp.Visible And shp.Fill.Visible = shpMaster.Fill.Visible And shp.Fill.Type = shpMaster.Fill.Type And shp.Fill.ForeColor.RGB = shpMaster.Fill.ForeColor.RGB Then
+        If ShapeMatchesAnyMaster(shp, masters, compareMode) Then
             shp.Select Replace:=False
         End If
     Next
-    
+
     Exit Sub
 Err_Handler:
     MsgBox "Fehler " & Err.Number & ":" & vbNewLine & Err.Description
 End Sub
 
-' Alle Shapes auswählen, bei denen Shape-Typ mit aktuellen Shpape-Rahmen übereinstimmt
-Public Sub SelectShapesByLineType()
+Private Function CreateShapeCollection(ByVal shpRange As ShapeRange) As Collection
     Dim shp As Shape
+    Dim result As Collection
+
+    Set result = New Collection
+    For Each shp In shpRange
+        result.Add shp
+    Next
+
+    Set CreateShapeCollection = result
+End Function
+
+Private Function ShapeMatchesAnyMaster(ByVal shp As Shape, ByVal shpMasters As Collection, ByVal compareMode As String) As Boolean
     Dim shpMaster As Shape
-    
-    On Error GoTo Err_Handler
-    If ActiveWindow.Selection.Type <> ppSelectionShapes Then Exit Sub
-    
-    Set shpMaster = ActiveWindow.Selection.ShapeRange(1)
-    ActiveWindow.Selection.Unselect
-    
-    For Each shp In ActiveWindow.View.Slide.Shapes
-        If shp.Visible And shp.Line.Visible = shpMaster.Line.Visible And shp.Line.Weight = shpMaster.Line.Weight And shp.Line.DashStyle = shpMaster.Line.DashStyle And shp.Line.ForeColor.RGB = shpMaster.Line.ForeColor.RGB Then
-            shp.Select Replace:=False
+
+    On Error GoTo ErrHandler
+    If shp Is Nothing Then Exit Function
+    If Not shp.Visible Then Exit Function
+
+    For Each shpMaster In shpMasters
+        If ShapeMatchesMaster(shp, shpMaster, compareMode) Then
+            ShapeMatchesAnyMaster = True
+            Exit Function
         End If
     Next
-    
-    Exit Sub
-Err_Handler:
-    MsgBox "Fehler " & Err.Number & ":" & vbNewLine & Err.Description
-End Sub
+    Exit Function
+
+ErrHandler:
+    ShapeMatchesAnyMaster = False
+End Function
+
+Private Function ShapeMatchesMaster(ByVal shp As Shape, ByVal shpMaster As Shape, ByVal compareMode As String) As Boolean
+    On Error GoTo ErrHandler
+
+    Select Case compareMode
+    Case "shape"
+        ShapeMatchesMaster = shp.Type = shpMaster.Type And shp.AutoShapeType = shpMaster.AutoShapeType
+    Case "fill"
+        ShapeMatchesMaster = shp.Fill.Visible = shpMaster.Fill.Visible And shp.Fill.Type = shpMaster.Fill.Type And shp.Fill.ForeColor.RGB = shpMaster.Fill.ForeColor.RGB
+    Case "line"
+        ShapeMatchesMaster = shp.Line.Visible = shpMaster.Line.Visible And shp.Line.Weight = shpMaster.Line.Weight And shp.Line.DashStyle = shpMaster.Line.DashStyle And shp.Line.ForeColor.RGB = shpMaster.Line.ForeColor.RGB
+    End Select
+    Exit Function
+
+ErrHandler:
+    ShapeMatchesMaster = False
+End Function
 
 
 ' SlideRangeIdentifier(activewindow.Presentation.Slides.Range(Array(2,1))) = "1,2"
