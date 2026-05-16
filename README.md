@@ -21,8 +21,9 @@ The BKT Legacy Toolbar runs under Windows from Office 2010 in all current Office
 The PowerPoint-Addin can be downloaded as [compiled `BKT-Legacy.ppam` file](https://github.com/pyro-team/bkt-legacy/releases/latest). (Same version as in `30_builds\10_stable\`.)
 
 * On Windows it can be installed at File > Options > Add-Ins > Select "PowerPoint-Add-Ins" in Menu below > In new dialog click Add and select downloaded file.
-* On Mac go to Extras > PowerPoint-Add-Ins and click "+" to select the downloaded file. Confirm any security questions to activate macros.
+* On Mac, quit PowerPoint, double-click `install.command`, choose whether to copy the add-in to the Microsoft Office Add-Ins folder or keep it in the current folder, then open PowerPoint and go to Tools > PowerPoint Add-ins. Click "+" and select `BKT-Legacy.ppam`. Confirm any security questions to activate macros. If macOS blocks the installer, right-click `install.command`, choose Open, then confirm. More detailed Mac instructions are available in `README-Mac.md` in the zip file.
 * In order to add template slides via menu in PowerPoint, you need to download the `Templates.pptx` file and place it next to the addin file. Feel free to add your own template slides.
+* To use the library menu for quickly opening PowerPoint files, create a `Library` folder next to `BKT-Legacy.ppam` and add `.pptx` files there. Subfolders are supported and will appear as nested menus. On Mac, PowerPoint asks for permission to access each subfolder once the first time the library is opened.
 
 ## Development
 
