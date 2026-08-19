@@ -523,7 +523,6 @@ End Sub
 Public Sub SplitShapeByParagraphs()
     Dim shp As Shape
     Dim shpCopy As Object
-    Dim par As TextRange
     Dim parIndex As Long
     Dim index As Long
     Dim parHeight As Single
@@ -532,11 +531,10 @@ Public Sub SplitShapeByParagraphs()
     Set rngSelection = GetActiveShapeRange()
     If rngSelection Is Nothing Then Exit Sub
     For Each shp In rngSelection
-        If shp.HasTextFrame And shp.TextFrame.HasText Then   'shp.TextFrame.TextRange.text <> "" Then
+        If shp.HasTextFrame And shp.TextFrame.HasText And shp.TextFrame.TextRange.Paragraphs.Count > 1 Then
             shp.Select msoTrue
             
             For parIndex = 2 To shp.TextFrame.TextRange.Paragraphs.Count
-                Set par = shp.TextFrame.TextRange.Paragraphs(parIndex)
                 ' Shape dublizieren
                 Set shpCopy = shp.Duplicate
                 shpCopy.Select msoFalse
@@ -555,7 +553,9 @@ Public Sub SplitShapeByParagraphs()
                     shpCopy.TextFrame.TextRange.Paragraphs(2).Delete
                 Next
                 ' Letztes CR-Zeichen loesen
-                TrimNewLineCharacters shpCopy.TextFrame.TextRange
+                If Len(TrimParagraphText(shpCopy.TextFrame.TextRange.Paragraphs(1).Text)) > 0 Then
+                    TrimNewLineCharacters shpCopy.TextFrame.TextRange
+                End If
                 
                 ' Shape Hoehe abhaengig von Absaetzhoehe
                 shpCopy.Height = ParagraphHeight(shpCopy.TextFrame.TextRange.Paragraphs(1)) + shpCopy.TextFrame.MarginTop + shpCopy.TextFrame.MarginBottom
@@ -571,7 +571,9 @@ Public Sub SplitShapeByParagraphs()
                 shp.TextFrame.TextRange.Paragraphs(2).Delete
             Next
             ' Letztes CR-Zeichen loesen
-            TrimNewLineCharacters shp.TextFrame.TextRange
+            If Len(TrimParagraphText(shp.TextFrame.TextRange.Paragraphs(1).Text)) > 0 Then
+                TrimNewLineCharacters shp.TextFrame.TextRange
+            End If
             ' Textbox Hoehe an Absatzhoehe anpassen
             shp.Height = ParagraphHeight(shp.TextFrame.TextRange.Paragraphs(1)) + shp.TextFrame.MarginTop + shp.TextFrame.MarginBottom
             ' Objekte vertikal verteilen
